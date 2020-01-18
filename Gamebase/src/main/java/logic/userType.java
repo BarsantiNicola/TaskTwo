@@ -11,7 +11,8 @@ public enum userType {
 	ADMINISTRATOR,       
 	USER,
 	ANALYST,
-	NO_USER
+	NO_USER,
+	WRONG_PASSWORD
 	
 }
 

@@ -12,17 +12,18 @@ import java.awt.Cursor;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import databaseConnection.MongoConnector;
-import utilities.UserTableType;
-import utilities.UserType;
+import logic.*; 
 
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 
 public class GraphicInterface {
 
@@ -42,6 +43,13 @@ public class GraphicInterface {
 
 	//Home page
 	private JPanel homePagePanel;
+	private JLabel gamesNumberHPLabel;
+	private JLabel followerNumberHPLabel;
+	
+	//Logic handler
+	private logicBridge logicHandler = new logicBridge();
+	private JLabel userTypeIconHPLabel;
+	
 	
 	/**
 	 * Launch the application.
@@ -136,7 +144,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				if( !MongoConnector.signUp(username,password) ) {
+				if( !logicHandler.signUp(username,password) ) {
 					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed: username " + username + " already exists");
 					errorMessageLabel.setText("Username already used");
 					errorMessageLabel.setVisible(true);
@@ -178,25 +186,33 @@ public class GraphicInterface {
 					return;
 				}
 				
-				UserType usertype = MongoConnector.login(username,password);
+				userType usertype = logicHandler.login(username,password);
 				
 				switch(usertype) {
 					case ADMINISTRATOR:
 						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
 						cl.show(panel, "homePagePanel");
-						
+						gamesNumberHPLabel.setText(Integer.toString(logicHandler.getFollowers(username)));
+						followerNumberHPLabel.setText(Integer.toString());
+						//fai vedere alcune cose, nascondine altre
 						break;
 					case USER:
 						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
 						cl.show(panel, "homePagePanel");
-						
+						gamesNumberHPLabel.setText(Integer.toString(logicHandler.getFollowers(username)));
+						//fai vedere alcune cose, nascondine altre
 						break;
-					case NOUSER:
+					case ANALYST:
+						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
+						cl.show(panel, "homePagePanel");
+						gamesNumberHPLabel.setText(Integer.toString(logicHandler.getFollowers(username)));
+						break;
+					case NO_USER:
 						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: no user " + username + " found");
 						errorMessageLabel.setText("No User " + username + " found");
 						errorMessageLabel.setVisible(true);
 						break;
-					case WRONGPASSWORD:
+					case WRONG_PASSWORD:
 						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: wrong password for username " + username);
 						errorMessageLabel.setText("Uncorrect Password for User " + username );
 						errorMessageLabel.setVisible(true);
@@ -223,6 +239,49 @@ public class GraphicInterface {
 		loginPanel.add(myGamesLabel);
 		
 		homePagePanel = new JPanel();
+		homePagePanel.setBackground(new Color(87, 86, 82));
 		panel.add(homePagePanel, "homePagePanel");
+		homePagePanel.setLayout(null);
+		
+		JLabel usertypeHPLabel = new JLabel("userType");
+		usertypeHPLabel.setName("usertypeHPLabel");
+		usertypeHPLabel.setBounds(166, 35, 92, 16);
+		homePagePanel.add(usertypeHPLabel);
+		
+		JLabel usernameHPLabel = new JLabel("username");
+		usernameHPLabel.setName("usernameHPLabel");
+		usernameHPLabel.setBounds(166, 64, 92, 16);
+		homePagePanel.add(usernameHPLabel);
+		
+		JButton logoutHPButton = new JButton("Logout");
+		logoutHPButton.setToolTipText("Click Here To Logout");
+		logoutHPButton.setName("logoutHPButton");
+		logoutHPButton.setBounds(161, 93, 97, 25);
+		homePagePanel.add(logoutHPButton);
+		
+		gamesNumberHPLabel = new JLabel("11");
+		gamesNumberHPLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		gamesNumberHPLabel.setForeground(Color.WHITE);
+		gamesNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 41));
+		gamesNumberHPLabel.setToolTipText("Number of Games You Like");
+		gamesNumberHPLabel.setName("gamesNumberHPLabel");
+		gamesNumberHPLabel.setBounds(526, 13, 128, 69);
+		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 69, Image.SCALE_SMOOTH)));
+		homePagePanel.add(gamesNumberHPLabel);
+		
+		followerNumberHPLabel = new JLabel("0");
+		followerNumberHPLabel.setForeground(Color.WHITE);
+		followerNumberHPLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		followerNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 41));
+		followerNumberHPLabel.setToolTipText("Number of  People Who Follow You");
+		followerNumberHPLabel.setName("followerNumberHPLabel");
+		followerNumberHPLabel.setBounds(734, 13, 116, 69);
+		followerNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/followers.png")).getImage().getScaledInstance(69, 69, Image.SCALE_SMOOTH)));
+		homePagePanel.add(followerNumberHPLabel);
+		
+		userTypeIconHPLabel = new JLabel("");
+		userTypeIconHPLabel.setName("userTypeIconHPLabel");
+		userTypeIconHPLabel.setBounds(41, 13, 83, 83);
+		homePagePanel.add(userTypeIconHPLabel);
 	}
 }

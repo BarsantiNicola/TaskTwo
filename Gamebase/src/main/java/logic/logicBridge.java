@@ -17,7 +17,10 @@ import logic.data.*;
 public class logicBridge {
 	
 	//  GRAPH FUNCTIONS
+	
 	public userType login( String USERNAME , String PASSWORD ) { return userType.NO_USER; }
+	
+	public boolean signUp( String USERNAME, String PASSWORD ) { return false; }
 	
 	public int getFollowers( String USERNAME ) { return 0; }
 	
