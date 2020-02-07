@@ -50,6 +50,29 @@ public class GraphicInterface {
 	private logicBridge logicHandler = new logicBridge();
 	private JLabel userTypeIconHPLabel;
 	
+	//support functions
+	
+	private void initializeHomePage( userType user, String username ) {
+		
+		gamesNumberHPLabel.setText(logicHandler.getFollowersNumber(username)!=-1?Integer.toString(logicHandler.getFollowersNumber(username)):"N/A");
+		followerNumberHPLabel.setText(logicHandler.getLikedGamesNumber(username)!=-1?Integer.toString(logicHandler.getLikedGamesNumber(username)):"N/A");
+		
+		switch(user) {
+			case ADMINISTRATOR:
+				//fai vedere alcune cose, nascondine altre
+				break;
+			case USER:
+				
+				//fai vedere alcune cose, nascondine altre
+				break;
+			case ANALYST:
+				
+				break;
+			default:
+				return;
+	}
+	}
+	
 	
 	/**
 	 * Launch the application.
@@ -188,38 +211,19 @@ public class GraphicInterface {
 				
 				userType usertype = logicHandler.login(username,password);
 				
-				switch(usertype) {
-					case ADMINISTRATOR:
-						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
-						cl.show(panel, "homePagePanel");
-						gamesNumberHPLabel.setText(Integer.toString(logicHandler.getFollowers(username)));
-						followerNumberHPLabel.setText(Integer.toString());
-						//fai vedere alcune cose, nascondine altre
-						break;
-					case USER:
-						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
-						cl.show(panel, "homePagePanel");
-						gamesNumberHPLabel.setText(Integer.toString(logicHandler.getFollowers(username)));
-						//fai vedere alcune cose, nascondine altre
-						break;
-					case ANALYST:
-						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
-						cl.show(panel, "homePagePanel");
-						gamesNumberHPLabel.setText(Integer.toString(logicHandler.getFollowers(username)));
-						break;
-					case NO_USER:
-						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: no user " + username + " found");
-						errorMessageLabel.setText("No User " + username + " found");
-						errorMessageLabel.setVisible(true);
-						break;
-					case WRONG_PASSWORD:
-						System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: wrong password for username " + username);
-						errorMessageLabel.setText("Uncorrect Password for User " + username );
-						errorMessageLabel.setVisible(true);
-						break;
-					default:
-						return;
-				}
+				if( usertype == userType.NO_USER ) {
+					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: no user " + username + " found");
+					errorMessageLabel.setText("No User " + username + " found");
+					errorMessageLabel.setVisible(true);
+				} else if( usertype == userType.WRONG_PASSWORD ) {
+					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: wrong password for username " + username);
+					errorMessageLabel.setText("Uncorrect Password for User " + username );
+					errorMessageLabel.setVisible(true);
+				} else {
+					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
+					cl.show(panel, "homePagePanel");
+					initializeHomePage( usertype, username );
+				}				
 			}
 		});
 		loginPanel.add(loginButton);

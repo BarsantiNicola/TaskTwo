@@ -98,7 +98,6 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
 		editButton.setMnemonic(mnemonic);
 	}
 
-	@Override
 	public Component getTableCellEditorComponent( JTable table, Object value, boolean isSelected, int row, int column )
 	{
 		if (value == null)
@@ -121,7 +120,6 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
 		return editButton;
 	}
 
-	@Override
 	public Object getCellEditorValue()
 	{
 		return editorValue;

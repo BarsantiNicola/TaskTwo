@@ -18,11 +18,16 @@ public class logicBridge {
 	
 	//  GRAPH FUNCTIONS
 	
+	//return USER,ADMINISTRATOR,ANALYST,NO_USER( no user with the given username ), WRONG_PASSWORD( user exists, but password is wrong)
 	public userType login( String USERNAME , String PASSWORD ) { return userType.NO_USER; }
 	
 	public boolean signUp( String USERNAME, String PASSWORD ) { return false; }
 	
-	public int getFollowers( String USERNAME ) { return 0; }
+	//in case of failure return -1
+	public int getFollowersNumber( String USERNAME ) { return 0; }
+	
+	//in case of failure return -1
+	public int getLikedGamesNumber( String USERNAME ) { return 0; }
 	
 	public List<Friend> getFriends( String USERNAME ) { return null; }
 	
