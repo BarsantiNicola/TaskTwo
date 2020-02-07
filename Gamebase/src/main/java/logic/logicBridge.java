@@ -21,6 +21,7 @@ public class logicBridge {
 	//return USER,ADMINISTRATOR,ANALYST,NO_USER( no user with the given username ), WRONG_PASSWORD( user exists, but password is wrong)
 	public userType login( String USERNAME , String PASSWORD ) { return userType.NO_USER; }
 	
+	//return false if the username is already used
 	public boolean signUp( String USERNAME, String PASSWORD ) { return false; }
 	
 	//in case of failure return -1

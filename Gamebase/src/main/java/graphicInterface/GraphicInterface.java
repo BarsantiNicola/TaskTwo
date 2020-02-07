@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import java.awt.Insets;
 
 public class GraphicInterface {
 
@@ -45,10 +46,17 @@ public class GraphicInterface {
 	private JPanel homePagePanel;
 	private JLabel gamesNumberHPLabel;
 	private JLabel followerNumberHPLabel;
-	
-	//Logic handler
-	private logicBridge logicHandler = new logicBridge();
+	private JLabel usertypeHPLabel;
+	private JLabel usernameHPLabel;
+	private JButton logoutHPButton;
 	private JLabel userTypeIconHPLabel;
+	private JButton adminHPButton;
+	private JButton becomeAnalystButton;
+	private JButton analystHPButton;
+	
+	//Logic and support info
+	private logicBridge logicHandler = new logicBridge();
+	private String currentUser = null;
 	
 	//support functions
 	
@@ -57,22 +65,43 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setText(logicHandler.getFollowersNumber(username)!=-1?Integer.toString(logicHandler.getFollowersNumber(username)):"N/A");
 		followerNumberHPLabel.setText(logicHandler.getLikedGamesNumber(username)!=-1?Integer.toString(logicHandler.getLikedGamesNumber(username)):"N/A");
 		
+		usertypeHPLabel.setText(user.toString());
+		usernameHPLabel.setText(username);
+		
 		switch(user) {
 			case ADMINISTRATOR:
-				//fai vedere alcune cose, nascondine altre
-				break;
-			case USER:
-				
+				userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/admin.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
+				adminHPButton.setVisible(true);
+				becomeAnalystButton.setVisible(false);
+				analystHPButton.setVisible(true);
 				//fai vedere alcune cose, nascondine altre
 				break;
 			case ANALYST:
-				
+				userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/analyst.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
+				adminHPButton.setVisible(false);
+				becomeAnalystButton.setVisible(false);
+				analystHPButton.setVisible(true);
+				break;
+			case USER:
+				userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/user.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
+				adminHPButton.setVisible(false);
+				becomeAnalystButton.setVisible(true);
+				analystHPButton.setVisible(false);
+				//fai vedere alcune cose, nascondine altre
 				break;
 			default:
 				return;
-	}
+		}
 	}
 	
+	private void cleanHomePage() {
+		
+		gamesNumberHPLabel.setText("");
+		followerNumberHPLabel.setText("");
+		usertypeHPLabel.setText("");
+		usernameHPLabel.setText("");
+		userTypeIconHPLabel.setIcon(null);
+	}
 	
 	/**
 	 * Launch the application.
@@ -175,7 +204,8 @@ public class GraphicInterface {
 				} else {
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->sign up completed: username " + username + " registered");
 					cl.show(panel, "homePagePanel");
-					
+					initializeHomePage(userType.USER,username);
+					currentUser = username;
 				}
 			}
 		});
@@ -223,6 +253,7 @@ public class GraphicInterface {
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
 					cl.show(panel, "homePagePanel");
 					initializeHomePage( usertype, username );
+					currentUser = username;
 				}				
 			}
 		});
@@ -247,20 +278,41 @@ public class GraphicInterface {
 		panel.add(homePagePanel, "homePagePanel");
 		homePagePanel.setLayout(null);
 		
-		JLabel usertypeHPLabel = new JLabel("userType");
+		usertypeHPLabel = new JLabel("userType");
+		usertypeHPLabel.setForeground(Color.WHITE);
+		usertypeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
 		usertypeHPLabel.setName("usertypeHPLabel");
-		usertypeHPLabel.setBounds(166, 35, 92, 16);
+		usertypeHPLabel.setBounds(152, 13, 106, 16);
 		homePagePanel.add(usertypeHPLabel);
 		
-		JLabel usernameHPLabel = new JLabel("username");
+		usernameHPLabel = new JLabel("username");
+		usernameHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
+		usernameHPLabel.setForeground(Color.WHITE);
 		usernameHPLabel.setName("usernameHPLabel");
-		usernameHPLabel.setBounds(166, 64, 92, 16);
+		usernameHPLabel.setBounds(152, 42, 106, 16);
 		homePagePanel.add(usernameHPLabel);
 		
-		JButton logoutHPButton = new JButton("Logout");
+		logoutHPButton = new JButton("Logout");
+		logoutHPButton.setMargin(new Insets(2, 2, 2, 2));
+		logoutHPButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				currentUser = null;
+				cl.show(panel, "loginPanel");
+			}
+		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
 		logoutHPButton.setName("logoutHPButton");
-		logoutHPButton.setBounds(161, 93, 97, 25);
+		logoutHPButton.setBounds(152, 75, 74, 21);
+		logoutHPButton.setBorderPainted(false);
+		logoutHPButton.setBackground(new Color(0, 128, 128));
+		logoutHPButton.setOpaque(false);
+		logoutHPButton.setContentAreaFilled(false);
+		logoutHPButton.setBorder(null);
+		logoutHPButton.setForeground(new Color(128, 0, 0));
+		logoutHPButton.setFont(new Font("Corbel", Font.BOLD, 21));
 		homePagePanel.add(logoutHPButton);
 		
 		gamesNumberHPLabel = new JLabel("11");
@@ -269,7 +321,7 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 41));
 		gamesNumberHPLabel.setToolTipText("Number of Games You Like");
 		gamesNumberHPLabel.setName("gamesNumberHPLabel");
-		gamesNumberHPLabel.setBounds(526, 13, 128, 69);
+		gamesNumberHPLabel.setBounds(508, 10, 128, 69);
 		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(gamesNumberHPLabel);
 		
@@ -279,7 +331,7 @@ public class GraphicInterface {
 		followerNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 41));
 		followerNumberHPLabel.setToolTipText("Number of  People Who Follow You");
 		followerNumberHPLabel.setName("followerNumberHPLabel");
-		followerNumberHPLabel.setBounds(734, 13, 116, 69);
+		followerNumberHPLabel.setBounds(648, 10, 116, 69);
 		followerNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/followers.png")).getImage().getScaledInstance(69, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(followerNumberHPLabel);
 		
@@ -287,5 +339,17 @@ public class GraphicInterface {
 		userTypeIconHPLabel.setName("userTypeIconHPLabel");
 		userTypeIconHPLabel.setBounds(41, 13, 83, 83);
 		homePagePanel.add(userTypeIconHPLabel);
+		
+		adminHPButton = new JButton("Admin Section");
+		adminHPButton.setBounds(326, 137, 97, 30);
+		homePagePanel.add(adminHPButton);
+		
+		becomeAnalystButton = new JButton("Become Analyst");
+		becomeAnalystButton.setBounds(326, 242, 97, 25);
+		homePagePanel.add(becomeAnalystButton);
+		
+		analystHPButton = new JButton("Analyst Section");
+		analystHPButton.setBounds(161, 358, 97, 25);
+		homePagePanel.add(analystHPButton);
 	}
 }
