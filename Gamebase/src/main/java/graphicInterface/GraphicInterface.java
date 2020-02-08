@@ -25,6 +25,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import java.awt.Insets;
+import javax.swing.JTable;
+import java.awt.SystemColor;
 
 public class GraphicInterface {
 
@@ -46,7 +48,7 @@ public class GraphicInterface {
 	private JPanel homePagePanel;
 	private JLabel gamesNumberHPLabel;
 	private JLabel followerNumberHPLabel;
-	private JLabel usertypeHPLabel;
+	private JLabel welcomeHPLabel;
 	private JLabel usernameHPLabel;
 	private JButton logoutHPButton;
 	private JLabel userTypeIconHPLabel;
@@ -57,6 +59,7 @@ public class GraphicInterface {
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
+	private JTable followedHPTable;
 	
 	//support functions
 	
@@ -65,7 +68,6 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setText(logicHandler.getFollowersNumber(username)!=-1?Integer.toString(logicHandler.getFollowersNumber(username)):"N/A");
 		followerNumberHPLabel.setText(logicHandler.getLikedGamesNumber(username)!=-1?Integer.toString(logicHandler.getLikedGamesNumber(username)):"N/A");
 		
-		usertypeHPLabel.setText(user.toString());
 		usernameHPLabel.setText(username);
 		
 		switch(user) {
@@ -98,7 +100,7 @@ public class GraphicInterface {
 		
 		gamesNumberHPLabel.setText("");
 		followerNumberHPLabel.setText("");
-		usertypeHPLabel.setText("");
+		welcomeHPLabel.setText("");
 		usernameHPLabel.setText("");
 		userTypeIconHPLabel.setIcon(null);
 	}
@@ -274,22 +276,23 @@ public class GraphicInterface {
 		loginPanel.add(myGamesLabel);
 		
 		homePagePanel = new JPanel();
+		homePagePanel.setName("followedHPTable");
 		homePagePanel.setBackground(new Color(87, 86, 82));
 		panel.add(homePagePanel, "homePagePanel");
 		homePagePanel.setLayout(null);
 		
-		usertypeHPLabel = new JLabel("userType");
-		usertypeHPLabel.setForeground(Color.WHITE);
-		usertypeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
-		usertypeHPLabel.setName("usertypeHPLabel");
-		usertypeHPLabel.setBounds(152, 13, 106, 16);
-		homePagePanel.add(usertypeHPLabel);
+		welcomeHPLabel = new JLabel("Welcome,");
+		welcomeHPLabel.setForeground(Color.WHITE);
+		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
+		welcomeHPLabel.setName("usertypeHPLabel");
+		welcomeHPLabel.setBounds(146, 13, 106, 16);
+		homePagePanel.add(welcomeHPLabel);
 		
 		usernameHPLabel = new JLabel("username");
-		usernameHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
+		usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 17));
 		usernameHPLabel.setForeground(Color.WHITE);
 		usernameHPLabel.setName("usernameHPLabel");
-		usernameHPLabel.setBounds(152, 42, 106, 16);
+		usernameHPLabel.setBounds(146, 42, 106, 16);
 		homePagePanel.add(usernameHPLabel);
 		
 		logoutHPButton = new JButton("Logout");
@@ -305,7 +308,7 @@ public class GraphicInterface {
 		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
 		logoutHPButton.setName("logoutHPButton");
-		logoutHPButton.setBounds(152, 75, 74, 21);
+		logoutHPButton.setBounds(143, 71, 74, 21);
 		logoutHPButton.setBorderPainted(false);
 		logoutHPButton.setBackground(new Color(0, 128, 128));
 		logoutHPButton.setOpaque(false);
@@ -316,40 +319,64 @@ public class GraphicInterface {
 		homePagePanel.add(logoutHPButton);
 		
 		gamesNumberHPLabel = new JLabel("11");
+		gamesNumberHPLabel.setOpaque(true);
+		gamesNumberHPLabel.setBackground(SystemColor.controlDkShadow);
 		gamesNumberHPLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		gamesNumberHPLabel.setForeground(Color.WHITE);
 		gamesNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 41));
 		gamesNumberHPLabel.setToolTipText("Number of Games You Like");
 		gamesNumberHPLabel.setName("gamesNumberHPLabel");
-		gamesNumberHPLabel.setBounds(508, 10, 128, 69);
+		gamesNumberHPLabel.setBounds(641, 13, 128, 69);
 		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(gamesNumberHPLabel);
 		
 		followerNumberHPLabel = new JLabel("0");
+		followerNumberHPLabel.setOpaque(true);
+		followerNumberHPLabel.setBackground(SystemColor.controlDkShadow);
 		followerNumberHPLabel.setForeground(Color.WHITE);
 		followerNumberHPLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		followerNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 41));
 		followerNumberHPLabel.setToolTipText("Number of  People Who Follow You");
 		followerNumberHPLabel.setName("followerNumberHPLabel");
-		followerNumberHPLabel.setBounds(648, 10, 116, 69);
+		followerNumberHPLabel.setBounds(781, 13, 116, 69);
 		followerNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/followers.png")).getImage().getScaledInstance(69, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(followerNumberHPLabel);
 		
 		userTypeIconHPLabel = new JLabel("");
+		userTypeIconHPLabel.setOpaque(true);
 		userTypeIconHPLabel.setName("userTypeIconHPLabel");
 		userTypeIconHPLabel.setBounds(41, 13, 83, 83);
 		homePagePanel.add(userTypeIconHPLabel);
 		
 		adminHPButton = new JButton("Admin Section");
+		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		adminHPButton.setBounds(326, 137, 97, 30);
 		homePagePanel.add(adminHPButton);
 		
 		becomeAnalystButton = new JButton("Become Analyst");
-		becomeAnalystButton.setBounds(326, 242, 97, 25);
+		becomeAnalystButton.setBounds(423, 13, 97, 69);
+		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
+		becomeAnalystButton.setBorderPainted(false);
+		becomeAnalystButton.setBackground(Color.LIGHT_GRAY);
+		becomeAnalystButton.setOpaque(false);
+		becomeAnalystButton.setContentAreaFilled(false);
+		becomeAnalystButton.setBorder(null);
+		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(97, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(becomeAnalystButton);
 		
-		analystHPButton = new JButton("Analyst Section");
-		analystHPButton.setBounds(161, 358, 97, 25);
+		analystHPButton = new JButton("");
+		analystHPButton.setBounds(532, 13, 97, 69);
+		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
+		analystHPButton.setBorderPainted(false);
+		analystHPButton.setBackground(Color.LIGHT_GRAY);
+		analystHPButton.setOpaque(false);
+		analystHPButton.setContentAreaFilled(false);
+		analystHPButton.setBorder(null);
+		analystHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/statistics.png")).getImage().getScaledInstance(97, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(analystHPButton);
+		
+		followedHPTable = new JTable();
+		followedHPTable.setBounds(697, 380, -167, -111);
+		homePagePanel.add(followedHPTable);
 	}
 }
