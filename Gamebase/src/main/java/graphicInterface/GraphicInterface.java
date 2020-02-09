@@ -27,6 +27,9 @@ import javax.swing.SwingConstants;
 import java.awt.Insets;
 import javax.swing.JTable;
 import java.awt.SystemColor;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+import java.awt.Dimension;
 
 public class GraphicInterface {
 
@@ -55,11 +58,28 @@ public class GraphicInterface {
 	private JButton adminHPButton;
 	private JButton becomeAnalystButton;
 	private JButton analystHPButton;
+	private DefaultTableModel followedTableModel = new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Username", "Name", "Last Access"
+			}
+		) {
+			Class[] columnTypes = new Class[] {
+				String.class, String.class, String.class
+			};
+			public Class getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		};
 	
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
-	private JTable followedHPTable;
+	private JScrollPane followedTableScrollPane;
+	private JTable followedTable;
+	private JPanel adminPanel;
+	private JPanel analystPanel;
 	
 	//support functions
 	
@@ -276,7 +296,7 @@ public class GraphicInterface {
 		loginPanel.add(myGamesLabel);
 		
 		homePagePanel = new JPanel();
-		homePagePanel.setName("followedHPTable");
+		homePagePanel.setName("homePagePanel");
 		homePagePanel.setBackground(new Color(87, 86, 82));
 		panel.add(homePagePanel, "homePagePanel");
 		homePagePanel.setLayout(null);
@@ -349,11 +369,22 @@ public class GraphicInterface {
 		homePagePanel.add(userTypeIconHPLabel);
 		
 		adminHPButton = new JButton("Admin Section");
+		adminHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		adminHPButton.setHorizontalAlignment(SwingConstants.LEFT);
 		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
-		adminHPButton.setBounds(326, 137, 97, 30);
+		adminHPButton.setBounds(314, 13, 97, 69);
+		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
+		adminHPButton.setBorderPainted(false);
+		adminHPButton.setBackground(Color.LIGHT_GRAY);
+		adminHPButton.setOpaque(false);
+		adminHPButton.setContentAreaFilled(false);
+		adminHPButton.setBorder(null);
+		adminHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/gear.png")).getImage().getScaledInstance(97, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(adminHPButton);
 		
 		becomeAnalystButton = new JButton("Become Analyst");
+		becomeAnalystButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		becomeAnalystButton.setHorizontalAlignment(SwingConstants.LEFT);
 		becomeAnalystButton.setBounds(423, 13, 97, 69);
 		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
 		becomeAnalystButton.setBorderPainted(false);
@@ -365,6 +396,8 @@ public class GraphicInterface {
 		homePagePanel.add(becomeAnalystButton);
 		
 		analystHPButton = new JButton("");
+		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		analystHPButton.setHorizontalAlignment(SwingConstants.LEFT);
 		analystHPButton.setBounds(532, 13, 97, 69);
 		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
 		analystHPButton.setBorderPainted(false);
@@ -375,8 +408,26 @@ public class GraphicInterface {
 		analystHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/statistics.png")).getImage().getScaledInstance(97, 69, Image.SCALE_SMOOTH)));
 		homePagePanel.add(analystHPButton);
 		
-		followedHPTable = new JTable();
-		followedHPTable.setBounds(697, 380, -167, -111);
-		homePagePanel.add(followedHPTable);
+		followedTableScrollPane = new JScrollPane();
+		followedTableScrollPane.setName("followedTableScrollPane");
+		followedTableScrollPane.setBackground(Color.BLACK);
+		followedTableScrollPane.setBounds(41, 142, 326, 168);
+		homePagePanel.add(followedTableScrollPane);
+		
+		followedTable = new JTable();
+		followedTable.setName("followedTable");
+		followedTable.setModel(followedTableModel);
+		followedTable.getColumnModel().getColumn(2).setPreferredWidth(77);
+		followedTableScrollPane.setViewportView(followedTable);
+		
+		adminPanel = new JPanel();
+		adminPanel.setBackground(new Color(87, 86, 82));
+		panel.add(adminPanel, "adminPanel");
+		adminPanel.setLayout(null);
+		
+		analystPanel = new JPanel();
+		analystPanel.setBackground(new Color(87, 86, 82));
+		panel.add(analystPanel, "analystPanel");
+		analystPanel.setLayout(null);
 	}
 }
