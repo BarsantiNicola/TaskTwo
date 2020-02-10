@@ -1,5 +1,6 @@
 package logic;
 
+import java.awt.Image;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,6 +38,10 @@ public class logicBridge {
 	public boolean removeFriend( String USERNAME ) { return false; }
 
 	public boolean deleteUser( String USERNAME ) { return false; }
+	
+	public boolean becomeAnalyst( String USERNAME ) { return false; }
+	
+	public Image getUserPicture( String USERNAME ) {return null; }
 	
 	//  KEYVALUE FUNCTIONS
 	
