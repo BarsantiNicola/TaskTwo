@@ -34,6 +34,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
 
 public class GraphicInterface {
 
@@ -115,6 +121,22 @@ public class GraphicInterface {
 		
 		usernameHPLabel.setText(username);
 		
+		String mostViewedGameImageURL = logicHandler.get;
+				
+		if( mostViewedGameImageURL != null ) {
+			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));			
+		} else {
+			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
+		}
+		
+		String mostPopularGameImageURL = logicHandler.get;
+		
+		if( mostViewedGameImageURL != null ) {
+					
+		} else {
+					
+		}		
+				
 		Image profilePicture = logicHandler.getUserPicture(username);
 		
 		if( profilePicture != null ) {
@@ -419,9 +441,8 @@ public class GraphicInterface {
 		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		adminHPButton.setBounds(286, 13, 97, 69);
 		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
-		adminHPButton.setBorderPainted(false);
 		adminHPButton.setBackground(new Color(255, 127, 80));
-		adminHPButton.setBorder(null);
+		adminHPButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		adminHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/gear.png")).getImage().getScaledInstance(69, 65, Image.SCALE_SMOOTH)));
 		homePagePanel.add(adminHPButton);
 		
@@ -439,10 +460,9 @@ public class GraphicInterface {
 		becomeAnalystButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		becomeAnalystButton.setBounds(395, 13, 97, 69);
 		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
-		becomeAnalystButton.setBorderPainted(false);
 		becomeAnalystButton.setBackground(SystemColor.activeCaption);
 		becomeAnalystButton.setContentAreaFilled(false);
-		becomeAnalystButton.setBorder(null);
+		becomeAnalystButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		becomeAnalystButton.setOpaque(true);
 		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(69, 65, Image.SCALE_SMOOTH)));
 		homePagePanel.add(becomeAnalystButton);
@@ -462,9 +482,8 @@ public class GraphicInterface {
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		analystHPButton.setBounds(504, 13, 97, 69);
 		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
-		analystHPButton.setBorderPainted(false);
 		analystHPButton.setBackground(new Color(255, 215, 0));
-		analystHPButton.setBorder(null);
+		analystHPButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		analystHPButton.setContentAreaFilled(false);
 		analystHPButton.setOpaque(true);
 		analystHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/statistics.png")).getImage().getScaledInstance(69, 65, Image.SCALE_SMOOTH)));
@@ -473,7 +492,7 @@ public class GraphicInterface {
 		followedTableScrollPane = new JScrollPane();
 		followedTableScrollPane.setName("followedTableScrollPane");
 		followedTableScrollPane.setBackground(Color.BLACK);
-		followedTableScrollPane.setBounds(41, 142, 326, 168);
+		followedTableScrollPane.setBounds(27, 142, 326, 168);
 		homePagePanel.add(followedTableScrollPane);
 		
 		followedTable = new JTable();
@@ -484,14 +503,19 @@ public class GraphicInterface {
 		
 		myGamesScrollPane = new JScrollPane();
 		myGamesScrollPane.setName("myGamesScrollPane");
-		myGamesScrollPane.setBounds(41, 348, 326, 174);
+		myGamesScrollPane.setBounds(27, 348, 326, 174);
 		homePagePanel.add(myGamesScrollPane);
 		
 		myGamesList = new JList();
 		myGamesList.setName("myGamesList");
-		myGamesScrollPane.setViewportView(myGamesList);
+		myGamesScrollPane.setRowHeaderView(myGamesList);
 		
-		searchGameLabel = new JLabel("Find Game");
+		Font titleFont = new Font("Corbel", Font.BOLD, 20);
+		
+		searchGameLabel = new JLabel("");
+		searchGameLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+		searchGameLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		searchGameLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Find Game", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, Color.WHITE));
 		searchGameLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -503,15 +527,22 @@ public class GraphicInterface {
 				cl.show(panel, "searchGamePanel");
 			}
 		});
-		searchGameLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-		searchGameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		searchGameLabel.setVerticalAlignment(SwingConstants.TOP);
+		searchGameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		searchGameLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		searchGameLabel.setForeground(Color.WHITE);
-		searchGameLabel.setBounds(701, 142, 196, 380);
+		searchGameLabel.setBounds(714, 142, 196, 380);
+		searchGameLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(200, 350, Image.SCALE_SMOOTH)));
 		homePagePanel.add(searchGameLabel);
 		
-		mostViewedGamesLabel = new JLabel("Most Viewed Games");
-		mostViewedGamesLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+		mostViewedGamesLabel = new JLabel("");
+		mostViewedGamesLabel.setVerticalAlignment(SwingConstants.TOP);
+		mostViewedGamesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		mostViewedGamesLabel.setAlignmentY(0.0f);
+		mostViewedGamesLabel.setToolTipText("Click Here to See the Most Viewed Game");
+		mostViewedGamesLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Most Viewed Games", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, new Color(255, 255, 255)));
+		mostViewedGamesLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+		mostViewedGamesLabel.setVerticalTextPosition(SwingConstants.TOP);
 		mostViewedGamesLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -523,15 +554,20 @@ public class GraphicInterface {
 				cl.show(panel, "gamePanel");
 			}
 		});
-		mostViewedGamesLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		mostViewedGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		mostViewedGamesLabel.setForeground(Color.WHITE);
 		mostViewedGamesLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		mostViewedGamesLabel.setName("mostViewedGamesLabel");
-		mostViewedGamesLabel.setBounds(406, 142, 223, 168);
-		mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(223, 168, Image.SCALE_SMOOTH)));
+		mostViewedGamesLabel.setBounds(427, 142, 223, 168);
+		mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
 		homePagePanel.add(mostViewedGamesLabel);
 		
-		mostPopularGamesLabel = new JLabel("Most Popular Games");
+		mostPopularGamesLabel = new JLabel("");
+		mostPopularGamesLabel.setToolTipText("Click Here to See the Most Popular Game");
+		mostPopularGamesLabel.setVerticalTextPosition(SwingConstants.TOP);
+		mostPopularGamesLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+		mostPopularGamesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		mostPopularGamesLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Most Popular Games", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, Color.WHITE));
 		mostPopularGamesLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -543,12 +579,13 @@ public class GraphicInterface {
 				cl.show(panel, "gamePanel");
 			}
 		});
-		mostPopularGamesLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		mostPopularGamesLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+		mostPopularGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mostPopularGamesLabel.setVerticalAlignment(SwingConstants.TOP);
 		mostPopularGamesLabel.setForeground(Color.WHITE);
 		mostPopularGamesLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		mostPopularGamesLabel.setName("mostPopularGamesLabel");
-		mostPopularGamesLabel.setBounds(404, 348, 225, 174);
+		mostPopularGamesLabel.setBounds(427, 348, 223, 168);
+		mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
 		homePagePanel.add(mostPopularGamesLabel);
 		
 		adminPanel = new JPanel();
