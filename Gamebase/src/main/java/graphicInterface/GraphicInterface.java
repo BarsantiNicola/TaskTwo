@@ -1,45 +1,18 @@
 package graphicInterface;
 
-import java.awt.EventQueue;
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Cursor;
+import logic.*;
+import logic.data.*;
+import java.awt.event.*;
+import javax.imageio.ImageIO;
+import java.net.*;
+import java.util.*;
+import javax.swing.border.*;
+import javax.swing.table.*;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
-import logic.*; 
-
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
-import java.awt.Insets;
-import javax.swing.JTable;
-import java.awt.SystemColor;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JScrollPane;
-import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JList;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
 
 public class GraphicInterface {
 
@@ -74,7 +47,7 @@ public class GraphicInterface {
 	private JLabel searchGameLabel;
 	private JScrollPane followedTableScrollPane;
 	private JTable followedTable;
-	private JList myGamesList;
+	private JList<PreviewGame> myGamesList;
 	private DefaultTableModel followedTableModel = new DefaultTableModel(
 			new Object[][] {
 			},
@@ -105,8 +78,27 @@ public class GraphicInterface {
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
+	Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	
 	//support functions
+	
+	private boolean fillGamesList(List<PreviewGame> gamesList) {
+		
+		DefaultListModel<PreviewGame> listModel = new DefaultListModel();
+		
+		for( int i = 0; i < gamesList.size(); i++ ) {
+			listModel.addElement(gamesList.get(i));
+		}
+		
+		myGamesList = new JList(listModel);
+		myGamesList.setCellRenderer(new GameRenderer());
+		return true;
+	}
+	
+	private boolean fillFollowedList(List<Friend> friendList) {
+		
+		return true;
+	}
 	
 	private void initializeHomePage( userType user, String username ) {
 		
@@ -121,21 +113,29 @@ public class GraphicInterface {
 		
 		usernameHPLabel.setText(username);
 		
-		String mostViewedGameImageURL = logicHandler.get;
+		String mostViewedGameImageURL = logicHandler.getMostViewedGame().getPreviewPicURL();
 				
-		if( mostViewedGameImageURL != null ) {
-			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));			
+		if( mostViewedGameImageURL == null ) {
+			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 		} else {
-			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
-		}
+			try {
+				mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL))));
+			} catch (Exception e){
+				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+		    }
+		}	
 		
-		String mostPopularGameImageURL = logicHandler.get;
+		String mostPopularGameImageURL = logicHandler.getMostPopularGame().getPreviewPicURL();
 		
-		if( mostViewedGameImageURL != null ) {
-					
+		if( mostPopularGameImageURL == null ) {
+			mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 		} else {
-					
-		}		
+			try {
+				mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL))));
+			} catch (Exception e){
+				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+		    }
+		}	
 				
 		Image profilePicture = logicHandler.getUserPicture(username);
 		
@@ -145,12 +145,15 @@ public class GraphicInterface {
 			userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultProfilePicture.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
 		}
 		
+		fillGamesList(logicHandler.getMyGames(username));
+		
+		//fill friends list
+		
 		switch(user) {
 			case ADMINISTRATOR:
 				adminHPButton.setVisible(true);
 				becomeAnalystButton.setVisible(false);
 				analystHPButton.setVisible(true);
-				//fai vedere alcune cose, nascondine altre
 				break;
 			case ANALYST:
 				adminHPButton.setVisible(false);
@@ -161,13 +164,12 @@ public class GraphicInterface {
 				adminHPButton.setVisible(false);
 				becomeAnalystButton.setVisible(true);
 				analystHPButton.setVisible(false);
-				//fai vedere alcune cose, nascondine altre
 				break;
 			default:
 				return;
 		}
 	}
-	
+
 	private void cleanHomePage() {
 		
 		gamesNumberHPLabel.setText("");
@@ -175,6 +177,9 @@ public class GraphicInterface {
 		welcomeHPLabel.setText("");
 		usernameHPLabel.setText("");
 		userTypeIconHPLabel.setIcon(null);
+		
+		myGamesList = null;
+		
 	}
 	
 	/**
@@ -506,11 +511,23 @@ public class GraphicInterface {
 		myGamesScrollPane.setBounds(27, 348, 326, 174);
 		homePagePanel.add(myGamesScrollPane);
 		
-		myGamesList = new JList();
+		myGamesList = new JList<PreviewGame>();
+		myGamesList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				PreviewGame game = myGamesList.getSelectedValue();
+				
+				cleanHomePage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "gamePanel");
+			}
+		});
 		myGamesList.setName("myGamesList");
-		myGamesScrollPane.setRowHeaderView(myGamesList);
 		
-		Font titleFont = new Font("Corbel", Font.BOLD, 20);
+		myGamesScrollPane.add(myGamesList);
 		
 		searchGameLabel = new JLabel("");
 		searchGameLabel.setHorizontalTextPosition(SwingConstants.LEFT);
@@ -577,6 +594,9 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				cl.show(panel, "gamePanel");
+				
+				dfd
+				//devo dire il gioco
 			}
 		});
 		mostPopularGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);

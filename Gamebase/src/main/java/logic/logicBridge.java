@@ -43,6 +43,8 @@ public class logicBridge {
 	
 	public Image getUserPicture( String USERNAME ) {return null; }
 	
+	public List<PreviewGame> getMyGames( String USERNAME){ return null;}
+	
 	//  KEYVALUE FUNCTIONS
 	
 	public List<Game> getUserGames( String USERNAME ){ return null; }
@@ -60,6 +62,10 @@ public class logicBridge {
 	public boolean voteGame( String GAME , int VOTE ) { return false; }
 	
 	public List<PreviewGame> getPreviews( HashMap<String,String> OPTIONS ){ return null; }
+	
+	public PreviewGame getMostViewedGame() { return null; }
+	
+	public PreviewGame getMostPopularGame() { return null; }
 	
 	//  KEYVALUE --- STATISTICS FUNCTIONS
 	

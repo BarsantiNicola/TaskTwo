@@ -14,7 +14,7 @@ public class PreviewGame {
 	//                                           COSTRUCTOR                                                   //
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	PreviewGame( String game , String pic ){
+	public PreviewGame( String game , String pic ){
 		
 		gameTitle = game;
 		previewPicURL = pic;
@@ -25,8 +25,8 @@ public class PreviewGame {
 	//                                           GETTERS                                                      //
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	String getGameTitle() { return gameTitle; }
+	public String getGameTitle() { return gameTitle; }
 	
-	String getPreviewPicURL() { return previewPicURL; }
+	public String getPreviewPicURL() { return previewPicURL; }
 	
 }
