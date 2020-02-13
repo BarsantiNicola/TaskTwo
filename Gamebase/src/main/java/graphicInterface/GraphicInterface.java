@@ -460,9 +460,9 @@ public class GraphicInterface {
 		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		adminHPButton.setBounds(286, 13, 97, 69);
 		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
-		adminHPButton.setBackground(new Color(255, 127, 80));
-		adminHPButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		adminHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/gear.png")).getImage().getScaledInstance(69, 65, Image.SCALE_SMOOTH)));
+		adminHPButton.setBackground(SystemColor.controlDkShadow);
+		adminHPButton.setBorder(null);
+		adminHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/gear.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(adminHPButton);
 		
 		becomeAnalystButton = new JButton("");
@@ -479,11 +479,11 @@ public class GraphicInterface {
 		becomeAnalystButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		becomeAnalystButton.setBounds(395, 13, 97, 69);
 		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
-		becomeAnalystButton.setBackground(SystemColor.activeCaption);
+		becomeAnalystButton.setBackground(SystemColor.controlDkShadow);
 		becomeAnalystButton.setContentAreaFilled(false);
-		becomeAnalystButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		becomeAnalystButton.setBorder(null);
 		becomeAnalystButton.setOpaque(true);
-		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(69, 65, Image.SCALE_SMOOTH)));
+		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(90, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(becomeAnalystButton);
 		
 		analystHPButton = new JButton("");
@@ -501,11 +501,11 @@ public class GraphicInterface {
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		analystHPButton.setBounds(504, 13, 97, 69);
 		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
-		analystHPButton.setBackground(new Color(255, 215, 0));
-		analystHPButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		analystHPButton.setBackground(SystemColor.controlDkShadow);
+		analystHPButton.setBorder(null);
 		analystHPButton.setContentAreaFilled(false);
 		analystHPButton.setOpaque(true);
-		analystHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/statistics.png")).getImage().getScaledInstance(69, 65, Image.SCALE_SMOOTH)));
+		analystHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/statistics.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(analystHPButton);
 		
 		followedTableScrollPane = new JScrollPane();
