@@ -48,11 +48,12 @@ public class GraphicInterface {
 	private JScrollPane followedTableScrollPane;
 	private JTable followedTable;
 	private JList<PreviewGame> myGamesList;
+	private DefaultListModel<PreviewGame> gamesListModel = new DefaultListModel();
 	private DefaultTableModel followedTableModel = new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
-				"Username", "Name", "Last Access"
+				"Username", "Name", "Last Activity"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
@@ -84,18 +85,22 @@ public class GraphicInterface {
 	
 	private boolean fillGamesList(List<PreviewGame> gamesList) {
 		
-		DefaultListModel<PreviewGame> listModel = new DefaultListModel();
+		gamesListModel.removeAllElements();
 		
 		for( int i = 0; i < gamesList.size(); i++ ) {
-			listModel.addElement(gamesList.get(i));
+			gamesListModel.addElement(gamesList.get(i));
 		}
 		
-		myGamesList = new JList(listModel);
-		myGamesList.setCellRenderer(new GameRenderer());
 		return true;
 	}
 	
-	private boolean fillFollowedList(List<Friend> friendList) {
+	private boolean fillFollowedTable(List<Friend> friendList) {
+		
+		followedTableModel.setRowCount(0);
+		
+		while() {
+			
+		}
 		
 		return true;
 	}
@@ -147,7 +152,7 @@ public class GraphicInterface {
 		
 		fillGamesList(logicHandler.getMyGames(username));
 		
-		//fill friends list
+		fillFollowedTable(logicHandler.getFriends(username));
 		
 		switch(user) {
 			case ADMINISTRATOR:
@@ -178,7 +183,16 @@ public class GraphicInterface {
 		usernameHPLabel.setText("");
 		userTypeIconHPLabel.setIcon(null);
 		
-		myGamesList = null;
+		gamesListModel.removeAllElements();
+		followedTableModel.setRowCount(0);
+		
+	}
+	
+	private void initializeGamePage( String title ) {
+		
+	}
+	
+	private void cleanGamePage() {
 		
 	}
 	
@@ -511,7 +525,7 @@ public class GraphicInterface {
 		myGamesScrollPane.setBounds(27, 348, 326, 174);
 		homePagePanel.add(myGamesScrollPane);
 		
-		myGamesList = new JList<PreviewGame>();
+		myGamesList = new JList<PreviewGame>(gamesListModel);
 		myGamesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -523,10 +537,12 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				cl.show(panel, "gamePanel");
+				
+				initializeGamePage(game.getGameTitle());
 			}
 		});
 		myGamesList.setName("myGamesList");
-		
+		myGamesList.setCellRenderer(new GameRenderer());
 		myGamesScrollPane.add(myGamesList);
 		
 		searchGameLabel = new JLabel("");
@@ -569,6 +585,8 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				cl.show(panel, "gamePanel");
+				
+				initializeGamePage(logicHandler.getMostPopularGame().getGameTitle());
 			}
 		});
 		mostViewedGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -595,8 +613,8 @@ public class GraphicInterface {
 				
 				cl.show(panel, "gamePanel");
 				
-				dfd
-				//devo dire il gioco
+				initializeGamePage(logicHandler.getMostPopularGame().getGameTitle());
+			
 			}
 		});
 		mostPopularGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -619,10 +637,12 @@ public class GraphicInterface {
 		analystPanel.setLayout(null);
 		
 		searchGamePanel = new JPanel();
+		searchGamePanel.setBackground(new Color(87, 86, 82));
 		searchGamePanel.setName("searchGamePanel");
 		panel.add(searchGamePanel, "searchGamePanel");
 		
 		gamePanel = new JPanel();
+		gamePanel.setBackground(new Color(87, 86, 82));
 		gamePanel.setName("gamePanel");
 		panel.add(gamePanel, "gamePanel");
 		gamePanel.setLayout(null);
