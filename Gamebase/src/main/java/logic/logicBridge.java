@@ -45,6 +45,9 @@ public class logicBridge {
 	
 	public List<PreviewGame> getMyGames( String USERNAME){ return null;}
 	
+	//return the total number of users; -1 in case of failure
+	public int getUserCount() { return -1;}
+	
 	//  KEYVALUE FUNCTIONS
 	
 	public List<Game> getUserGames( String USERNAME ){ return null; }
@@ -67,9 +70,14 @@ public class logicBridge {
 	
 	public PreviewGame getMostPopularGame() { return null; }
 	
+	//return the total number of games; -1 in case of failure
+	public int getGameCount() { return -1; }
+	
 	//  KEYVALUE --- STATISTICS FUNCTIONS
 	
 	//  DATASCRAPER FUNCTIONS
+	
+	public boolean updateDatabase() { return false; }
 	
 	public String getTwitchURLChannel( String GAME ) { return null; }
 	

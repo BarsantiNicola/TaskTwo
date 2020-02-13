@@ -1,6 +1,8 @@
 package graphicInterface;
 
 import javax.swing.*;
+import javax.swing.Timer;
+
 import java.awt.*;
 import java.util.List;
 
@@ -47,6 +49,7 @@ public class GraphicInterface {
 	private JLabel searchGameLabel;
 	private JScrollPane followedTableScrollPane;
 	private JTable followedTable;
+	private JTableHeader followedTableHeader;
 	private JList<PreviewGame> myGamesList;
 	private DefaultListModel<PreviewGame> gamesListModel = new DefaultListModel();
 	private DefaultTableModel followedTableModel = new DefaultTableModel(
@@ -66,12 +69,26 @@ public class GraphicInterface {
 	
 	//admin panel
 	private JPanel adminPanel;	
-		
+	private JButton homeADButton;
+	private JButton deleteGameButton;
+	private JButton deleteUserButton;
+	private JTextField deleteUserTextField;
+	private JTextField deleteGameTextField;
+	private JPanel adminActionContainer;
+	private JLabel adminSectionLabel;
+	private JButton updateDatabaseButton;
+	private JLabel userCountLabel;
+	private JLabel gameCountLabel;
+	private JLabel deleteUserResultLabel;
+	private JLabel deleteGameResultLabel;
+	private JLabel updateDatabaseResultLabel;
+	
 	//analyst panel
 	private JPanel analystPanel;
 		
 	//search game panel
 	private JPanel searchGamePanel;	
+	private JButton homeSEButton;
 	
 	//game panel
 	private JPanel gamePanel;	
@@ -80,6 +97,10 @@ public class GraphicInterface {
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
 	Font titleFont = new Font("Corbel", Font.BOLD, 20);
+	private JTextField searchTextField;
+	private JButton searchButton;
+	
+	
 	
 	//support functions
 	
@@ -98,8 +119,29 @@ public class GraphicInterface {
 		
 		followedTableModel.setRowCount(0);
 		
-		while() {
+		for( Friend friend: friendList ) {
 			
+			Object[] object = new Object[3];
+			object[0] = friend.getUsername();
+			object[1] = friend.getCompleteName();
+			object[2] = friend.getLastAccess();
+			ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
+				
+				public void actionPerformed(ActionEvent e) {
+					
+					JTable table = (JTable)e.getSource();
+					int modelRow = Integer.valueOf(e.getActionCommand());
+					
+					String followerUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+					
+					CardLayout cl = (CardLayout)(panel.getLayout());
+					
+					cl.show(panel, "userPanel");
+					
+					initializeUserPage(followerUsername);
+				}
+			},0);
+			followedTableModel.addRow(object);
 		}
 		
 		return true;
@@ -196,6 +238,61 @@ public class GraphicInterface {
 		
 	}
 	
+	private void initializeUserPage( String username ) {
+		
+	}
+	
+	private void cleanUserPage() {
+		
+	}
+	
+	private void initializeAdminPage() {
+		
+		String userCount, gameCount;
+		int userC = logicHandler.getUserCount();
+		int gameC = logicHandler.getGameCount();
+		
+		if( userC == -1 ) {
+			userCount = "N/A";
+		} else {
+			userCount = Integer.toString(userC);
+		}
+		
+		if( gameC == -1 ) {
+			gameCount = "N/A";
+		} else {
+			gameCount = Integer.toString(gameC);
+		}
+		
+		userCountLabel.setText("User Count: " + userCount);
+		gameCountLabel.setText("Game Count: " + gameCount);
+		
+		deleteUserResultLabel.setVisible(false);
+		deleteGameResultLabel.setVisible(false);
+		updateDatabaseResultLabel.setVisible(false);
+	}
+	
+	private void cleanAdminPage() {
+		
+		userCountLabel.setText("User Count:");
+		gameCountLabel.setText("Game Count:");
+		
+		deleteUserTextField.setText("User");
+		deleteGameTextField.setText("Game");
+		
+		deleteUserResultLabel.setVisible(false);
+		deleteGameResultLabel.setVisible(false);
+		updateDatabaseResultLabel.setVisible(false);
+	}
+	
+	
+	private void initializeSearchGamePage() {
+		
+	}
+	
+	private void cleanSearchGamePage() {
+		
+	}
 	/**
 	 * Launch the application.
 	 */
@@ -483,7 +580,7 @@ public class GraphicInterface {
 		becomeAnalystButton.setContentAreaFilled(false);
 		becomeAnalystButton.setBorder(null);
 		becomeAnalystButton.setOpaque(true);
-		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(90, 60, Image.SCALE_SMOOTH)));
+		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(100, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(becomeAnalystButton);
 		
 		analystHPButton = new JButton("");
@@ -511,18 +608,23 @@ public class GraphicInterface {
 		followedTableScrollPane = new JScrollPane();
 		followedTableScrollPane.setName("followedTableScrollPane");
 		followedTableScrollPane.setBackground(Color.BLACK);
-		followedTableScrollPane.setBounds(27, 142, 326, 168);
+		followedTableScrollPane.setBounds(27, 142, 356, 168);
 		homePagePanel.add(followedTableScrollPane);
 		
 		followedTable = new JTable();
 		followedTable.setName("followedTable");
 		followedTable.setModel(followedTableModel);
+		followedTable.setFont(new Font("Corbel",Font.PLAIN,16));
 		followedTable.getColumnModel().getColumn(2).setPreferredWidth(77);
+		followedTableHeader = followedTable.getTableHeader();
+		followedTableHeader.setFont(titleFont);
+		followedTableHeader.setForeground(Color.WHITE);
+		followedTableHeader.setBackground(new Color(121,166,210));
 		followedTableScrollPane.setViewportView(followedTable);
 		
 		myGamesScrollPane = new JScrollPane();
 		myGamesScrollPane.setName("myGamesScrollPane");
-		myGamesScrollPane.setBounds(27, 348, 326, 174);
+		myGamesScrollPane.setBounds(27, 348, 356, 174);
 		homePagePanel.add(myGamesScrollPane);
 		
 		myGamesList = new JList<PreviewGame>(gamesListModel);
@@ -565,7 +667,7 @@ public class GraphicInterface {
 		searchGameLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		searchGameLabel.setForeground(Color.WHITE);
 		searchGameLabel.setBounds(714, 142, 196, 380);
-		searchGameLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(200, 350, Image.SCALE_SMOOTH)));
+		searchGameLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(185, 350, Image.SCALE_SMOOTH)));
 		homePagePanel.add(searchGameLabel);
 		
 		mostViewedGamesLabel = new JLabel("");
@@ -627,9 +729,215 @@ public class GraphicInterface {
 		homePagePanel.add(mostPopularGamesLabel);
 		
 		adminPanel = new JPanel();
+		adminPanel.setName("adminPanel");
 		adminPanel.setBackground(new Color(87, 86, 82));
 		panel.add(adminPanel, "adminPanel");
 		adminPanel.setLayout(null);
+		
+		homeADButton = new JButton("");
+		homeADButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				cleanAdminPage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "homePagePanel");
+				
+				initializeHomePage(userType.ADMINISTRATOR,currentUser);
+			}
+		});
+		homeADButton.setToolTipText("Return to Homepage");
+		homeADButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		homeADButton.setName("homeADButton");
+		homeADButton.setBounds(730, 30, 97, 69);
+		homeADButton.setBackground(SystemColor.controlDkShadow);
+		homeADButton.setBorder(null);
+		homeADButton.setContentAreaFilled(false);
+		homeADButton.setOpaque(true);
+		homeADButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		adminPanel.add(homeADButton);
+		
+		adminActionContainer = new JPanel();
+		adminActionContainer.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+		adminActionContainer.setName("adminActionContainer");
+		adminActionContainer.setBackground(Color.LIGHT_GRAY);
+		adminActionContainer.setBounds(446, 151, 384, 196);
+		adminPanel.add(adminActionContainer);
+		adminActionContainer.setLayout(null);
+		
+		deleteUserTextField = new JTextField();
+		deleteUserTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				deleteUserTextField.setText("");
+			}
+		});
+		deleteUserTextField.setBounds(12, 30, 189, 37);
+		adminActionContainer.add(deleteUserTextField);
+		deleteUserTextField.setText("User");
+		deleteUserTextField.setFont(new Font("Corbel", Font.ITALIC, 17));
+		deleteUserTextField.setName("deleteUserTextField");
+		deleteUserTextField.setColumns(10);
+		
+		deleteGameTextField = new JTextField();
+		deleteGameTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				deleteGameTextField.setText("");
+			}
+		});
+		deleteGameTextField.setBounds(12, 114, 189, 37);
+		adminActionContainer.add(deleteGameTextField);
+		deleteGameTextField.setFont(new Font("Corbel", Font.ITALIC, 17));
+		deleteGameTextField.setText("Game");
+		deleteGameTextField.setName("deleteGameTextField");
+		deleteGameTextField.setColumns(10);
+		
+		deleteUserButton = new JButton("Delete User");
+		deleteUserButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String username = deleteUserTextField.getText();
+				
+				if( username == "" ) {
+					deleteUserResultLabel.setText("Failure!");
+					deleteUserResultLabel.setVisible(true);
+				}
+				
+				if( logicHandler.deleteUser(username) ) {
+					deleteUserResultLabel.setText("Success!");
+					deleteUserResultLabel.setVisible(true);
+				} else {
+					deleteUserResultLabel.setText("Failure!");
+					deleteUserResultLabel.setVisible(true);
+				}
+				
+				new Timer(3000,new ActionListener() {
+				      public void actionPerformed(ActionEvent evt) {
+				          deleteUserResultLabel.setVisible(false);
+				      }
+				  }).start();
+			}
+		});
+		deleteUserButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		deleteUserButton.setBounds(227, 29, 133, 37);
+		adminActionContainer.add(deleteUserButton);
+		deleteUserButton.setBorder(new LineBorder(Color.RED, 1, true));
+		deleteUserButton.setName("deleteUserButton");
+		deleteUserButton.setForeground(Color.WHITE);
+		deleteUserButton.setFont(new Font("Corbel", Font.BOLD, 18));
+		deleteUserButton.setBackground(Color.RED);
+		deleteUserButton.setContentAreaFilled(false);
+		deleteUserButton.setOpaque(true);
+		
+		deleteGameButton = new JButton("Delete Game");
+		deleteGameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String game = deleteGameTextField.getText();
+				
+				if( game == "" ) {
+					deleteGameResultLabel.setText("Failure!");
+					deleteGameResultLabel.setVisible(true);
+				}
+				
+				if( logicHandler.deleteUser(game) ) {
+					deleteGameResultLabel.setText("Success!");
+					deleteGameResultLabel.setVisible(true);
+				} else {
+					deleteGameResultLabel.setText("Failure!");
+					deleteGameResultLabel.setVisible(true);
+				}
+				
+				new Timer(3000,new ActionListener() {
+				      public void actionPerformed(ActionEvent evt) {
+				          deleteGameResultLabel.setVisible(false);
+				      }
+				  }).start();
+			
+			}
+		});
+		deleteGameButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		deleteGameButton.setBorder(new LineBorder(Color.RED, 2, true));
+		deleteGameButton.setBounds(227, 113, 133, 37);
+		adminActionContainer.add(deleteGameButton);
+		deleteGameButton.setForeground(Color.WHITE);
+		deleteGameButton.setName("deleteGameButton");
+		deleteGameButton.setFont(new Font("Corbel", Font.BOLD, 18));
+		deleteGameButton.setBackground(Color.RED);
+		deleteGameButton.setContentAreaFilled(false);
+		deleteGameButton.setOpaque(true);
+		
+		deleteUserResultLabel = new JLabel("Success!");
+		deleteUserResultLabel.setName("deleteUserResultLabel");
+		deleteUserResultLabel.setFont(new Font("Corbel", Font.PLAIN, 14));
+		deleteUserResultLabel.setBounds(12, 68, 189, 21);
+		adminActionContainer.add(deleteUserResultLabel);
+		
+		deleteGameResultLabel = new JLabel("Success!");
+		deleteGameResultLabel.setName("deleteGameResultLabel");
+		deleteGameResultLabel.setFont(new Font("Corbel", Font.PLAIN, 14));
+		deleteGameResultLabel.setBounds(12, 150, 189, 21);
+		adminActionContainer.add(deleteGameResultLabel);
+		
+		adminSectionLabel = new JLabel("Admin Section");
+		adminSectionLabel.setName("adminSectionLabel");
+		adminSectionLabel.setForeground(Color.WHITE);
+		adminSectionLabel.setFont(new Font("Corbel", Font.BOLD, 41));
+		adminSectionLabel.setBounds(104, 40, 289, 49);
+		adminPanel.add(adminSectionLabel);
+		
+		updateDatabaseButton = new JButton("Update Database");
+		updateDatabaseButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				if( logicHandler.updateDatabase() ) {
+					updateDatabaseResultLabel.setText("Success!");
+					updateDatabaseResultLabel.setVisible(true);
+				} else {
+					updateDatabaseResultLabel.setText("Failure!");
+					updateDatabaseResultLabel.setVisible(true);
+				}
+				
+				new Timer(3000,new ActionListener() {
+				      public void actionPerformed(ActionEvent evt) {
+				          updateDatabaseResultLabel.setVisible(false);
+				      }
+				  }).start();
+			}
+		});
+		updateDatabaseButton.setBackground(new Color(30, 144, 255));
+		updateDatabaseButton.setForeground(Color.WHITE);
+		updateDatabaseButton.setFont(new Font("Corbel", Font.BOLD, 20));
+		updateDatabaseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		updateDatabaseButton.setName("updateDatabaseButton");
+		updateDatabaseButton.setBounds(339, 410, 218, 49);
+		updateDatabaseButton.setContentAreaFilled(false);
+		updateDatabaseButton.setOpaque(true);
+		adminPanel.add(updateDatabaseButton);
+		
+		userCountLabel = new JLabel("User Count: 10000");
+		userCountLabel.setName("userCountLabel");
+		userCountLabel.setForeground(Color.WHITE);
+		userCountLabel.setFont(new Font("Corbel", Font.BOLD, 26));
+		userCountLabel.setBounds(104, 180, 226, 35);
+		adminPanel.add(userCountLabel);
+		
+		gameCountLabel = new JLabel("Game Count: 10000");
+		gameCountLabel.setName("gameCountLabel");
+		gameCountLabel.setForeground(Color.WHITE);
+		gameCountLabel.setFont(new Font("Corbel", Font.BOLD, 26));
+		gameCountLabel.setBounds(104, 269, 226, 35);
+		adminPanel.add(gameCountLabel);
+		
+		updateDatabaseResultLabel = new JLabel("Success!");
+		updateDatabaseResultLabel.setName("updateDatabaseResultLabel");
+		updateDatabaseResultLabel.setFont(new Font("Corbel", Font.PLAIN, 14));
+		updateDatabaseResultLabel.setBounds(418, 461, 57, 21);
+		adminPanel.add(updateDatabaseResultLabel);
 		
 		analystPanel = new JPanel();
 		analystPanel.setBackground(new Color(87, 86, 82));
@@ -640,6 +948,51 @@ public class GraphicInterface {
 		searchGamePanel.setBackground(new Color(87, 86, 82));
 		searchGamePanel.setName("searchGamePanel");
 		panel.add(searchGamePanel, "searchGamePanel");
+		searchGamePanel.setLayout(null);
+		
+		homeSEButton = new JButton("");
+		homeSEButton.setName("homeSEButton");
+		homeSEButton.setBounds(63, 34, 97, 70);
+		homeSEButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				cleanSearchGamePage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "homePagePanel");
+				
+				//initializeHomePage(userType.,currentUser);
+			}
+		});
+		homeSEButton.setToolTipText("Return to Homepage");
+		homeSEButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		homeSEButton.setBackground(SystemColor.controlDkShadow);
+		homeSEButton.setBorder(null);
+		homeSEButton.setContentAreaFilled(false);
+		homeSEButton.setOpaque(true);
+		homeSEButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		searchGamePanel.add(homeSEButton);
+		
+		searchTextField = new JTextField();
+		searchTextField.setText("Search");
+		searchTextField.setFont(new Font("Corbel", Font.ITALIC, 16));
+		searchTextField.setName("searchTextField");
+		searchTextField.setBounds(589, 69, 207, 35);
+		searchGamePanel.add(searchTextField);
+		searchTextField.setColumns(10);
+		
+		searchButton = new JButton("");
+		searchButton.setName("searchButton");
+		searchButton.setBounds(797, 69, 52, 35);
+		searchButton.setToolTipText("Return to Homepage");
+		searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		searchButton.setBackground(SystemColor.controlDkShadow);
+		searchButton.setBorder(null);
+		searchButton.setContentAreaFilled(false);
+		searchButton.setOpaque(true);
+		searchButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/search.png")).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+		searchGamePanel.add(searchButton);
 		
 		gamePanel = new JPanel();
 		gamePanel.setBackground(new Color(87, 86, 82));
