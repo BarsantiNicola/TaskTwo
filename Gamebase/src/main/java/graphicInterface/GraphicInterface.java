@@ -93,16 +93,25 @@ public class GraphicInterface {
 	private JButton mostViewedButton;
 	private JButton mostLikedButton;
 	private JButton mostRecentButton;
+	private JTextField searchTextField;
+	private JButton searchButton;
+	private JScrollPane searchGameScrollPane;
+	private JList<PreviewGame> searchGamesJList;	
 	
 	//game panel
 	private JPanel gamePanel;	
+	private JTextArea gameDescriptionTextArea;
+	private JScrollPane gameDescriptionScrollPane;
+	private JButton playStationButton;
+	private JButton originButton;
+	private JButton steamButton;
+	private JLabel previewImageLabel;
+	private JLabel gameTitleLabel;
 	
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
 	Font titleFont = new Font("Corbel", Font.BOLD, 20);
-	private JTextField searchTextField;
-	private JButton searchButton;
 	
 	
 	
@@ -236,10 +245,19 @@ public class GraphicInterface {
 	
 	private void initializeGamePage( String title ) {
 		
+		Game game = logicHandler.getGame(title);
+		
+		if( game == null ) {
+			//error
+		}
+		
+		gameDescriptionTextArea.setText(game.getDescription());
+		
 	}
 	
 	private void cleanGamePage() {
 		
+		gameDescriptionTextArea.setText("");
 	}
 	
 	private void initializeUserPage( String username ) {
@@ -294,6 +312,8 @@ public class GraphicInterface {
 		
 		featuredButton.setForeground(Color.WHITE);
 		featuredButton.setBackground(new Color(30,144,255));
+		
+		searchTextField.setText("Search");
 		
 		//carica featured games
 	}
@@ -559,6 +579,8 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				cl.show(panel, "adminPanel");
+				
+				initializeAdminPage();
 			}
 		});
 		adminHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -813,9 +835,7 @@ public class GraphicInterface {
 				if( username == "" ) {
 					deleteUserResultLabel.setText("Failure!");
 					deleteUserResultLabel.setVisible(true);
-				}
-				
-				if( logicHandler.deleteUser(username) ) {
+				}else if( logicHandler.deleteUser(username) ) {
 					deleteUserResultLabel.setText("Success!");
 					deleteUserResultLabel.setVisible(true);
 				} else {
@@ -850,9 +870,7 @@ public class GraphicInterface {
 				if( game == "" ) {
 					deleteGameResultLabel.setText("Failure!");
 					deleteGameResultLabel.setVisible(true);
-				}
-				
-				if( logicHandler.deleteUser(game) ) {
+				}else if( logicHandler.deleteUser(game) ) {
 					deleteGameResultLabel.setText("Success!");
 					deleteGameResultLabel.setVisible(true);
 				} else {
@@ -983,6 +1001,13 @@ public class GraphicInterface {
 		searchGamePanel.add(homeSEButton);
 		
 		searchTextField = new JTextField();
+		searchTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				searchTextField.setText("");
+			}
+		});
 		searchTextField.setText("Search");
 		searchTextField.setFont(new Font("Corbel", Font.ITALIC, 16));
 		searchTextField.setName("searchTextField");
@@ -991,6 +1016,18 @@ public class GraphicInterface {
 		searchTextField.setColumns(10);
 		
 		searchButton = new JButton("");
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String searchedString = searchTextField.getText();
+				
+				if( searchedString=="" ) {
+					return;
+				}
+				
+				fillSearchGamesList(logicHandler.searchGames(searchedString));
+			}
+		});
 		searchButton.setName("searchButton");
 		searchButton.setBounds(870, 72, 52, 35);
 		searchButton.setToolTipText("Return to Homepage");
@@ -1005,7 +1042,20 @@ public class GraphicInterface {
 		mostViewedButton = new JButton("Most Viewed");
 		mostViewedButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//funzione
+				
+				mostViewedButton.setBackground(new Color(30,144,255));
+				mostViewedButton.setForeground(Color.WHITE);
+				
+				featuredButton.setForeground(Color.BLACK);
+				featuredButton.setBackground(Color.LIGHT_GRAY);
+				mostLikedButton.setForeground(Color.BLACK);
+				mostLikedButton.setBackground(Color.LIGHT_GRAY);
+				mostRecentButton.setForeground(Color.BLACK);
+				mostRecentButton.setBackground(Color.LIGHT_GRAY);
+				
+				searchTextField.setText("Search");
+				
+				fillSearchGamesList(logicHandler.getMostViewedGames());
 			}
 		});
 		mostViewedButton.setBackground(Color.LIGHT_GRAY);
@@ -1021,7 +1071,20 @@ public class GraphicInterface {
 		mostLikedButton = new JButton("Most Liked");
 		mostLikedButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//funzione
+				
+				mostLikedButton.setBackground(new Color(30,144,255));
+				mostLikedButton.setForeground(Color.WHITE);
+				
+				featuredButton.setForeground(Color.BLACK);
+				featuredButton.setBackground(Color.LIGHT_GRAY);
+				mostViewedButton.setForeground(Color.BLACK);
+				mostViewedButton.setBackground(Color.LIGHT_GRAY);
+				mostRecentButton.setForeground(Color.BLACK);
+				mostRecentButton.setBackground(Color.LIGHT_GRAY);
+				
+				searchTextField.setText("Search");
+				
+				fillSearchGamesList(logicHandler.getMostLikedGames());
 			}
 		});
 		mostLikedButton.setBackground(Color.LIGHT_GRAY);
@@ -1037,7 +1100,20 @@ public class GraphicInterface {
 		mostRecentButton = new JButton("Most Recent");
 		mostRecentButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//funzione
+				
+				mostRecentButton.setBackground(new Color(30,144,255));
+				mostRecentButton.setForeground(Color.WHITE);
+				
+				featuredButton.setForeground(Color.BLACK);
+				featuredButton.setBackground(Color.LIGHT_GRAY);
+				mostViewedButton.setForeground(Color.BLACK);
+				mostViewedButton.setBackground(Color.LIGHT_GRAY);
+				mostLikedButton.setForeground(Color.BLACK);
+				mostLikedButton.setBackground(Color.LIGHT_GRAY);
+				
+				searchTextField.setText("Search");
+				
+				fillSearchGamesList(logicHandler.getMostRecentGames());
 			}
 		});
 		mostRecentButton.setBackground(Color.LIGHT_GRAY);
@@ -1063,6 +1139,10 @@ public class GraphicInterface {
 				mostViewedButton.setBackground(Color.LIGHT_GRAY);
 				mostLikedButton.setForeground(Color.BLACK);
 				mostLikedButton.setBackground(Color.LIGHT_GRAY);
+				
+				searchTextField.setText("Search");
+				
+				fillSearchGamesList(logicHandler.getFeaturedGames(currentUser));
 			}
 		});
 		featuredButton.setBackground(new Color(30, 144, 255));
@@ -1076,10 +1156,75 @@ public class GraphicInterface {
 		featuredButton.setOpaque(true);
 		searchGamePanel.add(featuredButton);
 		
+		searchGameScrollPane = new JScrollPane();
+		searchGameScrollPane.setName("searchGameScrollPane");
+		searchGameScrollPane.setBounds(31, 160, 871, 352);
+		searchGamePanel.add(searchGameScrollPane);
+		
+		searchGamesJList = new JList<PreviewGame>();
+		searchGamesJList.setName("searchGameJList");
+		searchGameScrollPane.setViewportView(searchGamesJList);
+		
 		gamePanel = new JPanel();
 		gamePanel.setBackground(new Color(87, 86, 82));
 		gamePanel.setName("gamePanel");
 		panel.add(gamePanel, "gamePanel");
 		gamePanel.setLayout(null);
+		
+		gameDescriptionScrollPane = new JScrollPane();
+		gameDescriptionScrollPane.setBorder(null);
+		gameDescriptionScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		gameDescriptionScrollPane.setBounds(62, 76, 324, 190);
+		gamePanel.add(gameDescriptionScrollPane);
+		
+		gameDescriptionTextArea = new JTextArea();
+		gameDescriptionTextArea.setFont(new Font("Corbel", Font.PLAIN, 16));
+		gameDescriptionScrollPane.setViewportView(gameDescriptionTextArea);
+		gameDescriptionTextArea.setLineWrap(true);
+		gameDescriptionTextArea.setEditable(false);
+		gameDescriptionTextArea.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		gameDescriptionTextArea.setText("");
+		gameDescriptionTextArea.setName("gameDescriptionTextArea");
+		gameDescriptionTextArea.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		
+		gameTitleLabel = new JLabel("Game Title");
+		gameTitleLabel.setName("gameTitleLabel");
+		gameTitleLabel.setForeground(Color.WHITE);
+		gameTitleLabel.setFont(new Font("Corbel", Font.BOLD, 18));
+		gameTitleLabel.setBounds(62, 48, 324, 29);
+		gamePanel.add(gameTitleLabel);
+		
+		previewImageLabel = new JLabel("");
+		previewImageLabel.setName("previewImageLabel");
+		previewImageLabel.setBounds(466, 78, 386, 188);
+		gamePanel.add(previewImageLabel);
+		
+		steamButton = new JButton("");
+		steamButton.setBackground(SystemColor.controlDkShadow);
+		steamButton.setName("steamButton");
+		steamButton.setBounds(62, 292, 97, 62);
+		steamButton.setContentAreaFilled(false);
+		steamButton.setOpaque(true);
+		steamButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/steam.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		gamePanel.add(steamButton);
+		
+		originButton = new JButton("");
+		originButton.setBackground(SystemColor.controlDkShadow);
+		originButton.setName("originButton");
+		originButton.setContentAreaFilled(false);
+		originButton.setOpaque(true);
+		originButton.setBounds(180, 292, 97, 62);
+		originButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/origin.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		gamePanel.add(originButton);
+		
+		playStationButton = new JButton("");
+		playStationButton.setBackground(SystemColor.controlDkShadow);
+		playStationButton.setName("playStationButton");
+		playStationButton.setBounds(289, 292, 97, 62);
+		playStationButton.setContentAreaFilled(false);
+		playStationButton.setOpaque(true);
+		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(80, 60, Image.SCALE_SMOOTH)));
+		gamePanel.add(playStationButton);
+		
 	}
 }
