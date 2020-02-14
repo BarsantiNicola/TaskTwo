@@ -89,6 +89,10 @@ public class GraphicInterface {
 	//search game panel
 	private JPanel searchGamePanel;	
 	private JButton homeSEButton;
+	private JButton featuredButton;
+	private JButton mostViewedButton;
+	private JButton mostLikedButton;
+	private JButton mostRecentButton;
 	
 	//game panel
 	private JPanel gamePanel;	
@@ -288,6 +292,10 @@ public class GraphicInterface {
 	
 	private void initializeSearchGamePage() {
 		
+		featuredButton.setForeground(Color.WHITE);
+		featuredButton.setBackground(new Color(30,144,255));
+		
+		//carica featured games
 	}
 	
 	private void cleanSearchGamePage() {
@@ -952,7 +960,7 @@ public class GraphicInterface {
 		
 		homeSEButton = new JButton("");
 		homeSEButton.setName("homeSEButton");
-		homeSEButton.setBounds(63, 34, 97, 70);
+		homeSEButton.setBounds(12, 37, 97, 70);
 		homeSEButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -978,13 +986,13 @@ public class GraphicInterface {
 		searchTextField.setText("Search");
 		searchTextField.setFont(new Font("Corbel", Font.ITALIC, 16));
 		searchTextField.setName("searchTextField");
-		searchTextField.setBounds(589, 69, 207, 35);
+		searchTextField.setBounds(663, 72, 207, 35);
 		searchGamePanel.add(searchTextField);
 		searchTextField.setColumns(10);
 		
 		searchButton = new JButton("");
 		searchButton.setName("searchButton");
-		searchButton.setBounds(797, 69, 52, 35);
+		searchButton.setBounds(870, 72, 52, 35);
 		searchButton.setToolTipText("Return to Homepage");
 		searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		searchButton.setBackground(SystemColor.controlDkShadow);
@@ -993,6 +1001,80 @@ public class GraphicInterface {
 		searchButton.setOpaque(true);
 		searchButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/search.png")).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
 		searchGamePanel.add(searchButton);
+		
+		mostViewedButton = new JButton("Most Viewed");
+		mostViewedButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//funzione
+			}
+		});
+		mostViewedButton.setBackground(Color.LIGHT_GRAY);
+		mostViewedButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		mostViewedButton.setMargin(new Insets(2, 2, 2, 2));
+		mostViewedButton.setFont(new Font("Corbel", Font.BOLD, 15));
+		mostViewedButton.setName("mostViewedButton");
+		mostViewedButton.setBounds(200, 72, 112, 35);
+		mostViewedButton.setContentAreaFilled(false);
+		mostViewedButton.setOpaque(true);
+		searchGamePanel.add(mostViewedButton);
+		
+		mostLikedButton = new JButton("Most Liked");
+		mostLikedButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//funzione
+			}
+		});
+		mostLikedButton.setBackground(Color.LIGHT_GRAY);
+		mostLikedButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		mostLikedButton.setFont(new Font("Corbel", Font.BOLD, 15));
+		mostLikedButton.setMargin(new Insets(2, 2, 2, 2));
+		mostLikedButton.setName("mostLikedButton");
+		mostLikedButton.setBounds(311, 72, 97, 35);
+		mostLikedButton.setContentAreaFilled(false);
+		mostLikedButton.setOpaque(true);
+		searchGamePanel.add(mostLikedButton);
+		
+		mostRecentButton = new JButton("Most Recent");
+		mostRecentButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//funzione
+			}
+		});
+		mostRecentButton.setBackground(Color.LIGHT_GRAY);
+		mostRecentButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		mostRecentButton.setMargin(new Insets(2, 2, 2, 2));
+		mostRecentButton.setFont(new Font("Corbel", Font.BOLD, 15));
+		mostRecentButton.setName("mostRecentButton");
+		mostRecentButton.setBounds(408, 72, 102, 35);
+		mostRecentButton.setContentAreaFilled(false);
+		mostRecentButton.setOpaque(true);
+		searchGamePanel.add(mostRecentButton);
+		
+		featuredButton = new JButton("Featured");
+		featuredButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				featuredButton.setBackground(new Color(30,144,255));
+				featuredButton.setForeground(Color.WHITE);
+				
+				mostRecentButton.setForeground(Color.BLACK);
+				mostRecentButton.setBackground(Color.LIGHT_GRAY);
+				mostViewedButton.setForeground(Color.BLACK);
+				mostViewedButton.setBackground(Color.LIGHT_GRAY);
+				mostLikedButton.setForeground(Color.BLACK);
+				mostLikedButton.setBackground(Color.LIGHT_GRAY);
+			}
+		});
+		featuredButton.setBackground(new Color(30, 144, 255));
+		featuredButton.setForeground(Color.WHITE);
+		featuredButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		featuredButton.setMargin(new Insets(2, 2, 2, 2));
+		featuredButton.setFont(new Font("Corbel", Font.BOLD, 15));
+		featuredButton.setName("featuredButton");
+		featuredButton.setBounds(121, 72, 80, 35);
+		featuredButton.setContentAreaFilled(false);
+		featuredButton.setOpaque(true);
+		searchGamePanel.add(featuredButton);
 		
 		gamePanel = new JPanel();
 		gamePanel.setBackground(new Color(87, 86, 82));
