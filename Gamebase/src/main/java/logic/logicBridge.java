@@ -79,7 +79,7 @@ public class logicBridge {
 	
 	public boolean updateDatabase() { return false; }
 	
-	public String getTwitchURLChannel( String GAME ) { return null; }
+	public static String getTwitchURLChannel( String GAME ) { return null; }
 	
 	public String getGameDescription( String GAME ) { return null; }
 
