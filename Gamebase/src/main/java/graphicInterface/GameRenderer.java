@@ -1,5 +1,6 @@
 package graphicInterface;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
 import java.net.URL;
@@ -8,7 +9,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon; 
 import javax.swing.JLabel; 
 import javax.swing.JList; 
-import javax.swing.ListCellRenderer;  
+import javax.swing.ListCellRenderer;
+import javax.swing.border.LineBorder;
+
 import logic.data.PreviewGame; 
 
 /** 
@@ -30,14 +33,15 @@ public class GameRenderer extends JLabel implements ListCellRenderer<PreviewGame
         ImageIcon imageIcon = null;
         
         try {
-        	imageIcon = new ImageIcon(ImageIO.read(new URL(game.getPreviewPicURL())).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        	imageIcon = new ImageIcon(ImageIO.read(new URL(game.getPreviewPicURL())).getScaledInstance(60, 60, Image.SCALE_SMOOTH));
         } catch ( Exception e) {
-        	imageIcon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH));
+        	imageIcon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
         }
  
         setIcon(imageIcon); 
         setToolTipText(gameTitle); 
- 
+        setBorder(new LineBorder(Color.WHITE,2,true));
+        
         if (isSelected) { 
             setBackground(list.getSelectionBackground()); 
             setForeground(list.getSelectionForeground()); 

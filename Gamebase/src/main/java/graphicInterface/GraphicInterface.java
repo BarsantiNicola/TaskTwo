@@ -9,6 +9,8 @@ import java.util.List;
 import logic.*;
 import logic.data.*;
 import java.awt.event.*;
+import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import java.net.*;
 import java.util.*;
@@ -51,7 +53,7 @@ public class GraphicInterface {
 	private JTable followedTable;
 	private JTableHeader followedTableHeader;
 	private JList<PreviewGame> myGamesList;
-	private DefaultListModel<PreviewGame> gamesListModel = new DefaultListModel();
+	private DefaultListModel<PreviewGame> gamesListModel = new DefaultListModel<PreviewGame>();
 	private DefaultTableModel followedTableModel = new DefaultTableModel(
 			new Object[][] {
 			},
@@ -97,6 +99,8 @@ public class GraphicInterface {
 	private JButton searchButton;
 	private JScrollPane searchGameScrollPane;
 	private JList<PreviewGame> searchGamesJList;	
+	private DefaultListModel<PreviewGame> searchListModel = new DefaultListModel<PreviewGame>();
+	private JMenuBar gameGenreMenu;
 	
 	//game panel
 	private JPanel gamePanel;	
@@ -107,13 +111,14 @@ public class GraphicInterface {
 	private JButton steamButton;
 	private JLabel previewImageLabel;
 	private JLabel gameTitleLabel;
+	private ActionListener steamButtonListener;
+	private ActionListener originButtonListener;
+	private ActionListener playstationButtonListener;
 	
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
-	Font titleFont = new Font("Corbel", Font.BOLD, 20);
-	
-	
+	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	
 	//support functions
 	
@@ -158,6 +163,10 @@ public class GraphicInterface {
 		}
 		
 		return true;
+	}
+	
+	private void fillSearchedGamesList(List<PreviewGame> games) {
+		
 	}
 	
 	private void initializeHomePage( userType user, String username ) {
@@ -252,12 +261,89 @@ public class GraphicInterface {
 		}
 		
 		gameDescriptionTextArea.setText(game.getDescription());
+		gameTitleLabel.setText(game.getGameTitle());
+		
+		final String steamURL = game.getSteamURL();
+		
+		if( steamURL != null ) {
+			
+			steamButtonListener = new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+					    try {
+							Desktop.getDesktop().browse(new URI(steamURL));
+						} catch (Exception e) {
+							e.printStackTrace();
+					    }
+				    }	
+				}
+			};
+			steamButton.addActionListener(steamButtonListener);
+		} else {
+			steamButton.setVisible(false);
+		}
+		
+		final String originURL = game.getOriginURL();
+		
+		if( originURL != null ) {
+			
+			originButtonListener = new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+					    try {
+							Desktop.getDesktop().browse(new URI(originURL));
+						} catch (Exception e) {
+							e.printStackTrace();
+					    }
+				    }	
+				}
+			};
+			originButton.addActionListener(originButtonListener);
+		} else {
+			originButton.setVisible(false);
+		}
+		
+		final String playstationURL = game.getPlaystationURL();
+		
+		if( playstationURL != null ) {
+			
+			playstationButtonListener = new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+					    try {
+							Desktop.getDesktop().browse(new URI(playstationURL));
+						} catch (Exception e) {
+							e.printStackTrace();
+					    }
+				    }	
+				}
+			};
+			playStationButton.addActionListener(playstationButtonListener);
+		} else {
+			playStationButton.setVisible(false);
+		}
 		
 	}
 	
 	private void cleanGamePage() {
 		
 		gameDescriptionTextArea.setText("");
+		
+		steamButton.setVisible(true);
+		originButton.setVisible(true);
+		playStationButton.setVisible(true);
+		
+		steamButtonListener = null;
+		steamButton.addActionListener(null);
+		
+		originButtonListener = null;
+		originButton.addActionListener(null);
+		
+		playstationButtonListener = null;
+		playStationButton.addActionListener(null);
 	}
 	
 	private void initializeUserPage( String username ) {
@@ -315,10 +401,21 @@ public class GraphicInterface {
 		
 		searchTextField.setText("Search");
 		
+		String[] genres = logicHandler.getGenres();
+		
+		for( String genre : genres ) {
+			
+			String
+			
+			JMenuItem 
+		}
+		
 		//carica featured games
 	}
 	
 	private void cleanSearchGamePage() {
+		
+		searchListModel.removeAllElements();
 		
 	}
 	/**
@@ -653,6 +750,7 @@ public class GraphicInterface {
 		followedTableScrollPane.setViewportView(followedTable);
 		
 		myGamesScrollPane = new JScrollPane();
+		myGamesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		myGamesScrollPane.setName("myGamesScrollPane");
 		myGamesScrollPane.setBounds(27, 348, 356, 174);
 		homePagePanel.add(myGamesScrollPane);
@@ -674,6 +772,8 @@ public class GraphicInterface {
 			}
 		});
 		myGamesList.setName("myGamesList");
+		myGamesList.setVisibleRowCount(-1);
+		myGamesList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		myGamesList.setCellRenderer(new GameRenderer());
 		myGamesScrollPane.add(myGamesList);
 		
@@ -1157,13 +1257,31 @@ public class GraphicInterface {
 		searchGamePanel.add(featuredButton);
 		
 		searchGameScrollPane = new JScrollPane();
+		searchGameScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		searchGameScrollPane.setName("searchGameScrollPane");
 		searchGameScrollPane.setBounds(31, 160, 871, 352);
 		searchGamePanel.add(searchGameScrollPane);
 		
 		searchGamesJList = new JList<PreviewGame>();
+		searchGamesJList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		searchGamesJList.setVisibleRowCount(-1);
 		searchGamesJList.setName("searchGameJList");
 		searchGameScrollPane.setViewportView(searchGamesJList);
+		
+		gameGenreMenu = new JMenuBar();
+		gameGenreMenu.setBorderPainted(false);
+		gameGenreMenu.setBackground(Color.LIGHT_GRAY);
+		gameGenreMenu.setOpaque(false);
+		gameGenreMenu.setToolTipText("Select the Genre");
+		gameGenreMenu.setName("gameGenreMenu");
+		gameGenreMenu.setBounds(522, 72, 119, 26);
+		searchGamePanel.add(gameGenreMenu);
+		
+		JMenuItem actionMenuItem = new JMenuItem("Action");
+		gameGenreMenu.add(actionMenuItem);
+		
+		JMenuItem arcadeMenuItem = new JMenuItem("Arcade");
+		gameGenreMenu.add(arcadeMenuItem);
 		
 		gamePanel = new JPanel();
 		gamePanel.setBackground(new Color(87, 86, 82));
