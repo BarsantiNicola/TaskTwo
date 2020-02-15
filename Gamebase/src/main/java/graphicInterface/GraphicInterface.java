@@ -100,7 +100,8 @@ public class GraphicInterface {
 	private JScrollPane searchGameScrollPane;
 	private JList<PreviewGame> searchGamesJList;	
 	private DefaultListModel<PreviewGame> searchListModel = new DefaultListModel<PreviewGame>();
-	private JMenuBar gameGenreMenu;
+	private JMenu gameGenreMenu;
+	private JMenuBar gameGenreMenuBar;
 	
 	//game panel
 	private JPanel gamePanel;	
@@ -167,6 +168,12 @@ public class GraphicInterface {
 	
 	private void fillSearchedGamesList(List<PreviewGame> games) {
 		
+		searchListModel.removeAllElements();
+		
+		for( int i = 0; i < games.size(); i++ ) {
+			gamesListModel.addElement(games.get(i));
+		}
+
 	}
 	
 	private void initializeHomePage( userType user, String username ) {
@@ -405,17 +412,27 @@ public class GraphicInterface {
 		
 		for( String genre : genres ) {
 			
-			String
+			String a;
 			
-			JMenuItem 
+			JMenuItem item = new JMenuItem(genre);
+			item.setFont(new Font("Corbel", Font.BOLD, 15));
+			item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					//fai qualcosa
+					scorri la lista per vedere quali giochi hanno il genere uguale a genre, rimuovi gli altri
+				}
+			});
+			gameGenreMenu.add(item);
 		}
 		
-		//carica featured games
+		fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
 	}
 	
 	private void cleanSearchGamePage() {
 		
 		searchListModel.removeAllElements();
+		gameGenreMenu.removeAll();
 		
 	}
 	/**
@@ -1071,6 +1088,7 @@ public class GraphicInterface {
 		analystPanel.setLayout(null);
 		
 		searchGamePanel = new JPanel();
+		searchGamePanel.setFont(new Font("Corbel", Font.BOLD, 13));
 		searchGamePanel.setBackground(new Color(87, 86, 82));
 		searchGamePanel.setName("searchGamePanel");
 		panel.add(searchGamePanel, "searchGamePanel");
@@ -1221,7 +1239,7 @@ public class GraphicInterface {
 		mostRecentButton.setMargin(new Insets(2, 2, 2, 2));
 		mostRecentButton.setFont(new Font("Corbel", Font.BOLD, 15));
 		mostRecentButton.setName("mostRecentButton");
-		mostRecentButton.setBounds(408, 72, 102, 35);
+		mostRecentButton.setBounds(403, 72, 102, 35);
 		mostRecentButton.setContentAreaFilled(false);
 		mostRecentButton.setOpaque(true);
 		searchGamePanel.add(mostRecentButton);
@@ -1268,16 +1286,34 @@ public class GraphicInterface {
 		searchGamesJList.setName("searchGameJList");
 		searchGameScrollPane.setViewportView(searchGamesJList);
 		
-		gameGenreMenu = new JMenuBar();
-		gameGenreMenu.setBorderPainted(false);
+		gameGenreMenuBar = new JMenuBar();
+		gameGenreMenuBar.setBorder(new LineBorder(Color.BLACK, 1, true));
+		gameGenreMenuBar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		gameGenreMenuBar.setFont(new Font("Corbel", Font.PLAIN, 15));
+		gameGenreMenuBar.setOpaque(true);
+		gameGenreMenuBar.setBackground(Color.LIGHT_GRAY);
+		gameGenreMenuBar.setToolTipText("Filter by Game Genre");
+		gameGenreMenuBar.setName("gameGenreMenuBar");
+		gameGenreMenuBar.setBounds(557, 72, 48, 35);
+		searchGamePanel.add(gameGenreMenuBar);
+		
+		gameGenreMenu = new JMenu("Genre");
+		gameGenreMenu.setBorder(null);
+		gameGenreMenu.setHorizontalTextPosition(SwingConstants.CENTER);
+		gameGenreMenu.setHorizontalAlignment(SwingConstants.CENTER);
+		gameGenreMenu.setForeground(Color.BLACK);
 		gameGenreMenu.setBackground(Color.LIGHT_GRAY);
-		gameGenreMenu.setOpaque(false);
-		gameGenreMenu.setToolTipText("Select the Genre");
+		gameGenreMenu.setOpaque(true);
+		gameGenreMenu.setContentAreaFilled(true);
+		gameGenreMenu.setFont(new Font("Corbel", Font.BOLD, 15));
+		gameGenreMenu.setBorderPainted(false);
+		gameGenreMenu.setToolTipText("Filter by Game Genre");
 		gameGenreMenu.setName("gameGenreMenu");
-		gameGenreMenu.setBounds(522, 72, 119, 26);
-		searchGamePanel.add(gameGenreMenu);
+		gameGenreMenuBar.add(gameGenreMenu);
 		
 		JMenuItem actionMenuItem = new JMenuItem("Action");
+		actionMenuItem.setFont(new Font("Corbel", Font.BOLD, 15));
+		actionMenuItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		gameGenreMenu.add(actionMenuItem);
 		
 		JMenuItem arcadeMenuItem = new JMenuItem("Arcade");
