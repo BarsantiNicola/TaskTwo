@@ -17,7 +17,7 @@ public class WebScraping {
 		 try {
 	            System.out.println("Testing 1 - Send Http GET request");
 	            try {
-					twitchChannel = objRequest.sendGet(GAME);
+					twitchChannel = objRequest.sendGetTwitch(GAME);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -31,13 +31,39 @@ public class WebScraping {
 	        }
 		
 		
-		return twitchChannel; }
+		return twitchChannel; 
+	}
 	
-	public String getGameDescription( String GAME ) { return null; }
+	//Get description of a given Game (Needs Game_id)
+	public static String getGameDescription(int GAME_ID ) { 
+		//String for return
+		String gameDescription = null;
+		//Create http object for request
+		HttpClient objRequest = new HttpClient();
+		
+		 try {
+	            System.out.println("Testing 1 - Send Http GET request");
+	            try {
+					gameDescription = objRequest.sendGetGameDescription(GAME_ID);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+	        } finally {
+	            try {
+					objRequest.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	        }
+		
+		return gameDescription; 
+		
+	
+	}
 	
 	
 	 public static void main(String[] args) throws Exception {
-		 getTwitchURLChannel("Overwatch");
-		 
+
 	 }
 }
