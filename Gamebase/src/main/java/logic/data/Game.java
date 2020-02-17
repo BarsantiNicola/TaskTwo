@@ -10,6 +10,8 @@ public class Game extends PreviewGame{
 	
 	private String playstationURL;
 	
+	private String genre;
+	
 	Game( String gameTitle , String pic ){
 		
 		super( gameTitle , pic );
@@ -36,4 +38,8 @@ public class Game extends PreviewGame{
 		return playstationURL;
 	}
 	
+	public String getGenre() {
+		
+		return genre;
+	}
 }

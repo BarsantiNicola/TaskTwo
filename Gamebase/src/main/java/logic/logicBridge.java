@@ -48,6 +48,8 @@ public class logicBridge {
 	//return the total number of users; -1 in case of failure
 	public int getUserCount() { return -1;}
 	
+	public List<PreviewGame> getFeaturedGames( String USERNAME ){ return null; }
+	
 	//  KEYVALUE FUNCTIONS
 	
 	public List<Game> getUserGames( String USERNAME ){ return null; }
@@ -73,6 +75,16 @@ public class logicBridge {
 	//return the total number of games; -1 in case of failure
 	public int getGameCount() { return -1; }
 	
+	//return a list filled with all possible genres
+	public List<String> getGenres(){ return null; }
+	
+	public List<PreviewGame> searchGames( String SEARCHED_STRING ){ return null; }
+	
+	public List<PreviewGame> getMostViewedGames(){ return null; }
+	
+	public List<PreviewGame> getMostLikedGames(){ return null; }
+	
+	public List<PreviewGame> getMostRecentGames(){ return null; }
 	//  KEYVALUE --- STATISTICS FUNCTIONS
 	
 	//  DATASCRAPER FUNCTIONS
@@ -82,5 +94,8 @@ public class logicBridge {
 	public static String getTwitchURLChannel( String GAME ) { return null; }
 	
 	public String getGameDescription( String GAME ) { return null; }
-
+	
+	//OTHER
+	
+	public void closeConnection() {}
 }

@@ -119,6 +119,7 @@ public class GraphicInterface {
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
+	private userType currentUsertype = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	
 	//support functions
@@ -408,24 +409,29 @@ public class GraphicInterface {
 		
 		searchTextField.setText("Search");
 		
-		String[] genres = logicHandler.getGenres();
+		List<String> genres = logicHandler.getGenres();
 		
-		for( String genre : genres ) {
+		if( genres != null ) {
 			
-			String a;
-			
-			JMenuItem item = new JMenuItem(genre);
-			item.setFont(new Font("Corbel", Font.BOLD, 15));
-			item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					//fai qualcosa
-					scorri la lista per vedere quali giochi hanno il genere uguale a genre, rimuovi gli altri
-				}
-			});
-			gameGenreMenu.add(item);
+			for( final String genre : genres ) {
+
+				JMenuItem item = new JMenuItem(genre);
+				item.setFont(new Font("Corbel", Font.BOLD, 15));
+				item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				item.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						//scorri la lista per vedere quali giochi hanno il genere uguale a genre, rimuovi gli altri
+						for( int i=0; i<searchGamesJList.getModel().getSize(); i++ ) {
+							
+							if( logicHandler.getGame(searchGamesJList.getSelectedValue().getGameTitle()).getGenre() != genre ) {
+								searchListModel.get(i).
+							}
+						}
+					}
+				});
+				gameGenreMenu.add(item);
+			}
 		}
-		
 		fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
 	}
 	
@@ -463,6 +469,12 @@ public class GraphicInterface {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				logicHandler.closeConnection();
+			}
+		});
 		frame.setBounds(100, 100, 952, 615);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -538,6 +550,7 @@ public class GraphicInterface {
 					cl.show(panel, "homePagePanel");
 					initializeHomePage(userType.USER,username);
 					currentUser = username;
+					currentUsertype = userType.USER;
 				}
 			}
 		});
@@ -586,6 +599,7 @@ public class GraphicInterface {
 					cl.show(panel, "homePagePanel");
 					initializeHomePage( usertype, username );
 					currentUser = username;
+					currentUsertype = usertype;
 				}				
 			}
 		});
@@ -633,6 +647,7 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				currentUser = null;
+				currentUsertype = null;
 				cl.show(panel, "loginPanel");
 			}
 		});
@@ -714,6 +729,7 @@ public class GraphicInterface {
 					
 					becomeAnalystButton.setVisible(false);
 					analystHPButton.setVisible(true);
+					currentUsertype = userType.ANALYST;
 				}
 			}
 		});
@@ -807,6 +823,8 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				cl.show(panel, "searchGamePanel");
+				
+				initializeSearchGamePage();
 			}
 		});
 		searchGameLabel.setVerticalAlignment(SwingConstants.TOP);
@@ -1106,7 +1124,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				//initializeHomePage(userType.,currentUser);
+				initializeHomePage(currentUsertype,currentUser);
 			}
 		});
 		homeSEButton.setToolTipText("Return to Homepage");
@@ -1143,7 +1161,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				fillSearchGamesList(logicHandler.searchGames(searchedString));
+				fillSearchedGamesList(logicHandler.searchGames(searchedString));
 			}
 		});
 		searchButton.setName("searchButton");
@@ -1173,7 +1191,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchGamesList(logicHandler.getMostViewedGames());
+				fillSearchedGamesList(logicHandler.getMostViewedGames());
 			}
 		});
 		mostViewedButton.setBackground(Color.LIGHT_GRAY);
@@ -1202,7 +1220,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchGamesList(logicHandler.getMostLikedGames());
+				fillSearchedGamesList(logicHandler.getMostLikedGames());
 			}
 		});
 		mostLikedButton.setBackground(Color.LIGHT_GRAY);
@@ -1231,7 +1249,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchGamesList(logicHandler.getMostRecentGames());
+				fillSearchedGamesList(logicHandler.getMostRecentGames());
 			}
 		});
 		mostRecentButton.setBackground(Color.LIGHT_GRAY);
@@ -1260,7 +1278,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchGamesList(logicHandler.getFeaturedGames(currentUser));
+				fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
 			}
 		});
 		featuredButton.setBackground(new Color(30, 144, 255));

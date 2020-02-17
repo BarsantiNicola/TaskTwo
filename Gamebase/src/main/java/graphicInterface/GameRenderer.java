@@ -25,7 +25,7 @@ public class GameRenderer extends JLabel implements ListCellRenderer<PreviewGame
     public GameRenderer() { 
         setOpaque(true); 
     } 
- 
+    
     public Component getListCellRendererComponent(JList<? extends PreviewGame> list, PreviewGame game, int index, 
             boolean isSelected, boolean cellHasFocus) { 
  
