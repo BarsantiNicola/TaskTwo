@@ -42,6 +42,7 @@ public class GraphicInterface {
 	private JLabel usernameHPLabel;
 	private JButton logoutHPButton;
 	private JLabel userTypeIconHPLabel;
+	private JButton userButton;
 	private JButton adminHPButton;
 	private JButton becomeAnalystButton;
 	private JButton analystHPButton;
@@ -116,6 +117,34 @@ public class GraphicInterface {
 	private ActionListener originButtonListener;
 	private ActionListener playstationButtonListener;
 	
+	//user panel
+	private JPanel userPanel;
+	private JButton searchUserButton;
+	private JButton homeUserButton;
+	private JScrollPane userGamesScrollPane;
+	private JList<PreviewGame> userGamesList;
+	private DefaultListModel<PreviewGame> userGamesListModel = new DefaultListModel<PreviewGame>();
+	private JScrollPane usersScrollPane;
+	private JLabel displayedUserLabel;
+	private JButton featuredUserButton;
+	private JTextField searchUserTextField;
+	private JTable usersTable;
+	private JTableHeader usersTableHeader;
+	private DefaultTableModel usersTableModel = new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Username", "Games", "Action"
+			}
+		) {
+			Class[] columnTypes = new Class[] {
+				String.class, String.class, String.class
+			};
+			public Class getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		};
+	
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
@@ -135,7 +164,7 @@ public class GraphicInterface {
 		return true;
 	}
 	
-	private boolean fillFollowedTable(List<Friend> friendList) {
+	private void fillFollowedTable(List<Friend> friendList) {
 		
 		followedTableModel.setRowCount(0);
 		
@@ -158,13 +187,11 @@ public class GraphicInterface {
 					
 					cl.show(panel, "userPanel");
 					
-					initializeUserPage(followerUsername);
+					initializeUserPage(currentUser,followerUsername);
 				}
 			},0);
 			followedTableModel.addRow(object);
 		}
-		
-		return true;
 	}
 	
 	private void fillSearchedGamesList(List<PreviewGame> games) {
@@ -175,6 +202,74 @@ public class GraphicInterface {
 			gamesListModel.addElement(games.get(i));
 		}
 
+	}
+	
+	
+	private void fillUsersTable( List<Friend> usersList ) {
+		
+		usersTableModel.setRowCount(0);
+		
+		for( Friend friend: usersList ) {
+			
+			Object[] object = new Object[3];
+			object[0] = friend.getUsername();
+			object[1] = "SEE GAMES";
+			object[2] = logicHandler.isFollowed(currentUser,friend.getUsername())?"UNFOLLOW":"FOLLOW";
+			ButtonColumn buttonColumnGames = new ButtonColumn(followedTable, new AbstractAction() {
+				
+				public void actionPerformed(ActionEvent e) {
+					
+					JTable table = (JTable)e.getSource();
+					int modelRow = Integer.valueOf(e.getActionCommand());
+					
+					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+					
+					fillUserGamesList(logicHandler.getMyGames(selectedUsername));
+					
+					Friend selectedFriend = logicHandler.getFriend(selectedUsername);
+					String lastAccess;
+					
+					if( selectedFriend == null ) {
+						lastAccess = selectedFriend.getLastAccess();
+					}else {
+						lastAccess = "N/A";
+					}
+					
+					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games. Last access:" + lastAccess);
+					
+				}
+			},1);
+			ButtonColumn buttonColumnAction = new ButtonColumn(followedTable, new AbstractAction() {
+				
+				public void actionPerformed(ActionEvent e) {
+
+					JTable table = (JTable)e.getSource();
+					int modelRow = Integer.valueOf(e.getActionCommand());
+					
+					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+					
+					if( logicHandler.isFollowed(currentUser, selectedUsername)) {
+						
+						if( !logicHandler.follow(currentUser,selectedUsername) ) {
+							return;
+						}
+						usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
+					} else {
+						
+						if( !logicHandler.unfollow(currentUser,selectedUsername)) {
+							return;
+						}
+						usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+					}
+				}
+			},2);
+			followedTableModel.addRow(object);
+		}
+	}
+	
+	private void fillUserGamesList(List<PreviewGame> gamesList) {
+		
+		fare
 	}
 	
 	private void initializeHomePage( userType user, String username ) {
@@ -265,7 +360,8 @@ public class GraphicInterface {
 		Game game = logicHandler.getGame(title);
 		
 		if( game == null ) {
-			//error
+			
+			fare
 		}
 		
 		gameDescriptionTextArea.setText(game.getDescription());
@@ -354,12 +450,15 @@ public class GraphicInterface {
 		playStationButton.addActionListener(null);
 	}
 	
-	private void initializeUserPage( String username ) {
+	private void initializeUserPage( String currentUser, String searchedUser ) {
+		
+		fare
 		
 	}
 	
 	private void cleanUserPage() {
 		
+		fare
 	}
 	
 	private void initializeAdminPage() {
@@ -424,7 +523,11 @@ public class GraphicInterface {
 						for( int i=0; i<searchGamesJList.getModel().getSize(); i++ ) {
 							
 							if( logicHandler.getGame(searchGamesJList.getSelectedValue().getGameTitle()).getGenre() != genre ) {
-								searchListModel.get(i).
+								searchListModel.get(i); 
+								//PROBLEMA: rimuovendo i giochi dalla lista (e lasciando solo quelli del genere specificato)
+								//se voglio applicare nuovamente il filtro per genere otterrò sempre una lista vuota.
+								//possibile soluzione: 'nascondere' i giochi di altro genere, ma lasciare intatta la lista
+								//ma come si fa?
 							}
 						}
 					}
@@ -629,14 +732,14 @@ public class GraphicInterface {
 		welcomeHPLabel.setForeground(Color.WHITE);
 		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
 		welcomeHPLabel.setName("usertypeHPLabel");
-		welcomeHPLabel.setBounds(113, 13, 106, 16);
+		welcomeHPLabel.setBounds(103, 13, 89, 16);
 		homePagePanel.add(welcomeHPLabel);
 		
 		usernameHPLabel = new JLabel("username");
 		usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 17));
 		usernameHPLabel.setForeground(Color.WHITE);
 		usernameHPLabel.setName("usernameHPLabel");
-		usernameHPLabel.setBounds(113, 37, 106, 16);
+		usernameHPLabel.setBounds(103, 37, 89, 16);
 		homePagePanel.add(usernameHPLabel);
 		
 		logoutHPButton = new JButton("Logout");
@@ -653,7 +756,7 @@ public class GraphicInterface {
 		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
 		logoutHPButton.setName("logoutHPButton");
-		logoutHPButton.setBounds(110, 61, 74, 21);
+		logoutHPButton.setBounds(103, 61, 81, 21);
 		logoutHPButton.setBorderPainted(false);
 		logoutHPButton.setBackground(new Color(0, 128, 128));
 		logoutHPButton.setOpaque(false);
@@ -714,7 +817,7 @@ public class GraphicInterface {
 		});
 		adminHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
-		adminHPButton.setBounds(286, 13, 97, 69);
+		adminHPButton.setBounds(302, 13, 97, 69);
 		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
 		adminHPButton.setBackground(SystemColor.controlDkShadow);
 		adminHPButton.setBorder(null);
@@ -734,7 +837,7 @@ public class GraphicInterface {
 			}
 		});
 		becomeAnalystButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		becomeAnalystButton.setBounds(395, 13, 97, 69);
+		becomeAnalystButton.setBounds(411, 13, 97, 69);
 		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
 		becomeAnalystButton.setBackground(SystemColor.controlDkShadow);
 		becomeAnalystButton.setContentAreaFilled(false);
@@ -756,7 +859,7 @@ public class GraphicInterface {
 			}
 		});
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		analystHPButton.setBounds(504, 13, 97, 69);
+		analystHPButton.setBounds(520, 13, 97, 69);
 		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
 		analystHPButton.setBackground(SystemColor.controlDkShadow);
 		analystHPButton.setBorder(null);
@@ -892,6 +995,32 @@ public class GraphicInterface {
 		mostPopularGamesLabel.setBounds(427, 348, 223, 168);
 		mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
 		homePagePanel.add(mostPopularGamesLabel);
+		
+		userButton = new JButton("");
+		userButton.setBackground(SystemColor.controlDkShadow);
+		userButton.setName("userButton");
+		userButton.setBounds(196, 13, 97, 71);
+		userButton.setContentAreaFilled(false);
+		userButton.setOpaque(true);
+		userButton.setName("userButton");
+		userButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				cleanHomePage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "userPanel");
+				
+				initializeUserPage(currentUser,null);
+			}
+		});
+		userButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		userButton.setFont(new Font("Corbel", Font.PLAIN, 13));
+		userButton.setToolTipText("Click Here To Search for Other Users");
+		userButton.setBorder(null);
+		userButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/addFriend.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		homePagePanel.add(userButton);
 		
 		adminPanel = new JPanel();
 		adminPanel.setName("adminPanel");
@@ -1166,7 +1295,7 @@ public class GraphicInterface {
 		});
 		searchButton.setName("searchButton");
 		searchButton.setBounds(870, 72, 52, 35);
-		searchButton.setToolTipText("Return to Homepage");
+		searchButton.setToolTipText("Search for New Games");
 		searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		searchButton.setBackground(SystemColor.controlDkShadow);
 		searchButton.setBorder(null);
@@ -1329,14 +1458,6 @@ public class GraphicInterface {
 		gameGenreMenu.setName("gameGenreMenu");
 		gameGenreMenuBar.add(gameGenreMenu);
 		
-		JMenuItem actionMenuItem = new JMenuItem("Action");
-		actionMenuItem.setFont(new Font("Corbel", Font.BOLD, 15));
-		actionMenuItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		gameGenreMenu.add(actionMenuItem);
-		
-		JMenuItem arcadeMenuItem = new JMenuItem("Arcade");
-		gameGenreMenu.add(arcadeMenuItem);
-		
 		gamePanel = new JPanel();
 		gamePanel.setBackground(new Color(87, 86, 82));
 		gamePanel.setName("gamePanel");
@@ -1397,6 +1518,130 @@ public class GraphicInterface {
 		playStationButton.setOpaque(true);
 		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(80, 60, Image.SCALE_SMOOTH)));
 		gamePanel.add(playStationButton);
+		
+		userPanel = new JPanel();
+		userPanel.setBackground(new Color(87, 86, 82));
+		userPanel.setName("userPanel");
+		panel.add(userPanel, "userPanel");
+		userPanel.setLayout(null);
+		
+		featuredUserButton = new JButton("Featured");
+		featuredUserButton.setName("featuredUserButton");
+		featuredUserButton.setRequestFocusEnabled(false);
+		featuredUserButton.setBounds(537, 73, 97, 32);
+		featuredUserButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				featuredUserButton.setBackground(new Color(30, 144, 255));
+				featuredUserButton.setForeground(Color.WHITE);
+
+				fillUsersTable(logicHandler.getFeaturedUsers(currentUser));
+			}
+		});
+		featuredUserButton.setBackground(new Color(30, 144, 255));
+		featuredUserButton.setForeground(Color.WHITE);
+		featuredUserButton.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		featuredUserButton.setMargin(new Insets(2, 2, 2, 2));
+		featuredUserButton.setFont(new Font("Corbel", Font.BOLD, 15));
+		featuredUserButton.setContentAreaFilled(false);
+		featuredUserButton.setOpaque(true);
+		userPanel.add(featuredUserButton);
+		
+		searchUserTextField = new JTextField();
+		searchUserTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				searchUserTextField.setText("");
+			}
+		});
+		searchUserTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
+		searchUserTextField.setText("Search User");
+		searchUserTextField.setName("searchUserTextField");
+		searchUserTextField.setBounds(646, 74, 154, 31);
+		userPanel.add(searchUserTextField);
+		searchUserTextField.setColumns(10);
+		
+		searchUserButton = new JButton("");
+		searchUserButton.setName("searchUserButton");
+		searchUserButton.setBounds(798, 73, 52, 32);
+		searchUserButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String searchedString = searchTextField.getText();
+				
+				if( searchedString=="" ) {
+					return;
+				}
+				
+				featuredUserButton.setBackground(Color.WHITE);
+				featuredUserButton.setForeground(Color.BLACK);
+				
+				fillUsersTable(logicHandler.searchUsers(searchedString, currentUser));
+			}
+		});
+		searchUserButton.setToolTipText("Search for New Users");
+		searchUserButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		searchUserButton.setBackground(SystemColor.controlDkShadow);
+		searchUserButton.setBorder(null);
+		searchUserButton.setContentAreaFilled(false);
+		searchUserButton.setOpaque(true);
+		searchUserButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/search.png")).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+		userPanel.add(searchUserButton);
+		
+		homeUserButton = new JButton("");
+		homeUserButton.setName("homeUserButton");
+		homeUserButton.setBounds(57, 38, 97, 67);
+		homeUserButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				cleanUserPage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "homePagePanel");
+				
+				initializeHomePage(currentUsertype,currentUser);
+			}
+		});
+		homeUserButton.setToolTipText("Return to Homepage");
+		homeUserButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		homeUserButton.setBackground(SystemColor.controlDkShadow);
+		homeUserButton.setBorder(null);
+		homeUserButton.setContentAreaFilled(false);
+		homeUserButton.setOpaque(true);
+		homeUserButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		userPanel.add(homeUserButton);
+		
+		userGamesScrollPane = new JScrollPane();
+		userGamesScrollPane.setBounds(57, 146, 402, 336);
+		userPanel.add(userGamesScrollPane);
+		
+		userGamesList = new JList<PreviewGame>();
+		userGamesList.setModel(userGamesListModel);
+		userGamesScrollPane.setViewportView(userGamesList);
+		
+		usersScrollPane = new JScrollPane();
+		usersScrollPane.setBounds(537, 146, 313, 336);
+		userPanel.add(usersScrollPane);
+		
+		usersTable = new JTable();
+		usersTable.setName("usersTable");
+		usersTable.setModel(usersTableModel);
+		usersTable.setFont(new Font("Corbel",Font.PLAIN,16));
+		usersTableHeader = usersTable.getTableHeader();
+		usersTableHeader.setFont(titleFont);
+		usersTableHeader.setForeground(Color.WHITE);
+		usersTableHeader.setBackground(new Color(121,166,210));
+		usersScrollPane.setViewportView(usersTable);
+		
+		displayedUserLabel = new JLabel("Currently Displayed: Gianni's Games. Last Access: 10/10/1001");
+		displayedUserLabel.setForeground(Color.WHITE);
+		displayedUserLabel.setFont(new Font("Corbel", Font.BOLD, 15));
+		displayedUserLabel.setName("displayedUserLabel");
+		displayedUserLabel.setAutoscrolls(true);
+		displayedUserLabel.setBounds(57, 117, 402, 16);
+		userPanel.add(displayedUserLabel);
 		
 	}
 }

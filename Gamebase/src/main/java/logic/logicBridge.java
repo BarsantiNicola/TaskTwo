@@ -33,6 +33,9 @@ public class logicBridge {
 	
 	public List<Friend> getFriends( String USERNAME ) { return null; }
 	
+	//simply return a friend given his/her username
+	public Friend getFriend( String USERNAME ) { return null; }
+	
 	public boolean addFriend( String USERNAME ) { return false; }
 	
 	public boolean removeFriend( String USERNAME ) { return false; }
@@ -45,10 +48,22 @@ public class logicBridge {
 	
 	public List<PreviewGame> getMyGames( String USERNAME){ return null;}
 	
+	//USERNAME follow FOLLOWED?
+	public boolean isFollowed( String USERNAME, String FOLLOWED ) { return false; }
+	
 	//return the total number of users; -1 in case of failure
 	public int getUserCount() { return -1;}
 	
 	public List<PreviewGame> getFeaturedGames( String USERNAME ){ return null; }
+	
+	public List<Friend> getFeaturedUsers( String USERNAME ){ return null; }
+	
+	//pass the username in order to avoid returning a list containing the username itself
+	public List<Friend> searchUsers( String USERNAME, String SEARCHED_STRING ){ return null; }
+	
+	public boolean follow( String USERNAME, String USERNAME_TO_FOLLOW ) { return false; }
+	
+	public boolean unfollow( String USERNAME, String USERNAME_TO_UNFOLLOW ) { return false; }
 	
 	//  KEYVALUE FUNCTIONS
 	
