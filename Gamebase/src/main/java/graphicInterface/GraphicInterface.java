@@ -116,6 +116,7 @@ public class GraphicInterface {
 	private ActionListener steamButtonListener;
 	private ActionListener originButtonListener;
 	private ActionListener playstationButtonListener;
+	private JButton homeGameButton;
 	
 	//user panel
 	private JPanel userPanel;
@@ -150,6 +151,8 @@ public class GraphicInterface {
 	private String currentUser = null;
 	private userType currentUsertype = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
+	private JButton actionButton;
+	private JLabel lblReleaseDate;
 	
 	//support functions
 	
@@ -1539,6 +1542,49 @@ public class GraphicInterface {
 		playStationButton.setOpaque(true);
 		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(80, 60, Image.SCALE_SMOOTH)));
 		gamePanel.add(playStationButton);
+		
+		homeGameButton = new JButton("");
+		homeGameButton.setName("homeGameButton");
+		homeGameButton.setBounds(466, 13, 97, 68);
+		homeGameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				cleanGamePage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "homePagePanel");
+				
+				initializeHomePage(currentUsertype,currentUser);
+			}
+		});
+		homeGameButton.setToolTipText("Return to Homepage");
+		homeGameButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		homeGameButton.setBackground(SystemColor.controlDkShadow);
+		homeGameButton.setBorder(null);
+		homeGameButton.setContentAreaFilled(false);
+		homeGameButton.setOpaque(true);
+		homeGameButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		gamePanel.add(homeGameButton);
+		
+		actionButton = new JButton("");
+		actionButton.setToolTipText("Click Here to Add this Game to Your Games");
+		actionButton.setName("actionButton");
+		actionButton.setBounds(590, 292, 63, 37);
+		actionButton.setBackground(SystemColor.controlDkShadow);
+		actionButton.setContentAreaFilled(false);
+		actionButton.setOpaque(true);
+		actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+		gamePanel.add(actionButton);
+		
+		JLabel developerLabel = new JLabel("Developer: testDeveloper");
+		developerLabel.setName("developerLabel");
+		developerLabel.setBounds(131, 434, 56, 16);
+		gamePanel.add(developerLabel);
+		
+		lblReleaseDate = new JLabel("Release Date: 02/02/0202");
+		lblReleaseDate.setBounds(118, 473, 56, 16);
+		gamePanel.add(lblReleaseDate);
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(new Color(87, 86, 82));

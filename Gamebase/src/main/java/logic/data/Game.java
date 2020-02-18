@@ -3,14 +3,12 @@ package logic.data;
 public class Game extends PreviewGame{
 	
 	private String description;
-	
 	private String steamURL;
-	
 	private String originURL;
-	
 	private String playstationURL;
-	
 	private String genre;
+	private String developer;
+	private String releaseDate;
 	
 	Game( String gameTitle , String pic ){
 		
@@ -41,5 +39,15 @@ public class Game extends PreviewGame{
 	public String getGenre() {
 		
 		return genre;
+	}
+	
+	public String getDeveloper() {
+		
+		return developer;
+	}
+	
+	public String releaseDate() {
+		
+		return releaseDate;
 	}
 }
