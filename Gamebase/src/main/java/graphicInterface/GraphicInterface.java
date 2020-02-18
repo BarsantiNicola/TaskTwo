@@ -269,7 +269,11 @@ public class GraphicInterface {
 	
 	private void fillUserGamesList(List<PreviewGame> gamesList) {
 		
-		fare
+		userGamesListModel.removeAllElements();
+		
+		for( int i = 0; i < gamesList.size(); i++ ) {
+			gamesListModel.addElement(gamesList.get(i));
+		}
 	}
 	
 	private void initializeHomePage( userType user, String username ) {
@@ -452,13 +456,30 @@ public class GraphicInterface {
 	
 	private void initializeUserPage( String currentUser, String searchedUser ) {
 		
-		fare
+		featuredUserButton.setBackground(new Color(30, 144, 255));
+		featuredUserButton.setForeground(Color.WHITE);
 		
+		List<Friend> featuredUsers = logicHandler.getFeaturedUsers(currentUser);
+		
+		fillUsersTable(featuredUsers);
+		
+		String displayedUser = searchedUser==null?featuredUsers.get(0).getUsername():searchedUser;
+		
+		fillUserGamesList(logicHandler.getMyGames(displayedUser));
+		
+		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games. Last Access: " + logicHandler.getFriend(displayedUser).getLastAccess());
+		
+		searchUserTextField.setText("Search User");
 	}
 	
 	private void cleanUserPage() {
 		
-		fare
+		usersTableModel.setRowCount(0);
+		userGamesListModel.removeAllElements();
+		displayedUserLabel.setText("");
+		searchUserTextField.setText("Search User");
+		featuredUserButton.setBackground(new Color(30, 144, 255));
+		featuredUserButton.setForeground(Color.WHITE);
 	}
 	
 	private void initializeAdminPage() {
