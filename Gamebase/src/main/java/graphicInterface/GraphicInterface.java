@@ -117,6 +117,10 @@ public class GraphicInterface {
 	private ActionListener originButtonListener;
 	private ActionListener playstationButtonListener;
 	private JButton homeGameButton;
+	private JLabel developerLabel;
+	private DefaultListModel<Image> imagesListModel = new DefaultListModel<Image>();
+	private JScrollPane gameImagesScrollPane;
+	private JList<Image> imagesList;
 	
 	//user panel
 	private JPanel userPanel;
@@ -152,7 +156,7 @@ public class GraphicInterface {
 	private userType currentUsertype = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	private JButton actionButton;
-	private JLabel lblReleaseDate;
+	private JLabel releaseDateLabel;
 	
 	//support functions
 	
@@ -272,10 +276,31 @@ public class GraphicInterface {
 	
 	private void fillUserGamesList(List<PreviewGame> gamesList) {
 		
+		if( gamesList == null ) {
+			gestisci errore
+		}
+		
 		userGamesListModel.removeAllElements();
 		
 		for( int i = 0; i < gamesList.size(); i++ ) {
 			gamesListModel.addElement(gamesList.get(i));
+		}
+	}
+	
+	private void fillImagesList(List<String> imagesURLList) {
+		
+		if( imagesURLList == null ) {
+			errore
+		}
+		
+		imagesListModel.removeAllElements();
+		
+		Image image;
+		URL url;
+		for( int i=0; i < imagesURLList.size(); i++ ) {
+			url = new URL(imagesURLList.get(i));
+			image = ImageIO.read(url);
+			imagesListModel.addElement(image);
 		}
 	}
 	
@@ -437,6 +462,9 @@ public class GraphicInterface {
 			playStationButton.setVisible(false);
 		}
 		
+		List<String> imagesURL = logicHandler.getGamePicsURL(game.getGameTitle());
+		
+		fillImagesList(imagesURL);
 	}
 	
 	private void cleanGamePage() {
@@ -1491,7 +1519,7 @@ public class GraphicInterface {
 		gameDescriptionScrollPane = new JScrollPane();
 		gameDescriptionScrollPane.setBorder(null);
 		gameDescriptionScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		gameDescriptionScrollPane.setBounds(62, 76, 324, 190);
+		gameDescriptionScrollPane.setBounds(62, 54, 324, 190);
 		gamePanel.add(gameDescriptionScrollPane);
 		
 		gameDescriptionTextArea = new JTextArea();
@@ -1508,7 +1536,7 @@ public class GraphicInterface {
 		gameTitleLabel.setName("gameTitleLabel");
 		gameTitleLabel.setForeground(Color.WHITE);
 		gameTitleLabel.setFont(new Font("Corbel", Font.BOLD, 18));
-		gameTitleLabel.setBounds(62, 48, 324, 29);
+		gameTitleLabel.setBounds(62, 31, 324, 29);
 		gamePanel.add(gameTitleLabel);
 		
 		previewImageLabel = new JLabel("");
@@ -1519,7 +1547,7 @@ public class GraphicInterface {
 		steamButton = new JButton("");
 		steamButton.setBackground(SystemColor.controlDkShadow);
 		steamButton.setName("steamButton");
-		steamButton.setBounds(62, 292, 97, 62);
+		steamButton.setBounds(62, 257, 97, 62);
 		steamButton.setContentAreaFilled(false);
 		steamButton.setOpaque(true);
 		steamButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/steam.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
@@ -1530,14 +1558,14 @@ public class GraphicInterface {
 		originButton.setName("originButton");
 		originButton.setContentAreaFilled(false);
 		originButton.setOpaque(true);
-		originButton.setBounds(180, 292, 97, 62);
+		originButton.setBounds(180, 257, 97, 62);
 		originButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/origin.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		gamePanel.add(originButton);
 		
 		playStationButton = new JButton("");
 		playStationButton.setBackground(SystemColor.controlDkShadow);
 		playStationButton.setName("playStationButton");
-		playStationButton.setBounds(289, 292, 97, 62);
+		playStationButton.setBounds(289, 257, 97, 62);
 		playStationButton.setContentAreaFilled(false);
 		playStationButton.setOpaque(true);
 		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(80, 60, Image.SCALE_SMOOTH)));
@@ -1577,14 +1605,28 @@ public class GraphicInterface {
 		actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 		gamePanel.add(actionButton);
 		
-		JLabel developerLabel = new JLabel("Developer: testDeveloper");
+		developerLabel = new JLabel("Developer: testDeveloper");
 		developerLabel.setName("developerLabel");
-		developerLabel.setBounds(131, 434, 56, 16);
+		developerLabel.setBounds(674, 360, 56, 16);
 		gamePanel.add(developerLabel);
 		
-		lblReleaseDate = new JLabel("Release Date: 02/02/0202");
-		lblReleaseDate.setBounds(118, 473, 56, 16);
-		gamePanel.add(lblReleaseDate);
+		releaseDateLabel = new JLabel("Release Date: 02/02/0202");
+		releaseDateLabel.setName("releaseDateLabel");
+		releaseDateLabel.setBounds(750, 395, 56, 16);
+		gamePanel.add(releaseDateLabel);
+		
+		gameImagesScrollPane = new JScrollPane();
+		gameImagesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		gameImagesScrollPane.setName("gameImagesScrollPane");
+		gameImagesScrollPane.setBounds(63, 360, 324, 182);
+		gamePanel.add(gameImagesScrollPane);
+		
+		imagesList = new JList<Image>();
+		imagesList.setVisibleRowCount(-1);
+		imagesList.setModel(imagesListModel);
+		imagesList.setCellRenderer(new ImageRenderer());
+		imagesList.setName("imagesList");
+		gameImagesScrollPane.setViewportView(imagesList);
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(new Color(87, 86, 82));

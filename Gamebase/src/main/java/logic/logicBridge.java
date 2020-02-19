@@ -87,6 +87,8 @@ public class logicBridge {
 	
 	public PreviewGame getMostPopularGame() { return null; }
 	
+	public List<String> getGamePicsURL( String GAME_TITLE ){ return null; }
+	
 	//return the total number of games; -1 in case of failure
 	public int getGameCount() { return -1; }
 	
