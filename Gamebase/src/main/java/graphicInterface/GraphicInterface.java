@@ -9,6 +9,7 @@ import java.util.List;
 import logic.*;
 import logic.data.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -121,6 +122,14 @@ public class GraphicInterface {
 	private DefaultListModel<Image> imagesListModel = new DefaultListModel<Image>();
 	private JScrollPane gameImagesScrollPane;
 	private JList<Image> imagesList;
+	private JMenuBar voteMenuBar;
+	private JMenu voteMenu;
+	private JMenuItem vote1;
+	private JMenuItem vote2;
+	private JMenuItem vote3;
+	private JMenuItem vote4;
+	private JMenuItem vote5;
+	private JLabel metacriticScoreLabel;
 	
 	//user panel
 	private JPanel userPanel;
@@ -154,6 +163,7 @@ public class GraphicInterface {
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
 	private userType currentUsertype = null;
+	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	private JButton actionButton;
 	private JLabel releaseDateLabel;
@@ -276,11 +286,11 @@ public class GraphicInterface {
 	
 	private void fillUserGamesList(List<PreviewGame> gamesList) {
 		
-		if( gamesList == null ) {
-			gestisci errore
-		}
-		
 		userGamesListModel.removeAllElements();
+		
+		if( gamesList == null ) {
+			return;
+		}
 		
 		for( int i = 0; i < gamesList.size(); i++ ) {
 			gamesListModel.addElement(gamesList.get(i));
@@ -289,17 +299,28 @@ public class GraphicInterface {
 	
 	private void fillImagesList(List<String> imagesURLList) {
 		
-		if( imagesURLList == null ) {
-			errore
-		}
-		
 		imagesListModel.removeAllElements();
 		
-		Image image;
+		if( imagesURLList == null ) {
+			return;
+		}
+
+		Image image = null;
 		URL url;
+		
 		for( int i=0; i < imagesURLList.size(); i++ ) {
-			url = new URL(imagesURLList.get(i));
-			image = ImageIO.read(url);
+			try {
+				url = new URL(imagesURLList.get(i));
+				image = ImageIO.read(url);
+			} catch (Exception e) {
+				try {
+					image = ImageIO.read(new File("/resources/defaultGamePicture.png"));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
 			imagesListModel.addElement(image);
 		}
 	}
@@ -320,24 +341,24 @@ public class GraphicInterface {
 		String mostViewedGameImageURL = logicHandler.getMostViewedGame().getPreviewPicURL();
 				
 		if( mostViewedGameImageURL == null ) {
-			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 		} else {
 			try {
 				mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL))));
 			} catch (Exception e){
-				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 		    }
 		}	
 		
 		String mostPopularGameImageURL = logicHandler.getMostPopularGame().getPreviewPicURL();
 		
 		if( mostPopularGameImageURL == null ) {
-			mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+			mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 		} else {
 			try {
 				mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL))));
 			} catch (Exception e){
-				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 		    }
 		}	
 				
@@ -393,8 +414,11 @@ public class GraphicInterface {
 		
 		if( game == null ) {
 			
+			//torna alla home page?
 			fare
 		}
+		
+		currentGame = game;
 		
 		gameDescriptionTextArea.setText(game.getDescription());
 		gameTitleLabel.setText(game.getGameTitle());
@@ -465,6 +489,14 @@ public class GraphicInterface {
 		List<String> imagesURL = logicHandler.getGamePicsURL(game.getGameTitle());
 		
 		fillImagesList(imagesURL);
+		
+		double score = game.getMetacriticScore();
+			
+		if( score == -1 ) {
+			metacriticScoreLabel.setText("N/A");
+		} else {
+			metacriticScoreLabel.setText(Double.toString(score));
+		}
 	}
 	
 	private void cleanGamePage() {
@@ -483,6 +515,14 @@ public class GraphicInterface {
 		
 		playstationButtonListener = null;
 		playStationButton.addActionListener(null);
+		
+		metacriticScoreLabel.setText("");
+		
+		currentGame = null;
+		
+		imagesListModel.removeAllElements();
+		
+		previewImageLabel.setIcon(null);
 	}
 	
 	private void initializeUserPage( String currentUser, String searchedUser ) {
@@ -1541,7 +1581,7 @@ public class GraphicInterface {
 		
 		previewImageLabel = new JLabel("");
 		previewImageLabel.setName("previewImageLabel");
-		previewImageLabel.setBounds(466, 78, 386, 188);
+		previewImageLabel.setBounds(426, 56, 342, 188);
 		gamePanel.add(previewImageLabel);
 		
 		steamButton = new JButton("");
@@ -1573,7 +1613,7 @@ public class GraphicInterface {
 		
 		homeGameButton = new JButton("");
 		homeGameButton.setName("homeGameButton");
-		homeGameButton.setBounds(466, 13, 97, 68);
+		homeGameButton.setBounds(790, 54, 97, 68);
 		homeGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -1598,7 +1638,7 @@ public class GraphicInterface {
 		actionButton = new JButton("");
 		actionButton.setToolTipText("Click Here to Add this Game to Your Games");
 		actionButton.setName("actionButton");
-		actionButton.setBounds(590, 292, 63, 37);
+		actionButton.setBounds(477, 257, 63, 37);
 		actionButton.setBackground(SystemColor.controlDkShadow);
 		actionButton.setContentAreaFilled(false);
 		actionButton.setOpaque(true);
@@ -1606,19 +1646,23 @@ public class GraphicInterface {
 		gamePanel.add(actionButton);
 		
 		developerLabel = new JLabel("Developer: testDeveloper");
+		developerLabel.setFont(new Font("Corbel", Font.PLAIN, 15));
+		developerLabel.setForeground(Color.WHITE);
 		developerLabel.setName("developerLabel");
-		developerLabel.setBounds(674, 360, 56, 16);
+		developerLabel.setBounds(563, 257, 189, 16);
 		gamePanel.add(developerLabel);
 		
 		releaseDateLabel = new JLabel("Release Date: 02/02/0202");
+		releaseDateLabel.setForeground(Color.WHITE);
+		releaseDateLabel.setFont(new Font("Corbel", Font.PLAIN, 15));
 		releaseDateLabel.setName("releaseDateLabel");
-		releaseDateLabel.setBounds(750, 395, 56, 16);
+		releaseDateLabel.setBounds(563, 278, 189, 16);
 		gamePanel.add(releaseDateLabel);
 		
 		gameImagesScrollPane = new JScrollPane();
 		gameImagesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		gameImagesScrollPane.setName("gameImagesScrollPane");
-		gameImagesScrollPane.setBounds(63, 360, 324, 182);
+		gameImagesScrollPane.setBounds(63, 332, 324, 210);
 		gamePanel.add(gameImagesScrollPane);
 		
 		imagesList = new JList<Image>();
@@ -1627,6 +1671,83 @@ public class GraphicInterface {
 		imagesList.setCellRenderer(new ImageRenderer());
 		imagesList.setName("imagesList");
 		gameImagesScrollPane.setViewportView(imagesList);
+		
+		voteMenuBar = new JMenuBar();
+		voteMenuBar.setName("voteMenuBar");
+		voteMenuBar.setBounds(426, 257, 39, 37);
+		gamePanel.add(voteMenuBar);
+		
+		voteMenu = new JMenu("Vote");
+		voteMenu.setFont(new Font("Corbel", Font.PLAIN, 15));
+		voteMenuBar.add(voteMenu);
+		voteMenu.setName("voteMenu");
+		
+		vote1 = new JMenuItem("1");
+		vote1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				logicHandler.voteGame(currentGame.getGameTitle(), 1);
+			}
+		});
+		vote1.setFont(new Font("Corbel", Font.PLAIN, 15));
+		vote1.setName("vote1");
+		voteMenu.add(vote1);
+		
+		vote2 = new JMenuItem("2");
+		vote2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				logicHandler.voteGame(currentGame.getGameTitle(), 2);
+			}
+		});
+		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
+		vote2.setName("vote2");
+		voteMenu.add(vote2);
+		
+		vote3 = new JMenuItem("3");
+		vote3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				logicHandler.voteGame(currentGame.getGameTitle(), 3);
+			}
+		});
+		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
+		vote3.setName("vote3");
+		voteMenu.add(vote3);
+		
+		vote4 = new JMenuItem("4");
+		vote4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				logicHandler.voteGame(currentGame.getGameTitle(), 4);
+			}
+		});
+		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
+		vote4.setName("vote4");
+		voteMenu.add(vote4);
+		
+		vote5 = new JMenuItem("5");
+		vote5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				logicHandler.voteGame(currentGame.getGameTitle(), 5);
+			}
+		});
+		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));
+		vote5.setName("vote5");
+		voteMenu.add(vote5);
+		
+		metacriticScoreLabel = new JLabel("");
+		metacriticScoreLabel.setFont(new Font("Corbel", Font.BOLD, 20));
+		metacriticScoreLabel.setForeground(Color.WHITE);
+		metacriticScoreLabel.setBackground(SystemColor.controlDkShadow);
+		metacriticScoreLabel.setToolTipText("Metacritic Score");
+		metacriticScoreLabel.setName("metaciticScoreLabel");
+		metacriticScoreLabel.setBounds(789, 135, 98, 62);
+		metacriticScoreLabel.setOpaque(true);
+		metacriticScoreLabel.setText("4.7");
+		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/star.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		gamePanel.add(metacriticScoreLabel);
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(new Color(87, 86, 82));

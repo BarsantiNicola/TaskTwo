@@ -9,6 +9,7 @@ public class Game extends PreviewGame{
 	private String genre;
 	private String developer;
 	private String releaseDate;
+	public double metacriticScore;
 	
 	Game( String gameTitle , String pic ){
 		
@@ -49,5 +50,10 @@ public class Game extends PreviewGame{
 	public String releaseDate() {
 		
 		return releaseDate;
+	}
+	
+	public double getMetacriticScore() {
+		
+		return metacriticScore;
 	}
 }
