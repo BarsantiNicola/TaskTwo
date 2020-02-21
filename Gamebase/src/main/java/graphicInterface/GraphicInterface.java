@@ -130,6 +130,8 @@ public class GraphicInterface {
 	private JMenuItem vote4;
 	private JMenuItem vote5;
 	private JLabel metacriticScoreLabel;
+	private JButton actionButton;
+	private JLabel releaseDateLabel;
 	
 	//user panel
 	private JPanel userPanel;
@@ -165,8 +167,7 @@ public class GraphicInterface {
 	private userType currentUsertype = null;
 	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
-	private JButton actionButton;
-	private JLabel releaseDateLabel;
+	private List<PreviewGame> supportGamesList = null;
 	
 	//support functions
 	
@@ -211,14 +212,19 @@ public class GraphicInterface {
 		}
 	}
 	
-	private void fillSearchedGamesList(List<PreviewGame> games) {
+	private boolean fillSearchedGamesList(List<PreviewGame> games) {
+		
+		if( games == null ) {
+			return false;
+		}
 		
 		searchListModel.removeAllElements();
 		
 		for( int i = 0; i < games.size(); i++ ) {
 			gamesListModel.addElement(games.get(i));
 		}
-
+		
+		return true;
 	}
 	
 	
@@ -414,8 +420,12 @@ public class GraphicInterface {
 		
 		if( game == null ) {
 			
-			//torna alla home page?
-			fare
+			cleanGamePage();
+			
+			CardLayout cl = (CardLayout)(panel.getLayout());
+			
+			cl.show(panel, "homePagePanel");
+			
 		}
 		
 		currentGame = game;
@@ -611,23 +621,30 @@ public class GraphicInterface {
 				item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						//scorri la lista per vedere quali giochi hanno il genere uguale a genre, rimuovi gli altri
-						for( int i=0; i<searchGamesJList.getModel().getSize(); i++ ) {
+						
+						//scorro la support list, metto in un'altra lista quelli che matchano il genere e faccio la fill
+						List<PreviewGame> genreList = new ArrayList<PreviewGame>();
+						PreviewGame previewGame;
+						
+						for( int i=0; i<supportGamesList.size(); i++ ) {
 							
-							if( logicHandler.getGame(searchGamesJList.getSelectedValue().getGameTitle()).getGenre() != genre ) {
-								searchListModel.get(i); 
-								//PROBLEMA: rimuovendo i giochi dalla lista (e lasciando solo quelli del genere specificato)
-								//se voglio applicare nuovamente il filtro per genere otterrò sempre una lista vuota.
-								//possibile soluzione: 'nascondere' i giochi di altro genere, ma lasciare intatta la lista
-								//ma come si fa?
+							previewGame = supportGamesList.get(i);
+							
+							if( logicHandler.getGame(previewGame.getGameTitle()).getGenre() == genre ) {
+								genreList.add(previewGame);
 							}
 						}
+						
+						fillSearchedGamesList(genreList);
+						
 					}
 				});
 				gameGenreMenu.add(item);
 			}
 		}
 		fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
+		
+		//ci vorrebbe pure un menu item per rimuovere il filtro, ossia ripristinare la lista completa
 	}
 	
 	private void cleanSearchGamePage() {
@@ -1382,7 +1399,20 @@ public class GraphicInterface {
 					return;
 				}
 				
-				fillSearchedGamesList(logicHandler.searchGames(searchedString));
+				List<PreviewGame> searchedList = logicHandler.searchGames(searchedString);
+				
+				if( fillSearchedGamesList(searchedList) ) {
+					supportGamesList = searchedList;
+				}
+				
+				mostViewedButton.setBackground(Color.LIGHT_GRAY);
+				mostViewedButton.setForeground(Color.BLACK);
+				featuredButton.setForeground(Color.BLACK);
+				featuredButton.setBackground(Color.LIGHT_GRAY);
+				mostLikedButton.setForeground(Color.BLACK);
+				mostLikedButton.setBackground(Color.LIGHT_GRAY);
+				mostRecentButton.setForeground(Color.BLACK);
+				mostRecentButton.setBackground(Color.LIGHT_GRAY);
 			}
 		});
 		searchButton.setName("searchButton");
@@ -1412,7 +1442,11 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchedGamesList(logicHandler.getMostViewedGames());
+				List<PreviewGame> searchedList = logicHandler.getMostViewedGames();
+						
+				if( fillSearchedGamesList(searchedList) ) {
+						supportGamesList = searchedList;
+				}
 			}
 		});
 		mostViewedButton.setBackground(Color.LIGHT_GRAY);
@@ -1441,7 +1475,11 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchedGamesList(logicHandler.getMostLikedGames());
+				List<PreviewGame> searchedList = logicHandler.getMostLikedGames();
+						
+				if( fillSearchedGamesList(searchedList) ) {
+					supportGamesList = searchedList;
+				}
 			}
 		});
 		mostLikedButton.setBackground(Color.LIGHT_GRAY);
@@ -1470,7 +1508,11 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchedGamesList(logicHandler.getMostRecentGames());
+				List<PreviewGame> searchedList = logicHandler.getMostRecentGames();
+						
+				if( fillSearchedGamesList(searchedList) ) {
+					supportGamesList = searchedList;
+				}
 			}
 		});
 		mostRecentButton.setBackground(Color.LIGHT_GRAY);
@@ -1499,7 +1541,11 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
+				List<PreviewGame> searchedList = logicHandler.getFeaturedGames(currentUser);
+						
+				if( fillSearchedGamesList(searchedList) ) {
+					supportGamesList = searchedList;
+				}
 			}
 		});
 		featuredButton.setBackground(new Color(30, 144, 255));
