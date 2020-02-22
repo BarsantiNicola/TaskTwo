@@ -110,7 +110,7 @@ public class logicBridge {
 	
 	public static String getTwitchURLChannel( String GAME ) { return null; }
 	
-	public String getGameDescription( String GAME ) { return null; }
+	public String getGameDescription( int GAME_ID) { return null; }
 	
 	//OTHER
 	

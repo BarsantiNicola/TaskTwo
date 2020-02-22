@@ -21,6 +21,7 @@ public class HttpClient {
         httpClient.close();
     }
 
+    //Get twitch channel for a game
     public String sendGetTwitch(String GAME) throws Exception {
 
         HttpGet request = new HttpGet("https://api.twitch.tv/kraken/streams/?game=" + GAME);
@@ -38,26 +39,24 @@ public class HttpClient {
             Header headers = entity.getContentType();
             System.out.println(headers);
 
-            if (entity != null) {
-                String result = EntityUtils.toString(entity);
-                JSONObject jsonObject = new JSONObject(result);
-                String streams = jsonObject.get("streams").toString();
-                JSONArray jsonArray = new JSONArray(streams);
-                if (jsonArray.length() == 0) {
-                	return "No streaming available!";
-                }
-                
-                JSONObject jsonobject = jsonArray.getJSONObject(0);
-                JSONObject channel = jsonobject.getJSONObject("channel");
-                String url = channel.getString("url");
-                System.out.println(url);
-                return url;
-                }
+            String result = EntityUtils.toString(entity);
+            JSONObject jsonObject = new JSONObject(result);
+            String streams = jsonObject.get("streams").toString();
+            JSONArray jsonArray = new JSONArray(streams);
+            if (jsonArray.length() == 0) {
+            	return "No streaming available!";
+            }
             
-            return null; 
+            JSONObject jsonobject = jsonArray.getJSONObject(0);
+            JSONObject channel = jsonobject.getJSONObject("channel");
+            String url = channel.getString("url");
+            System.out.println(url); //Debug
+            return url;
+  
             }
         }
     
+    //Get game description
     public String sendGetGameDescription(int GAME_ID) throws Exception {
 
         HttpGet request = new HttpGet("https://api.rawg.io/api/games/" + GAME_ID);
@@ -71,16 +70,13 @@ public class HttpClient {
             Header headers = entity.getContentType();
             System.out.println(headers);
 
-            if (entity != null) {
-            	String result = EntityUtils.toString(entity);
-            	JSONObject jsonObject = new JSONObject(result);
+            String result = EntityUtils.toString(entity);
+            JSONObject jsonObject = new JSONObject(result);
             	
-            	return jsonObject.getString("description_raw");
-                }
+           return jsonObject.getString("description_raw");
             
   
             }
-		return null; 
         }
 
     }

@@ -4,7 +4,14 @@ import java.io.IOException;
 
 public class WebScraping {
 
-	public boolean updateDatabase() { return false; }
+	
+	//Update database using dynamic scraping (NEED TEST)
+	public boolean updateDatabase() { 
+		
+		int NGames = getGameCount();
+		
+		
+		return false; }
 	
 	//Get URL of the Twitch channel currently having the higher number of views for a game
 	public static String getTwitchURLChannel( String GAME ) { 
@@ -62,8 +69,11 @@ public class WebScraping {
 	
 	}
 	
-	
-	 public static void main(String[] args) throws Exception {
 
+	
+	
+	//Main per fare prove
+	 public static void main(String[] args) throws Exception {
+		 		
 	 }
 }
