@@ -21,6 +21,7 @@ import javax.swing.table.*;
 
 public class GraphicInterface {
 
+	private static final JLabel userInformationTextField = null;
 	private JFrame frame;
 	private JPanel panel;
 	
@@ -161,6 +162,21 @@ public class GraphicInterface {
 			}
 		};
 	
+	//user information panel
+	private JPanel userInformationPanel;	
+	private JButton homeUserInformationButton;
+	private JTextField ageTextField;
+	private JTextField nameTextField;
+	private JTextField surnameTextfield;
+	private JButton saveButton;
+	private JLabel updateInfoLabel;
+	private JMenu genreMenu;
+	private JMenuBar genreMenuBar;
+	private JMenuItem femaleMenuItem;
+	private JMenuItem maleMenuItem;
+	private JMenu genderMenu;
+	private JMenuBar genderMenuBar;
+	
 	//Logic and support info
 	private logicBridge logicHandler = new logicBridge();
 	private String currentUser = null;
@@ -168,6 +184,8 @@ public class GraphicInterface {
 	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	private List<PreviewGame> supportGamesList = null;
+	
+	
 	
 	//support functions
 	
@@ -653,6 +671,25 @@ public class GraphicInterface {
 		gameGenreMenu.removeAll();
 		
 	}
+	
+	private void initializeUserInformationPage() {
+		
+		//caricare nome user
+		userInformationTextField.setText("Hi " + currentUser + ", update your information");
+		
+		//caricare valori attuali nei textfield
+		
+		
+		//caricare i generi
+	}
+	
+	private void cleanUserInformationPage() {
+		
+		nameTextField.setText("");
+		surnameTextfield.setText("");
+	}
+	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -1918,6 +1955,118 @@ public class GraphicInterface {
 		displayedUserLabel.setAutoscrolls(true);
 		displayedUserLabel.setBounds(57, 117, 402, 16);
 		userPanel.add(displayedUserLabel);
+		
+		userInformationPanel = new JPanel();
+		userInformationPanel.setBackground(new Color(87, 86, 82));
+		userInformationPanel.setName("userInformationPanel");
+		panel.add(userInformationPanel, "userInformationPanel");
+		userInformationPanel.setLayout(null);
+		
+		ageTextField = new JTextField();
+		ageTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				ageTextField.setText("");
+			}
+		});
+		ageTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
+		ageTextField.setText("Age");
+		ageTextField.setName("ageTextField");
+		ageTextField.setBounds(233, 158, 233, 35);
+		userInformationPanel.add(ageTextField);
+		ageTextField.setColumns(10);
+		
+		saveButton = new JButton("Save");
+		saveButton.setName("saveButton");
+		saveButton.setBounds(399, 361, 113, 35);
+		userInformationPanel.add(saveButton);
+		
+		nameTextField = new JTextField();
+		nameTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				nameTextField.setText("");
+			}
+		});
+		nameTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
+		nameTextField.setName("nameTextField");
+		nameTextField.setText("Name");
+		nameTextField.setBounds(233, 222, 233, 37);
+		userInformationPanel.add(nameTextField);
+		nameTextField.setColumns(10);
+		
+		surnameTextfield = new JTextField();
+		surnameTextfield.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				nameTextField.setText("");
+			}
+		});
+		surnameTextfield.setFont(new Font("Corbel", Font.ITALIC, 15));
+		surnameTextfield.setText("Surname");
+		surnameTextfield.setName("surnameTextField");
+		surnameTextfield.setBounds(233, 283, 233, 37);
+		userInformationPanel.add(surnameTextfield);
+		surnameTextfield.setColumns(10);
+		
+		genderMenuBar = new JMenuBar();
+		genderMenuBar.setName("genderMenuBar");
+		genderMenuBar.setBounds(520, 158, 119, 35);
+		userInformationPanel.add(genderMenuBar);
+		
+		genderMenu = new JMenu("Gender");
+		genderMenu.setName("genderMenu");
+		genderMenuBar.add(genderMenu);
+		
+		maleMenuItem = new JMenuItem("Male");
+		maleMenuItem.setName("maleMenuItem");
+		genderMenu.add(maleMenuItem);
+		
+		femaleMenuItem = new JMenuItem("Female");
+		genderMenu.add(femaleMenuItem);
+		
+		genreMenuBar = new JMenuBar();
+		genreMenuBar.setName("genreMenuBar");
+		genreMenuBar.setBounds(520, 222, 119, 35);
+		userInformationPanel.add(genreMenuBar);
+		
+		genreMenu = new JMenu("Genre");
+		genreMenu.setName("genreMenu");
+		genreMenuBar.add(genreMenu);
+		
+		updateInfoLabel = new JLabel("Hi user, update your information");
+		updateInfoLabel.setName("updateInformationLabel");
+		updateInfoLabel.setForeground(Color.WHITE);
+		updateInfoLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		updateInfoLabel.setBounds(367, 81, 349, 25);
+		userInformationPanel.add(updateInfoLabel);
+		
+		homeUserInformationButton = new JButton("");
+		homeUserInformationButton.setName("homeUserInformationButton");
+		homeUserInformationButton.setBounds(233, 38, 97, 68);
+		homeUserInformationButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				cleanUserInformationPage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "homePagePanel");
+				
+				initializeHomePage(currentUsertype,currentUser);
+			}
+		});
+		homeUserInformationButton.setToolTipText("Return to Homepage");
+		homeUserInformationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		homeUserInformationButton.setBackground(SystemColor.controlDkShadow);
+		homeUserInformationButton.setBorder(null);
+		homeUserInformationButton.setContentAreaFilled(false);
+		homeUserInformationButton.setOpaque(true);
+		homeUserInformationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		userInformationPanel.add(homeUserInformationButton);
 		
 	}
 }
