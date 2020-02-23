@@ -675,18 +675,60 @@ public class GraphicInterface {
 	private void initializeUserInformationPage() {
 		
 		//caricare nome user
-		userInformationTextField.setText("Hi " + currentUser + ", update your information");
+		updateInfoLabel.setText("Hi " + currentUser + ", update your information");
+		
+		Friend friend = logicHandler.getFriend(currentUser);
+		
+		String currentAge = Integer.toString(friend.getAge());
+		String currentName = friend.getName();
+		String currentSurname = friend.getSurname();
+		String currentFavoriteGenre = friend.getFavoriteGenre();
+		String gender = friend.getGender();
 		
 		//caricare valori attuali nei textfield
-		
+		ageTextField.setText("Age - Current Value " + currentAge!=null?currentAge:"null");
+		nameTextField.setText("Name - Current Value " + currentName!=null?currentName:"null");
+		surnameTextfield.setText("Surname - Current Value " + currentSurname!=null?currentSurname:"null");
+
+		if( gender == "M" ) {
+			genderMenu.setText("M");
+		} else if( gender == "F" ) {
+			genderMenu.setText("F");
+		}
 		
 		//caricare i generi
+		List<String> genres = logicHandler.getGenres();
+		
+		if( genres != null ) {
+			
+			for( int i = 0; i < genres.size(); i++ ) {
+				
+				final String genre = genres.get(i);
+				JMenuItem item = new JMenuItem(genre);
+				item.setFont(new Font("Corbel", Font.BOLD, 15));
+				item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				item.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						
+						genreMenu.setText(genre);
+					}
+				});
+				genreMenu.add(item);
+				
+				if( genre == currentFavoriteGenre ) {
+					genreMenu.setText(genre);
+				}
+			}
+		}
 	}
 	
 	private void cleanUserInformationPage() {
 		
+		updateInfoLabel.setText("");
 		nameTextField.setText("");
 		surnameTextfield.setText("");
+		
+		genreMenu.removeAll();
 	}
 	
 	
@@ -1978,6 +2020,28 @@ public class GraphicInterface {
 		ageTextField.setColumns(10);
 		
 		saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				int age = Integer.parseInt(ageTextField.getText());
+				String name = nameTextField.getText();
+				String surname = surnameTextfield.getText();
+				String genre = genreMenu.getText();
+				String gender = genreMenu.getText();
+				
+				errr
+				
+				controlla age
+				if( name == "" || name.startsWith("Name") ) {
+					name = null;
+				}
+				
+				if( surname == "" || surname.startsWith("Surname") ) {
+					surname = null;
+				}
+				
+			}
+		});
 		saveButton.setName("saveButton");
 		saveButton.setBounds(399, 361, 113, 35);
 		userInformationPanel.add(saveButton);
@@ -2022,10 +2086,20 @@ public class GraphicInterface {
 		genderMenuBar.add(genderMenu);
 		
 		maleMenuItem = new JMenuItem("Male");
+		maleMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				genderMenu.setText("M");
+			}
+		});
 		maleMenuItem.setName("maleMenuItem");
 		genderMenu.add(maleMenuItem);
 		
 		femaleMenuItem = new JMenuItem("Female");
+		femaleMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				genderMenu.setText("F");
+			}
+		});
 		genderMenu.add(femaleMenuItem);
 		
 		genreMenuBar = new JMenuBar();
