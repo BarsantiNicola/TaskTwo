@@ -48,6 +48,9 @@ public class logicBridge {
 	
 	public List<PreviewGame> getMyGames( String USERNAME){ return null;}
 	
+	//if AGE==-1, don't update AGE whithin the db. The same if NAME, SURNAME, FAVORITE_GENRE, GENDER are NULL.
+	public boolean updateUserInformation( int AGE, String NAME, String SURNAME, String FAVORITE_GENRE, String GENDER ) { return false; }
+	
 	//USERNAME follow FOLLOWED?
 	public boolean isFollowed( String USERNAME, String FOLLOWED ) { return false; }
 	
@@ -102,6 +105,7 @@ public class logicBridge {
 	public List<PreviewGame> getMostLikedGames(){ return null; }
 	
 	public List<PreviewGame> getMostRecentGames(){ return null; }
+	
 	//  KEYVALUE --- STATISTICS FUNCTIONS
 	
 	//  DATASCRAPER FUNCTIONS

@@ -48,6 +48,7 @@ public class GraphicInterface {
 	private JButton adminHPButton;
 	private JButton becomeAnalystButton;
 	private JButton analystHPButton;
+	private JButton userInfoButton ;
 	private JScrollPane myGamesScrollPane;
 	private JLabel mostPopularGamesLabel;
 	private JLabel mostViewedGamesLabel;
@@ -956,7 +957,7 @@ public class GraphicInterface {
 		
 		gamesNumberHPLabel = new JLabel("999");
 		gamesNumberHPLabel.setIconTextGap(10);
-		gamesNumberHPLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
+		gamesNumberHPLabel.setBorder(new EmptyBorder(0, 2, 0, 2));
 		gamesNumberHPLabel.setOpaque(true);
 		gamesNumberHPLabel.setBackground(SystemColor.controlDkShadow);
 		gamesNumberHPLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -964,12 +965,12 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		gamesNumberHPLabel.setToolTipText("Number of Games You Like");
 		gamesNumberHPLabel.setName("gamesNumberHPLabel");
-		gamesNumberHPLabel.setBounds(629, 13, 141, 69);
+		gamesNumberHPLabel.setBounds(653, 13, 128, 69);
 		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 50, Image.SCALE_SMOOTH)));
 		homePagePanel.add(gamesNumberHPLabel);
 		
 		followerNumberHPLabel = new JLabel("999");
-		followerNumberHPLabel.setBorder(new EmptyBorder(0, 10, 0, 10));
+		followerNumberHPLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
 		followerNumberHPLabel.setOpaque(true);
 		followerNumberHPLabel.setBackground(SystemColor.controlDkShadow);
 		followerNumberHPLabel.setForeground(Color.WHITE);
@@ -977,7 +978,7 @@ public class GraphicInterface {
 		followerNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		followerNumberHPLabel.setToolTipText("Number of  People Who Follow You");
 		followerNumberHPLabel.setName("followerNumberHPLabel");
-		followerNumberHPLabel.setBounds(782, 13, 128, 69);
+		followerNumberHPLabel.setBounds(793, 13, 117, 69);
 		followerNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/followers.png")).getImage().getScaledInstance(69, 50, Image.SCALE_SMOOTH)));
 		homePagePanel.add(followerNumberHPLabel);
 		
@@ -1005,7 +1006,7 @@ public class GraphicInterface {
 		});
 		adminHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
-		adminHPButton.setBounds(302, 13, 97, 69);
+		adminHPButton.setBounds(374, 13, 81, 69);
 		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
 		adminHPButton.setBackground(SystemColor.controlDkShadow);
 		adminHPButton.setBorder(null);
@@ -1025,7 +1026,7 @@ public class GraphicInterface {
 			}
 		});
 		becomeAnalystButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		becomeAnalystButton.setBounds(411, 13, 97, 69);
+		becomeAnalystButton.setBounds(467, 13, 81, 69);
 		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
 		becomeAnalystButton.setBackground(SystemColor.controlDkShadow);
 		becomeAnalystButton.setContentAreaFilled(false);
@@ -1047,7 +1048,7 @@ public class GraphicInterface {
 			}
 		});
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		analystHPButton.setBounds(520, 13, 97, 69);
+		analystHPButton.setBounds(560, 13, 81, 69);
 		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
 		analystHPButton.setBackground(SystemColor.controlDkShadow);
 		analystHPButton.setBorder(null);
@@ -1187,7 +1188,7 @@ public class GraphicInterface {
 		userButton = new JButton("");
 		userButton.setBackground(SystemColor.controlDkShadow);
 		userButton.setName("userButton");
-		userButton.setBounds(196, 13, 97, 71);
+		userButton.setBounds(281, 13, 81, 69);
 		userButton.setContentAreaFilled(false);
 		userButton.setOpaque(true);
 		userButton.setName("userButton");
@@ -1209,6 +1210,31 @@ public class GraphicInterface {
 		userButton.setBorder(null);
 		userButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/addFriend.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(userButton);
+		
+		userInfoButton = new JButton("");
+		userInfoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			
+				cleanHomePage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "userInformationPanel");
+				
+				initializeUserInformationPage();
+			}
+		});
+		userInfoButton.setToolTipText("Click Here to Change your Info");
+		userInfoButton.setBackground(SystemColor.controlDkShadow);
+		userInfoButton.setContentAreaFilled(false);
+		userInfoButton.setOpaque(true);
+		userInfoButton.setName("userInfoButton");
+		userInfoButton.setFont(new Font("Corbel", Font.PLAIN, 13));
+		userInfoButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		userInfoButton.setBorder(null);
+		userInfoButton.setBounds(188, 13, 81, 69);
+		userInfoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/info.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		homePagePanel.add(userInfoButton);
 		
 		adminPanel = new JPanel();
 		adminPanel.setName("adminPanel");
@@ -2020,18 +2046,34 @@ public class GraphicInterface {
 		ageTextField.setColumns(10);
 		
 		saveButton = new JButton("Save");
+		saveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		saveButton.setToolTipText("Save your Personal Information");
+		saveButton.setBackground(new Color(0, 191, 255));
+		saveButton.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+		saveButton.setFont(new Font("Corbel", Font.BOLD, 17));
+		saveButton.setContentAreaFilled(false);
+		saveButton.setOpaque(true);
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				int age = Integer.parseInt(ageTextField.getText());
+				int age;
+				String ageString = ageTextField.getText();
 				String name = nameTextField.getText();
 				String surname = surnameTextfield.getText();
 				String genre = genreMenu.getText();
 				String gender = genreMenu.getText();
 				
-				errr
+
+				if( ageString == "" || ageString.startsWith("Age")) {
+					age = -1;
+				} else {
+					try {
+						age = Integer.parseInt(ageString);
+					} catch (NumberFormatException e) {
+						age = -1;
+					}
+				}
 				
-				controlla age
 				if( name == "" || name.startsWith("Name") ) {
 					name = null;
 				}
@@ -2040,10 +2082,20 @@ public class GraphicInterface {
 					surname = null;
 				}
 				
+				if( gender != "M" && gender != "F" ) {
+					gender = null;
+				}
+				
+				if( genre == "Genre" ) {
+					genre = null;
+				}
+				
+				logicHandler.updateUserInformation(age,name,surname,genre,gender);
+				initializeUserInformationPage();
 			}
 		});
 		saveButton.setName("saveButton");
-		saveButton.setBounds(399, 361, 113, 35);
+		saveButton.setBounds(398, 361, 127, 48);
 		userInformationPanel.add(saveButton);
 		
 		nameTextField = new JTextField();
@@ -2077,15 +2129,26 @@ public class GraphicInterface {
 		surnameTextfield.setColumns(10);
 		
 		genderMenuBar = new JMenuBar();
+		genderMenuBar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		genderMenuBar.setToolTipText("Click Here to Select Your Gender");
+		genderMenuBar.setFont(new Font("Corbel", Font.BOLD, 15));
 		genderMenuBar.setName("genderMenuBar");
-		genderMenuBar.setBounds(520, 158, 119, 35);
+		genderMenuBar.setBounds(520, 158, 55, 35);
 		userInformationPanel.add(genderMenuBar);
 		
 		genderMenu = new JMenu("Gender");
+		genderMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		genderMenu.setBorder(null);
+		genderMenu.setHorizontalTextPosition(SwingConstants.CENTER);
+		genderMenu.setHorizontalAlignment(SwingConstants.CENTER);
+		genderMenu.setToolTipText("Click Here To Select your Gender");
+		genderMenu.setFont(new Font("Corbel", Font.BOLD, 15));
 		genderMenu.setName("genderMenu");
 		genderMenuBar.add(genderMenu);
 		
 		maleMenuItem = new JMenuItem("Male");
+		maleMenuItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		maleMenuItem.setFont(new Font("Corbel", Font.BOLD, 15));
 		maleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				genderMenu.setText("M");
@@ -2095,6 +2158,8 @@ public class GraphicInterface {
 		genderMenu.add(maleMenuItem);
 		
 		femaleMenuItem = new JMenuItem("Female");
+		femaleMenuItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		femaleMenuItem.setFont(new Font("Corbel", Font.BOLD, 15));
 		femaleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				genderMenu.setText("F");
@@ -2103,11 +2168,17 @@ public class GraphicInterface {
 		genderMenu.add(femaleMenuItem);
 		
 		genreMenuBar = new JMenuBar();
+		genreMenuBar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		genreMenuBar.setToolTipText("Click Here to Select your Favorite Genre");
+		genreMenuBar.setFont(new Font("Corbel", Font.BOLD, 15));
 		genreMenuBar.setName("genreMenuBar");
-		genreMenuBar.setBounds(520, 222, 119, 35);
+		genreMenuBar.setBounds(520, 222, 55, 35);
 		userInformationPanel.add(genreMenuBar);
 		
 		genreMenu = new JMenu("Genre");
+		genreMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		genreMenu.setToolTipText("Click Here to Select your Favorite Genre");
+		genreMenu.setFont(new Font("Corbel", Font.BOLD, 15));
 		genreMenu.setName("genreMenu");
 		genreMenuBar.add(genreMenu);
 		
