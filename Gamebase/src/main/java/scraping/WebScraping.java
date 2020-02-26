@@ -3,6 +3,10 @@ package scraping;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONObject;
 
 public class WebScraping {
 
@@ -16,10 +20,10 @@ public class WebScraping {
 		
 		//Create http object for request
 		HttpClient objRequest = new HttpClient();
-		String newGames = null;
+		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
 		try {
-	           System.out.println("WEBSCRAPING/GETTWITCHURLCHANNEL-->Sending Http GET request for Twitch channel");
+	           System.out.println("WEBSCRAPING/UPDATEDATABASE-->Sending Http GET request for new games");
 	           try {
 				newGames = objRequest.sendGetNewGames(NPage);
 	           } catch (Exception e) {

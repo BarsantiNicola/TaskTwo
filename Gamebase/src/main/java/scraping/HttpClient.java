@@ -1,6 +1,8 @@
 package scraping;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -11,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.nodes.Document;
 
 
 public class HttpClient {
@@ -24,7 +27,7 @@ public class HttpClient {
     }
     
     
-    public String sendGetNewGames(int NPage) throws Exception {
+    public List<JSONObject> sendGetNewGames(int NPage) throws Exception {
     	System.out.println("HTTPCLIENT/SENDGETNEWGAMES-->Preparing request for new games");
     	
         HttpGet request = new HttpGet("https://api.rawg.io/api/games?&page_size=40&page=" + Integer.toString(NPage));
@@ -40,15 +43,21 @@ public class HttpClient {
             System.out.println(headers);
 
             String result = EntityUtils.toString(entity);
+            JSONObject jsonObject = new JSONObject(result);
+            //Extract the list of new games from the page
+            JSONArray results = jsonObject.getJSONArray("results");
+            
+            List<JSONObject> newGames = new ArrayList<JSONObject>();
 
-            String sub = result.substring(154, (result.length()-3112));
-            System.out.println(sub); //Debug
-            
-            System.out.println("HTTPCLIENT/SENDGETNEWGAMES-->Returning result");
-            return sub;
-            
+            for (int i = 0; i <results.length(); i++) {
+            	JSONObject game = results.getJSONObject(i);
+            	newGames.add(game);
             }
+            
+            System.out.println("HTTPCLIENT/SENDGETNEWGAMES-->Returning list of new games");
+            return newGames;
         }
+    }
 
     //Get twitch channel for a game
     public String sendGetTwitch(String GAME) throws Exception {
@@ -108,7 +117,7 @@ public class HttpClient {
             String result = EntityUtils.toString(entity);
             JSONObject jsonObject = new JSONObject(result);
             	
-           return jsonObject.getString("description_raw");
+            return jsonObject.getString("description_raw");
             
   
             }
