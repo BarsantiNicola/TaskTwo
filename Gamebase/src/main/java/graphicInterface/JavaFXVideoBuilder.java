@@ -31,8 +31,13 @@ public class JavaFXVideoBuilder {
 
 		//File video_source = new File(location);
 	    //Media m = new Media(video_source.toURI().toString());
-		
-	    media = new Media(location);
+		try {
+			media = new Media(location);
+		} catch (Exception e) {
+			File video_source = new File("/resources/notAvailable.mp4");
+	    	media = new Media(video_source.toURI().toString());
+		}
+	    
 	    player = new MediaPlayer(media);
 	    viewer = new MediaView(player);
 	

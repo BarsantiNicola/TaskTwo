@@ -134,6 +134,9 @@ public class GraphicInterface {
 	private JLabel metacriticScoreLabel;
 	private JButton actionButton;
 	private JLabel releaseDateLabel;
+	private VideoPlayerPanel videoPlayer;
+	private JButton previousVideoButton;
+	private JButton nextVideoButton;
 	
 	//user panel
 	private JPanel userPanel;
@@ -185,8 +188,9 @@ public class GraphicInterface {
 	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	private List<PreviewGame> supportGamesList = null;
-	
-	
+	private List<String> currentVideosURLlist = null;
+	private int currentVideoIndex = 0;
+	private int lastVideoIndex = 0;
 	
 	//support functions
 	
@@ -526,6 +530,30 @@ public class GraphicInterface {
 		} else {
 			metacriticScoreLabel.setText(Double.toString(score));
 		}
+		
+		List<String> videoURLs = game.getVideoURLs();
+		
+		if( videoURLs != null && videoURLs.size()!=0 ) {
+			
+			currentVideosURLlist = videoURLs;
+			currentVideoIndex = 0;
+			lastVideoIndex = videoURLs.size()-1;
+			
+			String firstVideo = videoURLs.get(0);
+			videoPlayer.getVideo(firstVideo);
+			
+			if( videoURLs.size() > 1 ) {
+				
+				nextVideoButton.setEnabled(true);
+			}
+		} else {
+			
+			nextVideoButton.setEnabled(false);
+			previousVideoButton.setEnabled(false);
+			videoPlayer.getVideo(null);
+		}
+		
+		
 	}
 	
 	private void cleanGamePage() {
@@ -552,6 +580,13 @@ public class GraphicInterface {
 		imagesListModel.removeAllElements();
 		
 		previewImageLabel.setIcon(null);
+		
+		currentVideosURLlist = null;
+		currentVideoIndex = 0;
+		lastVideoIndex = 0;
+		
+		nextVideoButton.setEnabled(true);
+		previousVideoButton.setEnabled(true);
 	}
 	
 	private void initializeUserPage( String currentUser, String searchedUser ) {
@@ -1899,6 +1934,77 @@ public class GraphicInterface {
 		metacriticScoreLabel.setText("4.7");
 		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/star.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		gamePanel.add(metacriticScoreLabel);
+		
+		videoPlayer = new VideoPlayerPanel();
+		videoPlayer.setSize(342, 210);
+		videoPlayer.setLocation(426, 332);
+		gamePanel.add(videoPlayer);
+		
+		nextVideoButton = new JButton("");
+		nextVideoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				if( currentVideoIndex == lastVideoIndex ) {
+					return;
+				}
+				
+				currentVideoIndex++;
+				
+				videoPlayer.getVideo(currentVideosURLlist.get(currentVideoIndex));
+				
+				if( currentVideoIndex == 1 ) {
+					
+					previousVideoButton.setEnabled(true);
+				}
+				
+				
+				if( currentVideoIndex == lastVideoIndex ) {
+					
+					nextVideoButton.setEnabled(false);
+				}
+			}
+		});
+		nextVideoButton.setToolTipText("Next Video");
+		nextVideoButton.setName("nextVideoButton");
+		nextVideoButton.setBackground(SystemColor.controlDkShadow);
+		nextVideoButton.setContentAreaFilled(false);
+		nextVideoButton.setOpaque(true);
+		nextVideoButton.setBounds(804, 351, 73, 43);
+		nextVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/next.png")).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+		gamePanel.add(nextVideoButton);
+		
+		previousVideoButton = new JButton("");
+		previousVideoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if( currentVideoIndex == 0 ) {
+					
+					return;
+				}
+				
+				currentVideoIndex--;
+				
+				videoPlayer.getVideo(currentVideosURLlist.get(currentVideoIndex));
+				
+				if( currentVideoIndex == lastVideoIndex-1 ) {
+					
+					nextVideoButton.setEnabled(true);
+				}
+				
+				if( currentVideoIndex == 0 ) {
+					
+					previousVideoButton.setEnabled(false);
+				}
+			}
+		});
+		previousVideoButton.setToolTipText("Previous Video");
+		previousVideoButton.setName("previousVideoButton");
+		previousVideoButton.setBackground(SystemColor.controlDkShadow);
+		previousVideoButton.setContentAreaFilled(false);
+		previousVideoButton.setOpaque(true);
+		previousVideoButton.setBounds(804, 469, 73, 45);
+		previousVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/back.png")).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+		gamePanel.add(previousVideoButton);
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(new Color(87, 86, 82));

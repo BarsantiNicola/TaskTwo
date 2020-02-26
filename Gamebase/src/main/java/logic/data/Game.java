@@ -1,5 +1,7 @@
 package logic.data;
 
+import java.util.List;
+
 public class Game extends PreviewGame{
 	
 	private String description;
@@ -9,7 +11,8 @@ public class Game extends PreviewGame{
 	private String genre;
 	private String developer;
 	private String releaseDate;
-	public double metacriticScore;
+	private double metacriticScore;
+	private List<String> videoURLs;
 	
 	Game( String gameTitle , String pic ){
 		
@@ -55,5 +58,10 @@ public class Game extends PreviewGame{
 	public double getMetacriticScore() {
 		
 		return metacriticScore;
+	}
+	
+	public List<String> getVideoURLs() {
+		
+		return videoURLs;
 	}
 }
