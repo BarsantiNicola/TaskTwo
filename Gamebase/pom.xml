@@ -21,25 +21,30 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.jsoup</groupId>
-          <artifactId>jsoup</artifactId>
-          <version>1.11.3</version>
-      </dependency>
+    <dependency>
+       <groupId>org.jsoup</groupId>
+       <artifactId>jsoup</artifactId>
+       <version>1.11.3</version>
+    </dependency>
 	<dependency>
-		<groupId>org.apache.httpcomponents</groupId>
-		<artifactId>httpclient</artifactId>
-		<version>4.5.10</version>
+	   <groupId>org.apache.httpcomponents</groupId>
+	   <artifactId>httpclient</artifactId>
+	   <version>4.5.10</version>
 	</dependency>
 	<dependency>
-    <groupId>org.json</groupId>
-    <artifactId>json</artifactId>
-    <version>20190722</version>
-</dependency>
+       <groupId>org.json</groupId>
+       <artifactId>json</artifactId>
+   	   <version>20190722</version>
+	</dependency>
 	<dependency>
-    <groupId>com.googlecode.json-simple</groupId>
-    <artifactId>json-simple</artifactId>
-    <version>1.1</version>
-</dependency>
+       <groupId>org.jfree</groupId>
+       <artifactId>jfreechart</artifactId>
+       <version>1.5.0</version>
+    </dependency>
+	<dependency>
+       <groupId>com.googlecode.json-simple</groupId>
+       <artifactId>json-simple</artifactId>
+       <version>1.1</version>
+    </dependency>
   </dependencies>
 </project>
