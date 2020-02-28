@@ -55,6 +55,9 @@ public class WebScraping {
 	public static String getTwitchURLChannel( String GAME ) { 
 		System.out.println("WEBSCRAPING/GETTWITCHURLCHANNEL--> Getting Twitch channel for game " + GAME);
 		
+		//Replace spaces in the game title
+		GAME = GAME.replaceAll(" ", "%20");
+		
 		String twitchChannel = null;
 		//Create http object for request
 		HttpClient objRequest = new HttpClient();
@@ -113,6 +116,6 @@ public class WebScraping {
 	
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 updateDatabase();
+		 
 	 }
 }
