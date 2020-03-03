@@ -6,8 +6,9 @@ public class Game extends PreviewGame{
 	
 	private String description;
 	private String steamURL;
-	private String originURL;
+	private String nintendoURL;
 	private String playstationURL;
+	private String xboxURL;
 	private String genre;
 	private String developer;
 	private String releaseDate;
@@ -30,14 +31,19 @@ public class Game extends PreviewGame{
 		return steamURL;
 	}
 	
-	public String getOriginURL() {
+	public String getNintendoURL() {
 		
-		return originURL;
+		return nintendoURL;
 	}
 	
 	public String getPlaystationURL() {
 		
 		return playstationURL;
+	}
+	
+	public String getXboxURL() {
+		
+		return xboxURL;
 	}
 	
 	public String getGenre() {

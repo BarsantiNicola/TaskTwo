@@ -21,7 +21,6 @@ import javax.swing.table.*;
 
 public class GraphicInterface {
 
-	private static final JLabel userInformationTextField = null;
 	private JFrame frame;
 	private JPanel panel;
 	
@@ -112,13 +111,14 @@ public class GraphicInterface {
 	private JTextArea gameDescriptionTextArea;
 	private JScrollPane gameDescriptionScrollPane;
 	private JButton playStationButton;
-	private JButton originButton;
+	private JButton nintendoButton;
 	private JButton steamButton;
 	private JLabel previewImageLabel;
 	private JLabel gameTitleLabel;
 	private ActionListener steamButtonListener;
-	private ActionListener originButtonListener;
+	private ActionListener nintendoButtonListener;
 	private ActionListener playstationButtonListener;
+	private ActionListener xboxButtonListener;
 	private JButton homeGameButton;
 	private JLabel developerLabel;
 	private DefaultListModel<Image> imagesListModel = new DefaultListModel<Image>();
@@ -137,6 +137,7 @@ public class GraphicInterface {
 	private VideoPlayerPanel videoPlayer;
 	private JButton previousVideoButton;
 	private JButton nextVideoButton;
+	private JButton XBoxButton;
 	
 	//user panel
 	private JPanel userPanel;
@@ -164,7 +165,7 @@ public class GraphicInterface {
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
-		};
+	};
 	
 	//user information panel
 	private JPanel userInformationPanel;	
@@ -477,25 +478,25 @@ public class GraphicInterface {
 			steamButton.setVisible(false);
 		}
 		
-		final String originURL = game.getOriginURL();
+		final String nintendoURL = game.getNintendoURL();
 		
-		if( originURL != null ) {
+		if( nintendoURL != null ) {
 			
-			originButtonListener = new ActionListener() {
+			nintendoButtonListener = new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
 					if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
 					    try {
-							Desktop.getDesktop().browse(new URI(originURL));
+							Desktop.getDesktop().browse(new URI(nintendoURL));
 						} catch (Exception e) {
 							e.printStackTrace();
 					    }
 				    }	
 				}
 			};
-			originButton.addActionListener(originButtonListener);
+			nintendoButton.addActionListener(nintendoButtonListener);
 		} else {
-			originButton.setVisible(false);
+			nintendoButton.setEnabled(false);
 		}
 		
 		final String playstationURL = game.getPlaystationURL();
@@ -516,7 +517,28 @@ public class GraphicInterface {
 			};
 			playStationButton.addActionListener(playstationButtonListener);
 		} else {
-			playStationButton.setVisible(false);
+			playStationButton.setEnabled(false);
+		}
+		
+		final String xboxURL = game.getXboxURL();
+		
+		if( xboxURL != null ) {
+			
+			xboxButtonListener = new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+					    try {
+							Desktop.getDesktop().browse(new URI(xboxURL));
+						} catch (Exception e) {
+							e.printStackTrace();
+					    }
+				    }	
+				}
+			};
+			XBoxButton.addActionListener(xboxButtonListener);
+		} else {
+			playStationButton.setEnabled(false);
 		}
 		
 		List<String> imagesURL = logicHandler.getGamePicsURL(game.getGameTitle());
@@ -561,17 +583,20 @@ public class GraphicInterface {
 		gameDescriptionTextArea.setText("");
 		
 		steamButton.setVisible(true);
-		originButton.setVisible(true);
+		nintendoButton.setVisible(true);
 		playStationButton.setVisible(true);
 		
 		steamButtonListener = null;
 		steamButton.addActionListener(null);
 		
-		originButtonListener = null;
-		originButton.addActionListener(null);
+		nintendoButtonListener = null;
+		nintendoButton.addActionListener(null);
 		
 		playstationButtonListener = null;
 		playStationButton.addActionListener(null);
+		
+		xboxButtonListener = null;
+		XBoxButton.addActionListener(null);
 		
 		metacriticScoreLabel.setText("");
 		
@@ -1773,29 +1798,38 @@ public class GraphicInterface {
 		steamButton = new JButton("");
 		steamButton.setBackground(SystemColor.controlDkShadow);
 		steamButton.setName("steamButton");
-		steamButton.setBounds(62, 257, 97, 62);
+		steamButton.setBounds(62, 257, 73, 62);
 		steamButton.setContentAreaFilled(false);
 		steamButton.setOpaque(true);
 		steamButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/steam.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		gamePanel.add(steamButton);
 		
-		originButton = new JButton("");
-		originButton.setBackground(SystemColor.controlDkShadow);
-		originButton.setName("originButton");
-		originButton.setContentAreaFilled(false);
-		originButton.setOpaque(true);
-		originButton.setBounds(180, 257, 97, 62);
-		originButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/origin.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
-		gamePanel.add(originButton);
+		nintendoButton = new JButton("");
+		nintendoButton.setBackground(SystemColor.controlDkShadow);
+		nintendoButton.setName("nintendoButton");
+		nintendoButton.setContentAreaFilled(false);
+		nintendoButton.setOpaque(true);
+		nintendoButton.setBounds(147, 257, 73, 62);
+		nintendoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/nintendo.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		gamePanel.add(nintendoButton);
 		
 		playStationButton = new JButton("");
 		playStationButton.setBackground(SystemColor.controlDkShadow);
 		playStationButton.setName("playStationButton");
-		playStationButton.setBounds(289, 257, 97, 62);
+		playStationButton.setBounds(313, 257, 73, 62);
 		playStationButton.setContentAreaFilled(false);
 		playStationButton.setOpaque(true);
-		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(80, 60, Image.SCALE_SMOOTH)));
+		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		gamePanel.add(playStationButton);
+		
+		XBoxButton = new JButton("");
+		XBoxButton.setBackground(SystemColor.controlDkShadow);
+		XBoxButton.setName("XBoxButton");
+		XBoxButton.setBounds(232, 257, 73, 62);
+		XBoxButton.setContentAreaFilled(false);
+		XBoxButton.setOpaque(true);
+		XBoxButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/xbox.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		gamePanel.add(XBoxButton);
 		
 		homeGameButton = new JButton("");
 		homeGameButton.setName("homeGameButton");
@@ -2005,6 +2039,8 @@ public class GraphicInterface {
 		previousVideoButton.setBounds(804, 469, 73, 45);
 		previousVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/back.png")).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
 		gamePanel.add(previousVideoButton);
+		
+		
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(new Color(87, 86, 82));
