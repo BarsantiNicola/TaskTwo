@@ -206,11 +206,11 @@ public class GraphicInterface {
 		return true;
 	}
 	
-	private void fillFollowedTable(List<Friend> friendList) {
+	private void fillFollowedTable(List<User> friendList) {
 		
 		followedTableModel.setRowCount(0);
 		
-		for( Friend friend: friendList ) {
+		for( User friend: friendList ) {
 			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
@@ -252,11 +252,11 @@ public class GraphicInterface {
 	}
 	
 	
-	private void fillUsersTable( List<Friend> usersList ) {
+	private void fillUsersTable( List<User> usersList ) {
 		
 		usersTableModel.setRowCount(0);
 		
-		for( Friend friend: usersList ) {
+		for( User friend: usersList ) {
 			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
@@ -273,7 +273,7 @@ public class GraphicInterface {
 					
 					fillUserGamesList(logicHandler.getMyGames(selectedUsername));
 					
-					Friend selectedFriend = logicHandler.getFriend(selectedUsername);
+					User selectedFriend = logicHandler.getFriend(selectedUsername);
 					String lastAccess;
 					
 					if( selectedFriend == null ) {
@@ -619,7 +619,7 @@ public class GraphicInterface {
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
 		
-		List<Friend> featuredUsers = logicHandler.getFeaturedUsers(currentUser);
+		List<User> featuredUsers = logicHandler.getFeaturedUsers(currentUser);
 		
 		fillUsersTable(featuredUsers);
 		
@@ -738,7 +738,7 @@ public class GraphicInterface {
 		//caricare nome user
 		updateInfoLabel.setText("Hi " + currentUser + ", update your information");
 		
-		Friend friend = logicHandler.getFriend(currentUser);
+		User friend = logicHandler.getFriend(currentUser);
 		
 		String currentAge = Integer.toString(friend.getAge());
 		String currentName = friend.getName();

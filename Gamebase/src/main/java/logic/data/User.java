@@ -1,6 +1,6 @@
 package logic.data;
 
-public class Friend {
+public class User {
 	
 	private String username;
 	//private String picture;
@@ -11,7 +11,7 @@ public class Friend {
 	private String lastAccess;
 	private String gender;
 	
-	public Friend() {}
+	public User() {}
 	
 	public String getUsername() {
 		

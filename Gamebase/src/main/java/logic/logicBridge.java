@@ -31,10 +31,10 @@ public class logicBridge {
 	//in case of failure return -1
 	public int getLikedGamesNumber( String USERNAME ) { return 0; }
 	
-	public List<Friend> getFriends( String USERNAME ) { return null; }
+	public List<User> getFriends( String USERNAME ) { return null; }
 	
 	//simply return a friend given his/her username
-	public Friend getFriend( String USERNAME ) { return null; }
+	public User getFriend( String USERNAME ) { return null; }
 	
 	public boolean addFriend( String USERNAME ) { return false; }
 	
@@ -59,10 +59,10 @@ public class logicBridge {
 	
 	public List<PreviewGame> getFeaturedGames( String USERNAME ){ return null; }
 	
-	public List<Friend> getFeaturedUsers( String USERNAME ){ return null; }
+	public List<User> getFeaturedUsers( String USERNAME ){ return null; }
 	
 	//pass the username in order to avoid returning a list containing the username itself
-	public List<Friend> searchUsers( String USERNAME, String SEARCHED_STRING ){ return null; }
+	public List<User> searchUsers( String USERNAME, String SEARCHED_STRING ){ return null; }
 	
 	public boolean follow( String USERNAME, String USERNAME_TO_FOLLOW ) { return false; }
 	
