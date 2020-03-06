@@ -18,6 +18,7 @@ public class Game implements Serializable{
     private Integer metacritic;
     private Integer viewsCount;
     private Integer favouritesCount;
+    private String  description;
 
     private ArrayList<String> genres;
     private ArrayList<ReleaseInfo> releases;
@@ -66,6 +67,10 @@ public class Game implements Serializable{
 
     public Integer getFavouritesCount() {
         return favouritesCount;
+    }
+    
+    public String getDescription() {
+    	return description;
     }
 
     public ArrayList<ReleaseInfo> getReleases() {
@@ -116,6 +121,10 @@ public class Game implements Serializable{
 
     public void setFavouritesCount(Integer favouritesCount) {
         this.favouritesCount = favouritesCount;
+    }
+    
+    public void setDescription(String description) {
+    	this.description = description;
     }
 
     public void setReleases(ArrayList<ReleaseInfo> releases) {

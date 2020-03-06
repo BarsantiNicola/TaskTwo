@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import logic.data.*;
+import logic.mongoConnection.MongoConnection;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //  The class is used to bridge the graphic interface to the program logic.
@@ -15,8 +16,15 @@ import logic.data.*;
 //  changing the function in charge
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-public class logicBridge {
+public class LogicBridge {
 	
+	MongoConnection MONGO;
+	
+	LogicBridge(){
+		
+		MONGO = new MongoConnection();
+		
+	}
 	//  GRAPH FUNCTIONS
 	
 	//return USER,ADMINISTRATOR,ANALYST,NO_USER( no user with the given username ), WRONG_PASSWORD( user exists, but password is wrong)
@@ -68,29 +76,37 @@ public class logicBridge {
 	
 	public boolean unfollow( String USERNAME, String USERNAME_TO_UNFOLLOW ) { return false; }
 	
-	//  KEYVALUE FUNCTIONS
-	
 	public List<Game> getUserGames( String USERNAME ){ return null; }
 	
 	public boolean addUserGame( String USERNAME , String GAME ) { return false; }
 	
 	public boolean removeUserGame( String USERNAME , String GAME ) { return false; }
 	
-	public Game getGame( String GAME ){ return null; }
+	//  DOCUMENT FUNCTIONS
 	
-	private boolean addGameDescription( String GAME , String DESCRIPTION ) { return false; }
+	public Game getGame( String GAME ){ 
+		return MONGO.getGame(GAME);
+	}
 	
-	public boolean deleteGame( String GAME ) { return false; }
+	private boolean addGameDescription( String GAME , String DESCRIPTION ) { 
+		return MONGO.addGameDescription(GAME,DESCRIPTION);
+	}
 	
-	public boolean voteGame( String GAME , int VOTE ) { return false; }
+	public boolean deleteGame( String GAME ) { 
+		return MONGO.deleteGame(GAME);
+	}
+	
+	public boolean voteGame( String GAME , int VOTE ) { 
+		return MONGO.voteGame( GAME, VOTE );
+	}
+	
+	public List<String> getGamePicsURL( String GAME_TITLE ){ return null; }
 	
 	public List<PreviewGame> getPreviews( HashMap<String,String> OPTIONS ){ return null; }
 	
 	public PreviewGame getMostViewedGame() { return null; }
 	
 	public PreviewGame getMostPopularGame() { return null; }
-	
-	public List<String> getGamePicsURL( String GAME_TITLE ){ return null; }
 	
 	//return the total number of games; -1 in case of failure
 	public int getGameCount() { return -1; }
@@ -118,5 +134,7 @@ public class logicBridge {
 	
 	//OTHER
 	
-	public void closeConnection() {}
+	public void closeConnection(){
+		MONGO.closeConnection();
+	}
 }
