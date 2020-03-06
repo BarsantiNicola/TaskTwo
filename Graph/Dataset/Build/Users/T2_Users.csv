@@ -1,0 +1,48 @@
+﻿:LABEL,username:ID,password:string,joinDate:date,firstName:string,lastName:string,age:long,email:string,gender:char,country:string,favouriteGenre:string,followedCount:long
+administrator,admin,adminPassword,2019-12-10,,,,admin@example.com,,,,0
+user,adri,adriPassword,2020-01-02,Adrienne,LaCroix,25,adri@example.com,F,France,Action,5
+analyst,adrian,adrianPassword,2019-12-27,Adrian,Johnson,32,adrian@example.com,M,United States,,0
+user,agatha,agathaPassword,2020-01-05,,,45,,F,Germany,Sports,3
+user,amy,amyPassword,2020-01-09,Amy,,,,,China,,7
+user,anto83,anto83Password,2020-01-15,,,25,anto83@example.com,M,,Shooters,2
+user,betty,bettyPassword,2020-01-19,Betty,,41,,,Scotland,Strategy,3
+user,bob,bobPassword,2020-01-26,Robert,Jones,,bob@example.com,M,,,2
+user,brad,bradPassword,2020-01-30,,,,,M,United States,Platform,4
+user,christopher,christopherPassword,2020-02-02,Christopher,Miller,36,christopher@example.com,,,,0
+user,Dani,DaniPassword,2020-02-02,Danielle,,54,,,France,Shooters,1
+user,david91,david91Password,2020-02-08,,,19,david91@example.com,M,United States,Action,5
+user,Dia,DiaPassword,2020-02-11,,,25,,F,Japan,MMORPG,0
+user,donny,donnyPassword,2020-02-15,Donny,Garcia,24,,,Mexico,,2
+user,eth,ethPassword,2020-02-17,Ethan,,40,,M,Canada,Shooters,3
+user,Gabriel,GabrielPassword,2020-02-18,Gabriel,Taylor,,Gabriel@example.com,M,,Action,0
+user,imanne,imannePassword,2020-02-20,,,,,,Iran,,2
+user,jacob,jacobPassword,2020-02-22,Jacob,Perez,25,,,Spain,MMORPG,1
+analyst,james,jamesPassword,2020-02-22,James,Hill,42,james@example.com,M,,,0
+user,james96,james96Password,2020-02-27,,,31,,,Ireland,Action,5
+user,john,johnPassword,2020-02-29,John,Baker,,john@example.com,M,England,,2
+user,john72,john72Password,2020-03-01,John,,18,,,United States,Platform,1
+analyst,laura,lauraPassword,2020-03-04,Laura,Logan,46,laura@example.com,F,Denmark,,0
+user,lisa,lisaPassword,2020-03-07,Lisa,,20,lisa@example.com,F,,MMORPG,4
+user,lola,lolaPassword,2020-03-11,,,25,,,Brazil,RPG,6
+user,lorry,lorryPassword,2020-03-11,Lorry,Collins,,lorry@example.com,M,,Shooters,2
+user,madeline,madelinePassword,2020-03-12,,,28,,F,France,,1
+user,magicBob,magicBobPassword,2020-03-15,Bob,,40,,,United States,Shooters,8
+user,maria,mariaPassword,2020-03-17,Maria,Peterson,,maria@example.com,,,Puzzle,0
+user,Marianne,MariannePassword,2020-03-21,,,29,Marianne@example.com,F,France,RPG,4
+user,matt,mattPassword,2020-03-22,Matthew,Wood,32,matt@example.com,M,,,1
+user,matty,mattyPassword,2020-03-24,Matthew,,39,,M,England,,3
+user,michael,michaelPassword,2020-03-25,Michael,,36,michael@example.com,,United States,Platform,1
+user,PaulPaul,PaulPaulPassword,2020-03-28,,,,paul@example.com,M,,Strategy,0
+user,Philip,PhilipPassword,2020-03-30,,,21,Philip@example.com,,England,,3
+user,ralph68,ralph68Password,2020-04-01,Ralph,Myers,,ralph68@example.com,,,RPG,2
+user,randi,randiPassword,2020-04-03,,,36,,F,United States,,4
+user,richard,richardPassword,2020-04-05,Richard,,,richard@example.com,,England,Puzzle,1
+analyst,rob,robPassword,2020-04-07,Robert,Fisher,28,rob@example.com,M,United States,,0
+user,roy,royPassword,2020-04-07,Roy,,29,,M,,Action,6
+user,ruth,ruthPassword,2020-04-08,,,18,ruth@example.com,F,Germany,,4
+user,Sarah,SarahPassword,2020-04-10,Sarah,Morales,,Sarah@example.com,,,Platform,4
+user,seli,seliPassword,2020-04-12,,,21,,,Mexico,,5
+user,soJenny,soJennyPassword,2020-04-13,Jenny,Perez,27,jenny@example.com,F,,Shooters,2
+user,susy,susyPassword,2020-04-14,Susan,,25,,F,France,Action,2
+user,timJ,timJPassword,2020-04-14,,,,tim@example.com,M,,,0
+user,Vince,VincePassword,2020-04-15,,,47,Vince@example.com,M,England,RPG,1
