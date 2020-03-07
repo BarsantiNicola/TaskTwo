@@ -450,7 +450,7 @@ public class GraphicInterface {
 	
 	private void initializeGamePage( String title ) {
 		
-		Game game = logicHandler.getGame(title);
+		Game game = logicHandler.getGame(title,true);
 		
 		if( game == null ) {
 			
@@ -721,7 +721,7 @@ public class GraphicInterface {
 							
 							///// CORREGGERE, UN GIOCO NON HA SOLO UN GENERE MA UNA LISTA DI GENERI
 							//  IL TIPO IN RITORNO È CAMBIATO IN LIST<STRING>
-							List<String> genres = logicHandler.getGame(previewGame.getGameTitle()).getGenres();
+							List<String> genres = logicHandler.getGame(previewGame.getGameTitle(),false).getGenres();
 							for( String gen: genres)
 								if( gen.compareTo(genre) == 0 ) {
 									genreList.add(previewGame);

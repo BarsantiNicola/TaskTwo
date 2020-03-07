@@ -1,7 +1,6 @@
 package logic;
 
 import java.awt.Image;
-import java.util.HashMap;
 import java.util.List;
 
 import logic.data.*;
@@ -78,14 +77,21 @@ public class LogicBridge {
 	
 	public List<Game> getUserGames( String USERNAME ){ return null; }
 	
-	public boolean addUserGame( String USERNAME , String GAME ) { return false; }
+	public boolean addUserGame( String USERNAME , String GAME ) { 
+
+		//MONGO.updateFavouritesCount( GAME , 1);  //  TO ACTIVATE WHEN GRAPH PART IS READY
+		return false; 
+	}
 	
-	public boolean removeUserGame( String USERNAME , String GAME ) { return false; }
+	public boolean removeUserGame( String USERNAME , String GAME ) {
 	
+		//MONGO.updateFavouritesCount( GAME , -1);  // TO ACTIVATE WHEN GRAPH PART IS READY
+		return false;
+	}
 	//  DOCUMENT FUNCTIONS
 	
-	public Game getGame( String GAME ){ 
-		return MONGO.getGame(GAME);
+	public Game getGame( String GAME , boolean doVote ){ 
+		return MONGO.getGame(GAME, doVote);
 	}
 	
 	private boolean addGameDescription( String GAME , String DESCRIPTION ) { 
