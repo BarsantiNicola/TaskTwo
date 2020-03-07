@@ -109,19 +109,17 @@ public class LogicBridge {
 	public List<String> getGenres(){ return MONGO.getGenres(); }
 	
 	
-	public List<PreviewGame> getPreviews( HashMap<String,String> OPTIONS ){ return null; }
+	public PreviewGame getMostViewedGame() { return MONGO.getMostViewedPreview(); }
 	
-	public PreviewGame getMostViewedGame() { return null; }
+	public PreviewGame getMostPopularGame() { return MONGO.getMostPopularPreview(); }
 	
-	public PreviewGame getMostPopularGame() { return null; }
-		
-	public List<PreviewGame> searchGames( String SEARCHED_STRING ){ return null; }
+	public List<PreviewGame> getMostViewedGames(){ return MONGO.getMostViewedPreviews(); }
 	
-	public List<PreviewGame> getMostViewedGames(){ return null; }
+	public List<PreviewGame> getMostLikedGames(){ return MONGO.getMostLikedPreviews(); }
 	
-	public List<PreviewGame> getMostLikedGames(){ return null; }
+	public List<PreviewGame> getMostRecentGames(){ return MONGO.getMostRecentPreviews(); }
 	
-	public List<PreviewGame> getMostRecentGames(){ return null; }
+	public List<PreviewGame> searchGames( String SEARCHED_STRING ){ return MONGO.searchGames(SEARCHED_STRING); }
 	
 	//  KEYVALUE --- STATISTICS FUNCTIONS
 	

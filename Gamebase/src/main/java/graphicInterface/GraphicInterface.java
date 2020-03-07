@@ -64,9 +64,15 @@ public class GraphicInterface {
 				"Username", "Name", "Last Activity"
 			}
 		) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			@SuppressWarnings("rawtypes")
 			Class[] columnTypes = new Class[] {
 				String.class, String.class, String.class
 			};
+			@SuppressWarnings("unchecked")
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
@@ -159,6 +165,10 @@ public class GraphicInterface {
 				"Username", "Games", "Action"
 			}
 		) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			Class[] columnTypes = new Class[] {
 				String.class, String.class, String.class
 			};
@@ -709,8 +719,13 @@ public class GraphicInterface {
 							
 							previewGame = supportGamesList.get(i);
 							
-							if( logicHandler.getGame(previewGame.getGameTitle()).getGenre() == genre ) {
-								genreList.add(previewGame);
+							///// CORREGGERE, UN GIOCO NON HA SOLO UN GENERE MA UNA LISTA DI GENERI
+							//  IL TIPO IN RITORNO È CAMBIATO IN LIST<STRING>
+							List<String> genres = logicHandler.getGame(previewGame.getGameTitle()).getGenres();
+							for( String gen: genres)
+								if( gen.compareTo(genre) == 0 ) {
+									genreList.add(previewGame);
+									break;
 							}
 						}
 						

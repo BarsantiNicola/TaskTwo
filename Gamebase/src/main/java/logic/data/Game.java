@@ -178,6 +178,10 @@ public class Game implements Serializable{
         
         return new Document(gson.fromJson(gson.toJson(this),Map.class));
     }
+	
+	public PreviewGame getPreview() {
+		return new PreviewGame(title,background_image);
+	}
 
     public String toString(){
 
