@@ -20,7 +20,7 @@ public class LogicBridge {
 	
 	MongoConnection MONGO;
 	
-	LogicBridge(){
+	public LogicBridge(){
 		
 		MONGO = new MongoConnection();
 		

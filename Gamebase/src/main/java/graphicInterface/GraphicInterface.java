@@ -183,7 +183,7 @@ public class GraphicInterface {
 	private JMenuBar genderMenuBar;
 	
 	//Logic and support info
-	private logicBridge logicHandler = new logicBridge();
+	private LogicBridge logicHandler = new LogicBridge();
 	private String currentUser = null;
 	private userType currentUsertype = null;
 	private Game currentGame = null;
@@ -455,7 +455,7 @@ public class GraphicInterface {
 		currentGame = game;
 		
 		gameDescriptionTextArea.setText(game.getDescription());
-		gameTitleLabel.setText(game.getGameTitle());
+		gameTitleLabel.setText(game.getTitle());
 		
 		final String steamURL = game.getSteamURL();
 		
@@ -541,11 +541,11 @@ public class GraphicInterface {
 			playStationButton.setEnabled(false);
 		}
 		
-		List<String> imagesURL = logicHandler.getGamePicsURL(game.getGameTitle());
+		List<String> imagesURL = logicHandler.getGamePicsURL(game.getTitle());
 		
 		fillImagesList(imagesURL);
 		
-		double score = game.getMetacriticScore();
+		double score = game.getMetacritic();
 			
 		if( score == -1 ) {
 			metacriticScoreLabel.setText("N/A");
@@ -646,7 +646,7 @@ public class GraphicInterface {
 		
 		String userCount, gameCount;
 		int userC = logicHandler.getUserCount();
-		int gameC = logicHandler.getGameCount();
+		long gameC = logicHandler.getGameCount();
 		
 		if( userC == -1 ) {
 			userCount = "N/A";
@@ -657,7 +657,7 @@ public class GraphicInterface {
 		if( gameC == -1 ) {
 			gameCount = "N/A";
 		} else {
-			gameCount = Integer.toString(gameC);
+			gameCount = Long.toString(gameC);
 		}
 		
 		userCountLabel.setText("User Count: " + userCount);
@@ -1906,7 +1906,7 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getGameTitle(), 1);
+				logicHandler.voteGame(currentGame.getTitle(), 1);
 			}
 		});
 		vote1.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -1917,7 +1917,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getGameTitle(), 2);
+				logicHandler.voteGame(currentGame.getTitle(), 2);
 			}
 		});
 		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -1928,7 +1928,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getGameTitle(), 3);
+				logicHandler.voteGame(currentGame.getTitle(), 3);
 			}
 		});
 		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -1939,7 +1939,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getGameTitle(), 4);
+				logicHandler.voteGame(currentGame.getTitle(), 4);
 			}
 		});
 		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -1950,7 +1950,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getGameTitle(), 5);
+				logicHandler.voteGame(currentGame.getTitle(), 5);
 			}
 		});
 		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));

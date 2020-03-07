@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.bson.Document;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Game implements Serializable{
@@ -83,6 +84,33 @@ public class Game implements Serializable{
 
     public Multimedia getMultimedia() {
         return multimedia;
+    }
+    
+    public String getNintendoURL() {
+    	return sales.get(0).getSaleUrl();
+    }
+    
+    public String getSteamURL() {
+    	return sales.get(1).getSaleUrl();    	
+    }
+    
+    public String getPlaystationURL() {
+    	return sales.get(2).getSaleUrl();
+    }
+    
+    public String getXboxURL() {
+    	return sales.get(3).getSaleUrl();    	
+    }
+     
+    public List<String> getVideoURLs(){
+    	if( multimedia == null ) {
+    		return new ArrayList<>();
+    	}
+    	ArrayList<Video> videos = multimedia.getVideos();
+    	List<String> URLs = new ArrayList<>();
+    	for(Video v:videos)
+    		URLs.add(v.getMediaUrl());
+    	return URLs;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

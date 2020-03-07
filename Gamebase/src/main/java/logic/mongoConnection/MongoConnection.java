@@ -1,27 +1,23 @@
 package logic.mongoConnection;
 
+import java.util.List;
 import logic.data.Game;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.text.NumberFormat;
 import com.mongodb.MongoClient;
+import java.text.DecimalFormat;
 import com.mongodb.ServerAddress;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-
 import org.bson.codecs.pojo.PojoCodecProvider;
 import static com.mongodb.client.model.Filters.*;
 import org.bson.codecs.configuration.CodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bson.Document;
-
 
 public class MongoConnection {
     
