@@ -5,6 +5,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
@@ -13,6 +14,11 @@ import static com.mongodb.client.model.Filters.*;
 import org.bson.codecs.configuration.CodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bson.Document;
 
@@ -74,9 +80,10 @@ public class MongoConnection {
     		return false;
     	}
     	int count = game.getRatingCount();
-    	double newRate = (game.getRating()*count + vote)/(count+1);
+    	NumberFormat nf = new DecimalFormat("0.0000");
+        double newRate = Double.parseDouble(nf.format((game.getRating()*count + vote)/(count+1)).replace(",", "."));
     	count++;
-    	UpdateResult res = gamesCollection.updateOne(eq("title", title), new Document("$set", new Document("Rating", newRate).put("RatingCount", count )));
+    	UpdateResult res = gamesCollection.updateOne(eq("title", title), new Document("$set", new Document("rating", newRate).append("ratingCount", count )));
     	
     	if(res.getMatchedCount() == 0 ){
     		System.out.println("--> [MONGO] Error, game not found");
@@ -91,6 +98,33 @@ public class MongoConnection {
     	
     }
     
+    public List<String> getGamePics( String title ){
+    	
+    	Game game = getGame(title);
+    	if( game == null ) {
+    		System.out.println("--> [MONGO][GETGAMEPICS] Error, game not found" );
+    		return new ArrayList<>();
+    	}
+    	if( game.getMultimedia() == null ) 
+    		return new ArrayList<>();
+    		
+    	return game.getMultimedia().getImages(); 
+    	
+    }
+    
+    public long getTotalGamesCount() {
+    	
+    	return gamesCollection.countDocuments();
+    }
+    
+    public List<String> getGenres(){
+    	MongoCursor<String> genres = gamesCollection.distinct("genres", String.class).iterator();
+    	List<String> retList = new ArrayList<>();
+    	while(genres.hasNext())
+    		retList.add(genres.next());
+    	return retList;
+    }
+    
     public void closeConnection() {
     	this.mongoClient.close();
     }
@@ -100,8 +134,14 @@ public class MongoConnection {
     	
     	System.out.println("------  [Mongo Connection test]  ------");
     	MongoConnection client = new MongoConnection();
+    	System.out.println(client.voteGame("BioShock", 5));
     	System.out.println(client.getGame("BioShock"));
     	System.out.println(client.addGameDescription("BioShock", "Andiamocene a Newtopia"));
+
+    	System.out.println(client.getGamePics("BioShock"));
+    	System.out.println(client.getTotalGamesCount());
+    	System.out.println(client.getGenres());
+    	client.closeConnection();
     	
     }
     

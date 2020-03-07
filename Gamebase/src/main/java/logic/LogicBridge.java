@@ -100,20 +100,21 @@ public class LogicBridge {
 		return MONGO.voteGame( GAME, VOTE );
 	}
 	
-	public List<String> getGamePicsURL( String GAME_TITLE ){ return null; }
+	public List<String> getGamePicsURL( String GAME_TITLE ){ return MONGO.getGamePics(GAME_TITLE); }
+	
+	//return the total number of games; -1 in case of failure
+	public long getGameCount() { return MONGO.getTotalGamesCount(); }
+	
+	//return a list filled with all possible genres
+	public List<String> getGenres(){ return MONGO.getGenres(); }
+	
 	
 	public List<PreviewGame> getPreviews( HashMap<String,String> OPTIONS ){ return null; }
 	
 	public PreviewGame getMostViewedGame() { return null; }
 	
 	public PreviewGame getMostPopularGame() { return null; }
-	
-	//return the total number of games; -1 in case of failure
-	public int getGameCount() { return -1; }
-	
-	//return a list filled with all possible genres
-	public List<String> getGenres(){ return null; }
-	
+		
 	public List<PreviewGame> searchGames( String SEARCHED_STRING ){ return null; }
 	
 	public List<PreviewGame> getMostViewedGames(){ return null; }
