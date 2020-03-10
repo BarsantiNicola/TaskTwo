@@ -56,7 +56,7 @@ public class LogicBridge {
 	public List<PreviewGame> getMyGames( String USERNAME){ return null;}
 	
 	//if AGE==-1, don't update AGE whithin the db. The same if NAME, SURNAME, FAVORITE_GENRE, GENDER are NULL.
-	public boolean updateUserInformation( int AGE, String NAME, String SURNAME, String FAVORITE_GENRE, String GENDER ) { return false; }
+	public boolean updateUserInformation( int AGE, String NAME, String SURNAME, String FAVORITE_GENRE, String GENDER, String EMAIL ) { return false; }
 	
 	//USERNAME follow FOLLOWED?
 	public boolean isFollowed( String USERNAME, String FOLLOWED ) { return false; }
