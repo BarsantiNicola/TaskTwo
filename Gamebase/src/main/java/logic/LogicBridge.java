@@ -4,13 +4,14 @@ import java.awt.Image;
 import java.util.List;
 
 import logic.data.*;
+import logic.mongoConnection.DataNavigator;
 import logic.mongoConnection.MongoConnection;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //  The class is used to bridge the graphic interface to the program logic.
 //  The class defines a simple API by which the upper layers could operate on the data
 //  without any knowledge of the management the data will get. The class is designed to
-//  work with the Neo4j database, the MongoDB keyvalue database and a webscraper API. 
+//  work with the Neo4j database, the MongoDB document database and a webscraper API. 
 //  However due to it's simplicity any other type of connection or data management could be added
 //  changing the function in charge
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,10 +22,10 @@ public class LogicBridge {
 	
 	public LogicBridge(){
 		
-		MONGO = new MongoConnection();
+		MONGO = new MongoConnection("127.0.0.1",27018);
 		
 	}
-	//  GRAPH FUNCTIONS
+	//////  GRAPH FUNCTIONS
 	
 	//return USER,ADMINISTRATOR,ANALYST,NO_USER( no user with the given username ), WRONG_PASSWORD( user exists, but password is wrong)
 	public userType login( String USERNAME , String PASSWORD ) { return userType.NO_USER; }
@@ -88,18 +89,19 @@ public class LogicBridge {
 		//MONGO.updateFavouritesCount( GAME , -1);  // TO ACTIVATE WHEN GRAPH PART IS READY
 		return false;
 	}
-	//  DOCUMENT FUNCTIONS
+	
+	//////  DOCUMENT FUNCTIONS
 	
 	public Game getGame( String GAME , boolean doVote ){ 
 		return MONGO.getGame(GAME, doVote);
 	}
 	
-	private boolean addGameDescription( String GAME , String DESCRIPTION ) { 
-		return MONGO.addGameDescription(GAME,DESCRIPTION);
+	private boolean addGameDescription( int ID , String DESCRIPTION ) { 
+		return MONGO.addGameDescription( ID ,DESCRIPTION);
 	}
 	
-	public boolean deleteGame( String GAME ) { 
-		return MONGO.deleteGame(GAME);
+	public boolean deleteGame( int ID ) { 
+		return MONGO.deleteGame(ID);
 	}
 	
 	public boolean voteGame( String GAME , int VOTE ) { 
@@ -119,15 +121,16 @@ public class LogicBridge {
 	
 	public PreviewGame getMostPopularGame() { return MONGO.getMostPopularPreview(); }
 	
-	public List<PreviewGame> getMostViewedGames(){ return MONGO.getMostViewedPreviews(); }
+	public DataNavigator getMostViewedGames(){ return MONGO.getMostViewedPreviews(); }
 	
-	public List<PreviewGame> getMostLikedGames(){ return MONGO.getMostLikedPreviews(); }
+	public DataNavigator getMostLikedGames(){ return MONGO.getMostLikedPreviews(); }
 	
-	public List<PreviewGame> getMostRecentGames(){ return MONGO.getMostRecentPreviews(); }
+	public DataNavigator getMostRecentGames(){ return MONGO.getMostRecentPreviews(); }
 	
-	public List<PreviewGame> searchGames( String SEARCHED_STRING ){ return MONGO.searchGames(SEARCHED_STRING); }
+	public DataNavigator searchGames( String SEARCHED_STRING ){ return MONGO.searchGames(SEARCHED_STRING); }
 	
-	//  KEYVALUE --- STATISTICS FUNCTIONS
+
+	
 	
 	//  DATASCRAPER FUNCTIONS
 	
