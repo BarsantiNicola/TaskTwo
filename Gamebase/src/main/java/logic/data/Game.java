@@ -180,7 +180,7 @@ public class Game implements Serializable{
     }
 	
 	public PreviewGame getPreview() {
-		return new PreviewGame(title,background_image);
+		return new PreviewGame(id,title,background_image);
 	}
 
     public String toString(){

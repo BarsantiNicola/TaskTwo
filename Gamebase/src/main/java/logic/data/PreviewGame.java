@@ -7,17 +7,19 @@ package logic.data;
 
 public class PreviewGame {
 	
-	private final String gameTitle;         //  the name of the game to be showed
+	private final Integer id;
+	private final String title;         //  the name of the game to be showed
 	private final String previewPicURL;     //  the picture to be showed for the game
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//                                           COSTRUCTOR                                                   //
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public PreviewGame( String game , String pic ){
+	public PreviewGame( int id , String title , String previewPicURL ){
 		
-		gameTitle = game;
-		previewPicURL = pic;
+		this.id = id;
+		this.title = title;
+		this.previewPicURL = previewPicURL;
 	
 	}
 	
@@ -25,8 +27,10 @@ public class PreviewGame {
 	//                                           GETTERS                                                      //
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public String getGameTitle() { return gameTitle; }
+	public String getTitle() { return title; }
 	
 	public String getPreviewPicURL() { return previewPicURL; }
 	
+	public Integer getId() { return id; }
+
 }

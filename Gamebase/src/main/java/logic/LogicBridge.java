@@ -22,9 +22,19 @@ public class LogicBridge {
 	
 	public LogicBridge(){
 		
-		MONGO = new MongoConnection("127.0.0.1",27018);
+		try {
+			
+			MONGO = new MongoConnection("127.0.0.1",27018);
+			
+		}catch( Exception e ) {
+			
+			System.out.println("-->[LogicBridge] Fatal Error, Invalid NET configuration");
+			System.exit(1);
+			
+		}
 		
 	}
+	
 	//////  GRAPH FUNCTIONS
 	
 	//return USER,ADMINISTRATOR,ANALYST,NO_USER( no user with the given username ), WRONG_PASSWORD( user exists, but password is wrong)
@@ -92,42 +102,46 @@ public class LogicBridge {
 	
 	//////  DOCUMENT FUNCTIONS
 	
-	public Game getGame( String GAME , boolean doVote ){ 
-		return MONGO.getGame(GAME, doVote);
+	public StatusObject<Game> getGame( int gameId ){ 
+		return MONGO.getGame( gameId );
 	}
 	
-	private boolean addGameDescription( int ID , String DESCRIPTION ) { 
+	public StatusObject<String> updateGameViews( int gameId ){
+		return MONGO.incrementGameViews(gameId);
+	}
+	
+	private StatusObject<String> addGameDescription( int ID , String DESCRIPTION ) { 
 		return MONGO.addGameDescription( ID ,DESCRIPTION);
 	}
 	
-	public boolean deleteGame( int ID ) { 
+	public StatusObject<String> deleteGame( int ID ) { 
 		return MONGO.deleteGame(ID);
 	}
 	
-	public boolean voteGame( String GAME , int VOTE ) { 
-		return MONGO.voteGame( GAME, VOTE );
+	public StatusObject<String> voteGame( int gameId , int vote ) { 
+		return MONGO.voteGame( gameId, vote );
 	}
 	
-	public List<String> getGamePicsURL( String GAME_TITLE ){ return MONGO.getGamePics(GAME_TITLE); }
+	public StatusObject<List<String>> getGamePicsURL( int gameId ){ return MONGO.getGamePics( gameId ); }
 	
 	//return the total number of games; -1 in case of failure
-	public long getGameCount() { return MONGO.getTotalGamesCount(); }
+	public StatusObject<Long> getGameCount() { return MONGO.getTotalGamesCount(); }
 	
 	//return a list filled with all possible genres
-	public List<String> getGenres(){ return MONGO.getGenres(); }
+	public StatusObject<List<String>> getGenres(){ return MONGO.getGenres(); }
 	
 	
-	public PreviewGame getMostViewedGame() { return MONGO.getMostViewedPreview(); }
+	public StatusObject<PreviewGame> getMostViewedGame() { return MONGO.getMostViewedPreview(); }
 	
-	public PreviewGame getMostPopularGame() { return MONGO.getMostPopularPreview(); }
+	public StatusObject<PreviewGame> getMostPopularGame() { return MONGO.getMostPopularPreview(); }
 	
-	public DataNavigator getMostViewedGames(){ return MONGO.getMostViewedPreviews(); }
+	public StatusObject<DataNavigator> getMostViewedGames(){ return MONGO.getMostViewedPreviews(); }
 	
-	public DataNavigator getMostLikedGames(){ return MONGO.getMostLikedPreviews(); }
+	public StatusObject<DataNavigator> getMostLikedGames(){ return MONGO.getMostLikedPreviews(); }
 	
-	public DataNavigator getMostRecentGames(){ return MONGO.getMostRecentPreviews(); }
+	public StatusObject<DataNavigator> getMostRecentGames(){ return MONGO.getMostRecentPreviews(); }
 	
-	public DataNavigator searchGames( String SEARCHED_STRING ){ return MONGO.searchGames(SEARCHED_STRING); }
+	public StatusObject<DataNavigator> searchGames( String SEARCHED_STRING ){ return MONGO.searchGames(SEARCHED_STRING); }
 	
 
 	
