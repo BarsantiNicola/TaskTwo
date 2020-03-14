@@ -2,21 +2,25 @@ package logic;
 
 public class StatusObject<T> {
 
-	private StatusCode statusCode;
-	private T element;
+	private final StatusCode statusCode;
+	private final T element;
 	
 		  
 	public StatusObject( StatusCode status, T element ){
 		
 		   this.statusCode = status;
-		   if( this.statusCode != StatusCode.OK)
-			   this.element = element;
+		   this.element = element;
+
 	}
 
 	public T getValue() {
 		
-		if( this.statusCode != StatusCode.OK && this.statusCode != StatusCode.ERR_NETWORK_PARTIAL_UNREACHABLE )
-			return null;
+		StatusCode[] whiteList = { StatusCode.OK , StatusCode.ERR_NETWORK_PARTIAL_UNREACHABLE };
+		
+		for( StatusCode accepted : whiteList )
+			if( this.statusCode == accepted )
+				return element;
+
 		
 		return element;
 	}
