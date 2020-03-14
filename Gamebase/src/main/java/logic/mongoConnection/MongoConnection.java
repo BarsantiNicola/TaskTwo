@@ -8,9 +8,13 @@ import logic.data.PreviewGame;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.mongodb.MongoClient;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.time.Year;
+
 import com.mongodb.ServerAddress;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoSocketOpenException;
@@ -447,47 +451,47 @@ public class MongoConnection {
 
     
     //  Most liked games year by year
-	public List<Game> getMostLikedGameByYearStats(){
+	public StatusObject<HashMap<Year,String>> getMostLikedGameByYearStats(){
 		return null;
 	}
 	
 	//  Most liked games for each generes
-	public List<Game> getMostLikedGamesByGenStats(){
+	public StatusObject<HashMap<String,String>> getMostLikedGamesByGenStats(){
 		return null;
 	}
 	
 	//  Most viewed games year by year
-	public List<Game> getMostViewedGameByYearStats(){
+	public StatusObject<HashMap<Year,String>> getMostViewedGameByYearStats(){
 		return null;
 	}
 	
 	//  Most viewed games for each generes
-	public List<Game> getMostViewedGameByGenStats(){
+	public StatusObject<HashMap<String,String>>  getMostViewedGameByGenStats(){
 		return null;		
 	}
 	
 	//  Number of games released year by year
-	public List<Integer> getReleasedGameByYearStats(){
+	public StatusObject<HashMap<Year,Integer>>  getReleasedGameCountByYearStats(){
 		return null;
 	}
 	
 	//  Number of games released year by year and grouped by genres
-	public List<Integer> getReleasedGameByYearAndGenStats(){
+	public StatusObject<HashMap<Year,HashMap<String,List<Integer>>>> getReleasedGameCountByYearAndGenStats(){
 		return null;
 	}
 	
 	//  Percentage of the total games used by each generes(games of the generes/total games)
-	public List<Integer> getGeneresWeightStats(){
+	public StatusObject<HashMap<String,Float>> getGeneresGameCountStats(){
 		return null;
 	}
 	
 	//  Percentage of the total views give for each generes(sum of the viewsCount of the generes/total views)
-	public List<Integer> getGeneresMostViewedStats(){
+	public StatusObject<HashMap<String,Float>> getGeneresMostViewedCountStats(){
 		return null;
 	}
 	
 	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
-	public List<Integer> getGeneresPreferencesStats(){
+	public StatusObject<HashMap<String,Float>> getGeneresPreferencesStats(){
 		return null;
 	}
 	
