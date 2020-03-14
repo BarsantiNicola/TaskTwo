@@ -19,6 +19,8 @@ public enum StatusCode
  ERR_DOCUMENT_GAME_NOT_FOUND,
  ERR_DOCUMENT_INVALID_VOTE,
  ERR_DOCUMENT_MULTIMEDIA_FIELD_NOT_FOUND,
+ ERR_DOCUMENT_MIN_INDEX_REACHED,
+ 
  //--------------------------------------------------------
  //                  Neo4j Error Codes
  //--------------------------------------------------------

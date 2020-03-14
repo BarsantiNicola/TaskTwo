@@ -21,7 +21,6 @@ public class StatusObject<T> {
 			if( this.statusCode == accepted )
 				return element;
 
-		
 		return element;
 	}
 	
@@ -61,6 +60,9 @@ public class StatusObject<T> {
 			case ERR_DOCUMENT_MULTIMEDIA_FIELD_NOT_FOUND:
 				stringError = "Error, the game doensn't have the multimedia field";
 				break;
+			case ERR_DOCUMENT_MIN_INDEX_REACHED:
+				stringError = "Error, the navigator has reached the 0 position";
+				break;
 
 			default: stringError = "";
 		
@@ -68,4 +70,5 @@ public class StatusObject<T> {
 		
 		return new StatusObject<String>( error, stringError );
 	}
+
 }
