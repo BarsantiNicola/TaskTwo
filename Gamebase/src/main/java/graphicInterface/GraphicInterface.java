@@ -191,6 +191,7 @@ public class GraphicInterface {
 	private JMenuItem maleMenuItem;
 	private JMenu genderMenu;
 	private JMenuBar genderMenuBar;
+	private JTextField emailTextField;
 	
 	//Logic and support info
 	private LogicBridge logicHandler = new LogicBridge();
@@ -2218,8 +2219,8 @@ public class GraphicInterface {
 				String name = nameTextField.getText();
 				String surname = surnameTextfield.getText();
 				String genre = genreMenu.getText();
-				String gender = genreMenu.getText();
-				
+				String gender = genderMenu.getText();
+				String email = emailTextField.getText();
 
 				if( ageString == "" || ageString.startsWith("Age")) {
 					age = -1;
@@ -2247,12 +2248,16 @@ public class GraphicInterface {
 					genre = null;
 				}
 				
-				logicHandler.updateUserInformation(age,name,surname,genre,gender);
+				if( email == "" || email.startsWith("E-Mail")) {
+					email = null;
+				}
+				
+				logicHandler.updateUserInformation(age,name,surname,genre,gender,email);
 				initializeUserInformationPage();
 			}
 		});
 		saveButton.setName("saveButton");
-		saveButton.setBounds(398, 361, 127, 48);
+		saveButton.setBounds(396, 409, 127, 48);
 		userInformationPanel.add(saveButton);
 		
 		nameTextField = new JTextField();
@@ -2369,6 +2374,14 @@ public class GraphicInterface {
 		homeUserInformationButton.setOpaque(true);
 		homeUserInformationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		userInformationPanel.add(homeUserInformationButton);
+		
+		emailTextField = new JTextField();
+		emailTextField.setText("E-Mail");
+		emailTextField.setName("emailTextField");
+		emailTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
+		emailTextField.setColumns(10);
+		emailTextField.setBounds(233, 348, 233, 37);
+		userInformationPanel.add(emailTextField);
 		
 	}
 }
