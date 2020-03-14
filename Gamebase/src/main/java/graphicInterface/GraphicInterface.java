@@ -196,7 +196,7 @@ public class GraphicInterface {
 	//Logic and support info
 	private LogicBridge logicHandler = new LogicBridge();
 	private String currentUser = null;
-	private userType currentUsertype = null;
+	private UserType currentUsertype = null;
 	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	private List<PreviewGame> supportGamesList = null;
@@ -366,7 +366,7 @@ public class GraphicInterface {
 		}
 	}
 	
-	private void initializeHomePage( userType user, String username ) {
+	private void initializeHomePage( UserType user, String username ) {
 		
 		String gamesNumber = logicHandler.getLikedGamesNumber(username)!=-1?Integer.toString(logicHandler.getLikedGamesNumber(username)):"N/A";
 		String followersNumber = logicHandler.getFollowersNumber(username)!=-1?Integer.toString(logicHandler.getFollowersNumber(username)):"N/A";
@@ -916,9 +916,9 @@ public class GraphicInterface {
 				} else {
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->sign up completed: username " + username + " registered");
 					cl.show(panel, "homePagePanel");
-					initializeHomePage(userType.USER,username);
+					initializeHomePage(UserType.USER,username);
 					currentUser = username;
-					currentUsertype = userType.USER;
+					currentUsertype = UserType.USER;
 				}
 			}
 		});
@@ -952,13 +952,13 @@ public class GraphicInterface {
 					return;
 				}
 				
-				userType usertype = logicHandler.login(username,password);
+				UserType usertype = logicHandler.login(username,password);
 				
-				if( usertype == userType.NO_USER ) {
+				if( usertype == UserType.NO_USER ) {
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: no user " + username + " found");
 					errorMessageLabel.setText("No User " + username + " found");
 					errorMessageLabel.setVisible(true);
-				} else if( usertype == userType.WRONG_PASSWORD ) {
+				} else if( usertype == UserType.WRONG_PASSWORD ) {
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: wrong password for username " + username);
 					errorMessageLabel.setText("Uncorrect Password for User " + username );
 					errorMessageLabel.setVisible(true);
@@ -1097,7 +1097,7 @@ public class GraphicInterface {
 					
 					becomeAnalystButton.setVisible(false);
 					analystHPButton.setVisible(true);
-					currentUsertype = userType.ANALYST;
+					currentUsertype = UserType.ANALYST;
 				}
 			}
 		});
@@ -1328,7 +1328,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(userType.ADMINISTRATOR,currentUser);
+				initializeHomePage(UserType.ADMINISTRATOR,currentUser);
 			}
 		});
 		homeADButton.setToolTipText("Return to Homepage");

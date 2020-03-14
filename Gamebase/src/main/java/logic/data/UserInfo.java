@@ -1,6 +1,7 @@
 package logic.data;
 
 import logic.StatusCode;
+import logic.UserType;
 
 /* Returned at login attempts */
 

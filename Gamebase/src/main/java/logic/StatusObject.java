@@ -14,8 +14,10 @@ public class StatusObject<T> {
 	}
 
 	public T getValue() {
-		if( this.statusCode != StatusCode.OK )
+		
+		if( this.statusCode != StatusCode.OK && this.statusCode != StatusCode.ERR_NETWORK_PARTIAL_UNREACHABLE )
 			return null;
+		
 		return element;
 	}
 	

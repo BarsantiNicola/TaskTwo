@@ -38,7 +38,7 @@ public class LogicBridge {
 	//////  GRAPH FUNCTIONS
 	
 	//return USER,ADMINISTRATOR,ANALYST,NO_USER( no user with the given username ), WRONG_PASSWORD( user exists, but password is wrong)
-	public userType login( String USERNAME , String PASSWORD ) { return userType.NO_USER; }
+	public UserType login( String USERNAME , String PASSWORD ) { return UserType.NO_USER; }
 	
 	//return false if the username is already used
 	public boolean signUp( String USERNAME, String PASSWORD ) { return false; }
