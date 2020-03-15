@@ -1,6 +1,8 @@
 package logic;
 
 import java.awt.Image;
+import java.time.Year;
+import java.util.HashMap;
 import java.util.List;
 
 import logic.data.*;
@@ -122,8 +124,6 @@ public class LogicBridge {
 		return MONGO.voteGame( gameId, vote );
 	}
 	
-	public StatusObject<List<String>> getGamePicsURL( int gameId ){ return MONGO.getGamePics( gameId ); }
-	
 	//return the total number of games; -1 in case of failure
 	public StatusObject<Long> getGameCount() { return MONGO.getTotalGamesCount(); }
 	
@@ -143,7 +143,34 @@ public class LogicBridge {
 	
 	public StatusObject<DataNavigator> searchGames( String SEARCHED_STRING ){ return MONGO.searchGames(SEARCHED_STRING); }
 	
-
+	//  STATISTICS
+	
+	//  Most liked games year by year
+	public StatusObject<List<Statistics>> getMostLikedGameByYearStats(){ return MONGO.getMostLikedGameByYearStats(); }
+		
+	//  Most viewed games year by year
+	public StatusObject<List<Statistics>> getMostViewedGameByYearStats(){ return MONGO.getMostViewedGameByYearStats(); }
+		
+	//  Number of games released year by year
+	public StatusObject<HashMap<Integer,Integer>>  getReleasedGameCountByYearStats(){ return MONGO.getReleasedGameCountByYearStats(); }
+	
+	//  Number of games released year by year and grouped by genres
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){ return MONGO.getReleasedGameCountByYearAndGenStats(); }
+	
+	//  Most viewed games for each generes
+	public StatusObject<HashMap<String,Statistics>>  getMostViewedGameByGenStats(){ return MONGO.getMostViewedGameByGenStats();	}
+		
+	//  Most liked games for each generes
+	public StatusObject<HashMap<String,Statistics>> getMostLikedGamesByGenStats(){ return MONGO.getMostLikedGamesByGenStats(); }
+			
+	//  Percentage of the total games used by each generes(games of the generes/total games)
+	public StatusObject<HashMap<String,Double>> getGeneresGameCountStats(){ return MONGO.getGeneresGameCountStats(); }
+		
+	//  Percentage of the total views give for each generes(sum of the viewsCount of the generes/total views)
+	public StatusObject<HashMap<String,Double>> getGeneresMostViewedCountStats(){ return MONGO.getGeneresMostViewedCountStats(); }
+		
+	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
+	public StatusObject<HashMap<String,Double>> getGeneresPreferencesStats(){ return MONGO.getGeneresPreferencesStats(); }
 	
 	
 	//  DATASCRAPER FUNCTIONS

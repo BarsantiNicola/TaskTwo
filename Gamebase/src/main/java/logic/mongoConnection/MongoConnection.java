@@ -5,16 +5,18 @@ import logic.StatusCode;
 import logic.StatusObject;
 import logic.data.Game;
 import logic.data.PreviewGame;
+import logic.data.Statistics;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.time.Year;
-
+import java.text.SimpleDateFormat;
 import com.mongodb.ServerAddress;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoSocketOpenException;
@@ -26,6 +28,8 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import com.mongodb.client.model.Updates;
 import static com.mongodb.client.model.Filters.*;
+
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -34,6 +38,7 @@ public class MongoConnection {
     
 	private MongoClient mongoClient;    
     private MongoCollection<Game> gamesCollection; 
+    private MongoCollection<Document> statisticsCollection;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                               COSTRUCTORS                                                       //
@@ -50,7 +55,8 @@ public class MongoConnection {
         	ServerAddress server = new ServerAddress( ipAddr , port );
     		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
     		mongoClient = new MongoClient( server , MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());      
-    		gamesCollection = mongoClient.getDatabase("myDb").getCollection("games",Game.class); 
+    		gamesCollection = mongoClient.getDatabase("myDb2").getCollection("games",Game.class); 
+    		statisticsCollection = mongoClient.getDatabase("myDb2").getCollection("games",Document.class);
     		
     	}
     
@@ -228,36 +234,6 @@ public class MongoConnection {
     	
     }
     
-    //  the function gives all the images URL of the given game
-    public StatusObject<List<String>> getGamePics( int gameId ){
-    	
-    	try {
-    		
-    		Game game = getGame(gameId).getValue();
-    		
-    		if( game == null ) {
-    			
-    			System.out.println("---> [MongoConnector][GetGamePics] Error, game not found" );
-    			return new StatusObject<List<String>>( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND , null );
-    			
-    		}
-    		
-    		if( game.getMultimedia() == null ){
-    			System.out.println("---> [MongoConnector][GetGamePics] Error, the game doesn't have multimedia datas" );
-    			return new StatusObject<List<String>>( StatusCode.ERR_DOCUMENT_MULTIMEDIA_FIELD_NOT_FOUND, null );
-    		}
-    		
-    		return new StatusObject<List<String>>( StatusCode.OK, game.getMultimedia().getImages() ); 
-    		
-    	}catch( Exception e ) {
-    		
-    		System.out.println( "---> [MongoConnector][GetGamePics] Error, connection lost" );
-			return new StatusObject<List<String>>( StatusCode.ERR_NETWORK_UNREACHABLE, null );
-    		
-    	}
-    	
-    }
-    
     public StatusObject<Long> getTotalGamesCount() {
     	
     	try {
@@ -366,53 +342,28 @@ public class MongoConnection {
     //  gives a structure to navigate into the ordered list(by views) of the games
     public StatusObject<DataNavigator> getMostViewedPreviews(){
     	
-    	try {
-    		return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_VIEWED , "" ));
-    	}catch( Exception e ) {
-    		return new StatusObject<DataNavigator>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
-    	}
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_VIEWED , "" ));
     	
     }
     
     //  gives a structure to navigate into the ordered list(by rate) of the games
     public StatusObject<DataNavigator> getMostLikedPreviews(){
-    	
-    	try {
-    		
-    		return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_LIKED , "" ));
-    		
-		}catch( Exception e ) {
-			
-    		return new StatusObject<DataNavigator>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
-			
-		}
+
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_LIKED , "" ));
     	
     }
     
     //  gives a structure to navigate into the ordered list(by id) of the games
     public StatusObject<DataNavigator> getMostRecentPreviews(){
-    	
-    	try {
     		
-    		return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_RECENT , "" ));
-    		
-    	}catch( Exception e ) {
-    		
-    		return new StatusObject<DataNavigator>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
-    	}
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_RECENT , "" ));
     	
     }
     
     //  gives a structure to navigate into the ordered list(by given search string) of the games
     public StatusObject<DataNavigator> searchGames( String search ){
-    	
-    	try {
-    		
-    		return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_SEARCH , search ));
-    		
-    	}catch( Exception e ) {
-    		return new StatusObject<DataNavigator>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
-    	}
+
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_SEARCH , search ));
     	
     }
     
@@ -449,50 +400,403 @@ public class MongoConnection {
     	}
     }
 
-    
-    //  Most liked games year by year
-	public StatusObject<HashMap<Year,String>> getMostLikedGameByYearStats(){
-		return null;
-	}
+	@SuppressWarnings("deprecation")
+	public StatusObject<List<Statistics>> getMostLikedGameByYearStats(){
+		
+		BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.rating", 1));
+	    
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",1));
+		         
+		List<Statistics> result = new ArrayList<>();
+		MongoCursor<Document> res = null;
+		Document data;
+		DateFormat df1 = new SimpleDateFormat("yyyy");
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
+			System.out.println("Statistiche raccolte " + res );
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<List<Statistics>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+
+			try {
+				
+				result.add(new Statistics(df1.parse(String.valueOf(data.get("_id",Document.class).getInteger("year"))).getYear(), 
+						null,
+						data.get("max",Document.class).getString("title"),data.get("max",Document.class).getDouble("rating")));
+
+			}catch(Exception e) {}
+		
+		}
+
+		return new StatusObject<List<Statistics>>(StatusCode.OK,result);
 	
-	//  Most liked games for each generes
-	public StatusObject<HashMap<String,String>> getMostLikedGamesByGenStats(){
-		return null;
 	}
 	
 	//  Most viewed games year by year
-	public StatusObject<HashMap<Year,String>> getMostViewedGameByYearStats(){
-		return null;
-	}
-	
-	//  Most viewed games for each generes
-	public StatusObject<HashMap<String,String>>  getMostViewedGameByGenStats(){
-		return null;		
+	@SuppressWarnings({ "deprecation" })
+	public StatusObject<List<Statistics>> getMostViewedGameByYearStats(){
+		
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.viewsCount", 1));
+	    
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",1));
+		         
+		List<Statistics> result = new ArrayList<>();
+		MongoCursor<Document> res = null;
+		Document data;
+		DateFormat df1 = new SimpleDateFormat("yyyy");
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
+			System.out.println("Statistiche raccolte " + res );
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<List<Statistics>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+
+			try {
+				
+				result.add(new Statistics(df1.parse(String.valueOf(data.get("_id",Document.class).getInteger("year"))).getYear(), 
+						data.get("max",Document.class).getInteger("viewsCount"),
+						data.get("max",Document.class).getString("title"),null));
+
+			}catch(Exception e) {}
+		
+		}
+
+		return new StatusObject<List<Statistics>>(StatusCode.OK,result);
+		
 	}
 	
 	//  Number of games released year by year
-	public StatusObject<HashMap<Year,Integer>>  getReleasedGameCountByYearStats(){
-		return null;
+	@SuppressWarnings("deprecation")
+	public StatusObject<HashMap<Integer,Integer>>  getReleasedGameCountByYearStats(){
+	
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))));
+	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+
+		HashMap<Integer,Integer> result = new HashMap<>();
+		MongoCursor<Document> res = null;
+		Document data;
+		DateFormat df1 = new SimpleDateFormat("yyyy");
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
+			
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<HashMap<Integer,Integer>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+			try {
+				
+				result.put(df1.parse(String.valueOf(data.get("_id",Document.class).getInteger("year"))).getYear(), data.getInteger("count"));
+			
+			}catch(Exception e) {}
+		
+		}
+
+		return new StatusObject<HashMap<Integer,Integer>>(StatusCode.OK,result);
+		
 	}
 	
 	//  Number of games released year by year and grouped by genres
-	public StatusObject<HashMap<Year,HashMap<String,List<Integer>>>> getReleasedGameCountByYearAndGenStats(){
-		return null;
+	@SuppressWarnings("deprecation")
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){
+
+		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))).append("generes", "$genres"));
+	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+	  	 
+		HashMap<Integer,HashMap<String,Integer>> result = new HashMap<>();
+		HashMap<String,Integer> genresGames;
+		
+		MongoCursor<Document> res = null;
+		Document data;
+		DateFormat df1 = new SimpleDateFormat("yyyy");
+		Integer year= null;
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			
+		}catch(Exception e ) {
+			e.printStackTrace();
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+			try {
+				if( data.get("_id",Document.class).getInteger("year") == null ) continue;
+				year = df1.parse(String.valueOf(data.get("_id",Document.class).getInteger("year"))).getYear();
+				if( result.containsKey(year))
+					genresGames = result.remove(year);
+				else
+					genresGames = new HashMap<String,Integer>();
+				genresGames.put(data.get("_id",Document.class).getString("generes") , data.getInteger("count"));
+				result.put(year,genresGames);
+			
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		
+		}
+
+		return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.OK,result);
+	}
+	
+	//  Most viewed games for each generes
+	public StatusObject<HashMap<String,Statistics>>  getMostViewedGameByGenStats(){
+		
+		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.viewsCount", 1));
+	    
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",1));
+
+		MongoCursor<Document> res = null;
+		Document data;
+		HashMap<String,Statistics> result = new HashMap<>();
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(split,iniSort,group,project,sort)).allowDiskUse(true).iterator();
+			System.out.println("Statistiche raccolte " + res );
+		}catch(Exception e ) {
+			e.printStackTrace();
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<HashMap<String,Statistics>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+			
+
+			try {
+				
+				result.put(data.get("_id",Document.class).getString("generes"), new Statistics(null,data.get("max",Document.class).getInteger("viewsCount"),data.get("max",Document.class).getString("title"),null));
+
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		
+		}
+
+		return new StatusObject<HashMap<String,Statistics>>(StatusCode.OK,result);	
+	}
+	
+	//  Most liked games for each generes
+	public StatusObject<HashMap<String,Statistics>> getMostLikedGamesByGenStats(){
+
+		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.rating", 1));
+	    
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",1));
+
+		MongoCursor<Document> res = null;
+		Document data;
+		HashMap<String,Statistics> result = new HashMap<>();
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(split,iniSort,group,project,sort)).allowDiskUse(true).iterator();
+			System.out.println("Statistiche raccolte " + res );
+		}catch(Exception e ) {
+			e.printStackTrace();
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<HashMap<String,Statistics>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+			
+
+			try {
+				
+				result.put(data.get("_id",Document.class).getString("generes"), new Statistics(null,null,data.get("max",Document.class).getString("title"),data.get("max",Document.class).getDouble("rating")));
+
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		
+		}
+
+		return new StatusObject<HashMap<String,Statistics>>(StatusCode.OK,result);	
 	}
 	
 	//  Percentage of the total games used by each generes(games of the generes/total games)
-	public StatusObject<HashMap<String,Float>> getGeneresGameCountStats(){
-		return null;
+	public StatusObject<HashMap<String,Double>> getGeneresGameCountStats(){
+		
+		Long total = getTotalGamesCount().getValue();
+		if( total == null ) {
+			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+		}
+		
+		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));	    
+	    BasicDBObject groupFields = group_id.append("count",  new BasicDBObject("$sum" , 1));
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+
+		HashMap<String,Double> result = new HashMap<>();
+		MongoCursor<Document> res = null;
+		Document data;
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+			try {
+				
+				result.put(data.get("_id", Document.class).getString("generes"), Double.parseDouble(new DecimalFormat( "0.0000" ).format(((double)data.get("_id", Document.class).getInteger("count"))/total)));
+			
+			}catch(Exception e) {}
+		
+		}
+
+		return new StatusObject<HashMap<String,Double>>(StatusCode.OK,result);
+
 	}
 	
+	// DA FINIRE
 	//  Percentage of the total views give for each generes(sum of the viewsCount of the generes/total views)
-	public StatusObject<HashMap<String,Float>> getGeneresMostViewedCountStats(){
-		return null;
+	public StatusObject<HashMap<String,Double>> getGeneresMostViewedCountStats(){
+		Long total = getTotalGamesCount().getValue();
+		if( total == null ) {
+			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+		}
+		
+		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));	    
+	    BasicDBObject groupFields = group_id.append("count",  new BasicDBObject("$sum" , "$viewsCount"));
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+
+		HashMap<String,Double> result = new HashMap<>();
+		MongoCursor<Document> res = null;
+		Document data;
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+			try {
+				
+				result.put(data.get("_id", Document.class).getString("generes"), Double.parseDouble(new DecimalFormat( "0.0000" ).format(((double)data.get("_id", Document.class).getInteger("count"))/total)));
+			
+			}catch(Exception e) {}
+		
+		}
+
+		return new StatusObject<HashMap<String,Double>>(StatusCode.OK,result);
+
 	}
-	
+	//DA FINIRE
 	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
-	public StatusObject<HashMap<String,Float>> getGeneresPreferencesStats(){
-		return null;
+	public StatusObject<HashMap<String,Double>> getGeneresPreferencesStats(){
+		
+		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));	    
+	    BasicDBObject groupFields = group_id.append("count",  new BasicDBObject("$sum" , "$favouritesCount"));
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+
+		HashMap<String,Double> result = new HashMap<>();
+		MongoCursor<Document> res = null;
+		Document data;
+		
+		try {
+			
+			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][GetReleaeGameCountByYearStats] Error, network unreachable" );
+			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+		while( res.hasNext()) {
+			
+			data = res.next();
+			try {
+				
+				result.put(data.get("_id", Document.class).getString("generes"), Double.parseDouble(new DecimalFormat( "0.0000" ).format(((double)data.get("_id", Document.class).getInteger("count")))));
+			
+			}catch(Exception e) {}
+		
+		}
+
+		return new StatusObject<HashMap<String,Double>>(StatusCode.OK,result);
+
 	}
 	
 	private StatusCode addressVerify( String ipAddr , int port ) {
@@ -548,10 +852,29 @@ public class MongoConnection {
     	
     	System.out.println("------  [Mongo Connection test]  ------");
     	try {
-    		MongoConnection client = new MongoConnection("172.16.0.80",27018);
+    		MongoConnection client = new MongoConnection("127.0.0.1",27017);
         	System.out.println("ok!");
+        	List<Statistics> prova = client.getMostViewedGameByYearStats().getValue();
+        	System.out.println("prova: " + prova );
+        	for( Statistics p: prova )
+        		System.out.println("Anno: " + p.getYear() + " Views: " + p.getViewsCount() + " Game: " + p.getGames() );
+        	
+        	prova = client.getMostLikedGameByYearStats().getValue();
+        	System.out.println("prova: " + prova );
+        	for( Statistics p: prova )
+        		System.out.println("Anno: " + p.getYear() + " Views: " + p.getRating() + " Game: " + p.getGames() );
         	//client.favouriterConsistencyAdapt();
-        	System.out.println(client.getGenres());
+        	
+        	HashMap<Integer,HashMap<String,Integer>> val = client.getReleasedGameCountByYearAndGenStats().getValue();
+            HashMap<String,Integer> values;
+        	for( Integer year: val.keySet()) {
+        		values = val.get(year);
+        		for( String gen : values.keySet())
+        			System.out.println("Anno: " + year + " Genere: " + gen + " Count: " + values.get(gen));
+        	}
+        	HashMap<String,Statistics> val2 = client.getMostViewedGameByGenStats().getValue();
+        	for( String gen:val2.keySet())
+        		System.out.println("Genere: " + gen + " Count: " + val2.get(gen).getViewsCount() + "Game: "+ val2.get(gen).getGames() );
         	client.closeConnection();
     	}catch(UnknownHostException | MongoSocketOpenException e) {
     		System.out.println("errore");
