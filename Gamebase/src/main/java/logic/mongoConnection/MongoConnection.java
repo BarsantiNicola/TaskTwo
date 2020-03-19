@@ -92,7 +92,7 @@ public class MongoConnection {
     	}
     }
     
-    public StatusObject<String> incrementGameViews( int gameID ) {
+    public StatusCode incrementGameViews( int gameID ) {
 		
     	Bson filter = eq( "_id", gameID );
     	Bson updateOperation = Updates.inc( "viewsCount", 1 );
@@ -104,27 +104,27 @@ public class MongoConnection {
     		System.out.println( "---> [MongoConnector][GetGame] Updating the game views count" );
     		if( res.getMatchedCount() == 0 ){
     			System.out.println( "---> [MongoConnector][GetGame] Error, game not found" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND );
+    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
     		}
 
     		if( res.getModifiedCount() == 0 ) {
     			System.out.println( "---> [MongoConnector][GetGame] Error, game found but not modified" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_UNKNOWN );
+    			return StatusCode.ERR_DOCUMENT_UNKNOWN;
     		}
 		
     		System.out.println( "---> [MongoConnector][GetGame] Views count correctly updated" );
-    		return StatusObject.buildError( StatusCode.OK );
+    		return StatusCode.OK;
     		
     	}catch( Exception e ) {
     		
     		System.out.println( "---> [MongoConnector][GetGame] Error, network unreachable" );
-    		return StatusObject.buildError( StatusCode.ERR_NETWORK_UNREACHABLE );
+    		return StatusCode.ERR_NETWORK_UNREACHABLE;
     		
     	}
     	
     }
     
-    public StatusObject<String> addGameDescription( int gameId , String description ) {
+    public StatusCode addGameDescription( int gameId , String description ) {
     	
     	try {
 
@@ -136,29 +136,29 @@ public class MongoConnection {
     		if( res.getMatchedCount() == 0 ){
     			
     			System.out.println( "---> [MongoConnector][AddGameDescription] Error, game not found" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND );
+    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
     			
     		}
     	
     		if( res.getModifiedCount() == 0 ) {
     			
     			System.out.println( "---> [MongoConnector][AddGameDescription] Error, game not modified, the game has already a description" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_UNKNOWN );
+    			return StatusCode.ERR_DOCUMENT_UNKNOWN;
     			
     		}
     		
-    		return StatusObject.buildError( StatusCode.OK );
+    		return StatusCode.OK;
     		
     	}catch( Exception e ){
     		
     		System.out.println( "---> [MongoConnector][AddGameDescription] Error, Connection Lost" );
-    		return StatusObject.buildError( StatusCode.ERR_NETWORK_UNREACHABLE );
+    		return StatusCode.ERR_NETWORK_UNREACHABLE;
     		
     	}
     	
     }
     
-    public StatusObject<String> deleteGame( int id ) {
+    public StatusCode deleteGame( int id ) {
     	
     	try {
     		
@@ -168,28 +168,28 @@ public class MongoConnection {
     		if( res.getDeletedCount() == 0 ) {
     			
     			System.out.println( "---> [MongoConnector][DeleteGame] Error, game not found" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND );
+    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
     			
     		}
     		
-    		return StatusObject.buildError( StatusCode.OK );
+    		return StatusCode.OK;
     		
     	}catch(Exception e) {
     		
     		System.out.println( "---> [MongoConnector][DeleteGame] Error, Connection Lost" );
-    		return StatusObject.buildError( StatusCode.ERR_NETWORK_UNREACHABLE );
+    		return StatusCode.ERR_NETWORK_UNREACHABLE;
     		
     	}
     }
     
-    public StatusObject<String> voteGame( int gameId , int vote ) {
+    public StatusCode voteGame( int gameId , int vote ) {
     	
     	try {
 
     		if( vote < 0 || vote > 5 ) {
     			
     			System.out.println( "---> [MongoConnector][VoteGame] Error, the vote must be in [0,5]" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_INVALID_VOTE );
+    			return StatusCode.ERR_DOCUMENT_INVALID_VOTE;
     			
     		}
     	
@@ -198,7 +198,7 @@ public class MongoConnection {
     		if( game == null ) {
     			
     			System.out.println( "---> [MongoConnector][VoteGame] Error, game not found" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND );
+    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
     			
     		}
     		
@@ -212,23 +212,23 @@ public class MongoConnection {
     		if( res.getMatchedCount() == 0 ){
     			
     			System.out.println( "---> [MongoConnector][VoteGame] Error, game not found" );
-    			return StatusObject.buildError(StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND);
+    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
     			
     		}
     	
     		if( res.getModifiedCount() == 0 ) {
     			
     			System.out.println( "---> [MongoConnector][VoteGame] Error, game not modified, the game has already a description" );
-    			return StatusObject.buildError(StatusCode.ERR_DOCUMENT_UNKNOWN);
+    			return StatusCode.ERR_DOCUMENT_UNKNOWN;
     			
     		}
     		
-    		return StatusObject.buildError(StatusCode.OK);
+    		return StatusCode.OK;
     		
     	}catch(Exception e) {
     		
     		System.out.println("---> [MongoConnector][VotoGame] Error, Connection Lost");
-    		return StatusObject.buildError( StatusCode.ERR_NETWORK_UNREACHABLE );
+    		return StatusCode.ERR_NETWORK_UNREACHABLE;
     		
     	}
     	
@@ -271,17 +271,17 @@ public class MongoConnection {
 
     }
 
-    public StatusObject<String> closeConnection() {
+    public StatusCode closeConnection() {
     	
     	try{ 
     		
     		this.mongoClient.close();
     		System.out.println( "---> [MongoConnector][CloseConnection] Connection close" );
-    		return StatusObject.buildError( StatusCode.OK );
+    		return StatusCode.OK;
     	}catch( Exception e ) {
 
     		System.out.println( "---> [MongoConnector][CloseConnection] Unknown error during the close of the connection" );
-    		return StatusObject.buildError( StatusCode.ERR_DOCUMENT_UNKNOWN );
+    		return StatusCode.ERR_DOCUMENT_UNKNOWN;
     		
     	}
     	
@@ -367,7 +367,7 @@ public class MongoConnection {
     	
     }
     
-    public StatusObject<String> updateFavouritesCount( int gameId , int count ) {
+    public StatusCode updateFavouritesCount( int gameId , int count ) {
     	
     	try {
     		
@@ -379,23 +379,23 @@ public class MongoConnection {
     		if( res.getMatchedCount() == 0 ){
     			
     			System.out.println( "--->  [MongoConnector][UpdateFavouritesCount] Error, game not found" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND );
+    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
     			
     		}
     	
     		if( res.getModifiedCount() == 0 ) {
     			
     			System.out.println( "---> [MongoConnector][UpdateFavouritesCount] Error, game not modified, the game has already updated" );
-    			return StatusObject.buildError( StatusCode.ERR_DOCUMENT_UNKNOWN );
+    			return StatusCode.ERR_DOCUMENT_UNKNOWN;
     			
     		}
     		
-			return StatusObject.buildError( StatusCode.OK );
+			return StatusCode.OK;
     		
     	}catch( Exception e ) {
     		
     		System.out.println( "---> [MongoConnector][UpdateFavouritesCount] Error, Connection Lost" );
-			return StatusObject.buildError( StatusCode.ERR_NETWORK_UNREACHABLE );
+			return StatusCode.ERR_NETWORK_UNREACHABLE;
     		
     	}
     }

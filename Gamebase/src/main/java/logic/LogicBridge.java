@@ -108,19 +108,19 @@ public class LogicBridge {
 		return MONGO.getGame( gameId );
 	}
 	
-	public StatusObject<String> updateGameViews( int gameId ){
+	public StatusCode updateGameViews( int gameId ){
 		return MONGO.incrementGameViews(gameId);
 	}
 	
-	private StatusObject<String> addGameDescription( int ID , String DESCRIPTION ) { 
+	private StatusCode addGameDescription( int ID , String DESCRIPTION ) { 
 		return MONGO.addGameDescription( ID ,DESCRIPTION);
 	}
 	
-	public StatusObject<String> deleteGame( int ID ) { 
+	public StatusCode deleteGame( int ID ) { 
 		return MONGO.deleteGame(ID);
 	}
 	
-	public StatusObject<String> voteGame( int gameId , int vote ) { 
+	public StatusCode voteGame( int gameId , int vote ) { 
 		return MONGO.voteGame( gameId, vote );
 	}
 	
