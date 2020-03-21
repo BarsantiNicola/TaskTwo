@@ -30,7 +30,10 @@ public class DataNavigator{
 	private final Bson idSort;
 	private final Bson ratingSort;
 	private final Bson viewsSort;
-	
+	private NavElem cache;
+	private int cacheSize;
+	private final int MAX_CACHE=20;
+	private final int CACHE_RESIZE = 5;
 	DataNavigator( MongoCollection<Game> data , int maxNumGames , NavType type , String search ){
 		
 		this.data = data;
@@ -42,6 +45,8 @@ public class DataNavigator{
 		this.idSort = Sorts.descending( "_id" );
 		this.ratingSort = Sorts.descending("rating");
 		this.viewsSort = Sorts.descending( "viewsCount" );
+		this.cache = null;
+		this.cacheSize = 0;
 		
 	}
 	
@@ -49,6 +54,14 @@ public class DataNavigator{
 		
 		List<PreviewGame> previews = new ArrayList<>();
 		MongoCursor<Game> games;
+		
+		if( cache != null && cache.hasNext()) {
+			
+			cache = cache.getNext();
+			position += numGames;
+			return new StatusObject<List<PreviewGame>>(StatusCode.OK, cache.getData());
+			
+		}
 		
 		try {
 			switch(queryType) {
@@ -80,6 +93,16 @@ public class DataNavigator{
 	
 			}
 			
+			if( this.cache == null )
+				this.cache = new NavElem(previews);
+			else {
+				if( this.cache.hasNext() == false )
+					this.cache.setNext(new NavElem(previews));
+			}
+			this.cacheSize++;
+			if( cacheSize> MAX_CACHE )
+				dropCache();
+			
 			return new StatusObject<List<PreviewGame>>( StatusCode.OK , previews );
 			
 		}catch( Exception e ) {
@@ -97,6 +120,12 @@ public class DataNavigator{
 		if( position == 0 ) 
 			return new StatusObject<List<PreviewGame>>(StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED , null);
 		
+		if( cache != null && cache.hasPrev()) {
+			cache = cache.getPrev();
+			position-=numGames;
+			return new StatusObject<List<PreviewGame>>(StatusCode.OK, cache.getData());
+			
+		}
 		MongoCursor<Game> games;
 		try {
 			switch(queryType) {
@@ -127,6 +156,16 @@ public class DataNavigator{
 			
 			}
 			
+			if( this.cache == null )
+				this.cache = new NavElem(previews);
+			else 
+				if( this.cache.hasPrev() == false )
+					this.cache.setPrev(new NavElem(previews));
+			this.cacheSize++;
+			
+			if( cacheSize> MAX_CACHE )
+				dropCache();
+			
 			return new StatusObject<List<PreviewGame>>(StatusCode.OK,previews);
 			
 		}catch( Exception e ) {
@@ -134,6 +173,39 @@ public class DataNavigator{
 			System.out.println("--->[DataNavigator][GetNextData] Error, network unreachable" );
 			return new StatusObject<List<PreviewGame>>(StatusCode.ERR_NETWORK_PARTIAL_UNREACHABLE, previews );
 			
+		}
+	}
+	
+	private void dropCache() {
+		
+		
+		NavElem leftApp = this.cache;
+		NavElem rightApp = this.cache;
+		int leftElems = 0,rightElems = 0;
+		
+		if( this.cache == null ) return;
+
+		if( cacheSize>MAX_CACHE && MAX_CACHE > CACHE_RESIZE ){
+			System.out.println("---> [DataNavigator][DropCache] Cache memory exceed max size, resizing cache");
+			while( rightApp.hasNext()) { 
+				rightApp = rightApp.getNext();
+				rightElems++;
+			}
+			while( leftApp.hasPrev()) {
+				leftApp = leftApp.getPrev();
+				rightElems++;
+			}
+			
+			if( rightElems > leftElems ) {
+				
+				for( int a = 0; a<CACHE_RESIZE;a++) 
+					rightApp = rightApp.getPrev();
+				rightApp.setNext(null);
+			}else {
+				for( int a = 0; a<CACHE_RESIZE;a++) 
+					leftApp = leftApp.getNext();
+				leftApp.setPrev(null);	
+			}
 		}
 	}
 	

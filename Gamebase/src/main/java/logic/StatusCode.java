@@ -20,6 +20,12 @@ public enum StatusCode
  ERR_DOCUMENT_INVALID_VOTE,
  ERR_DOCUMENT_MULTIMEDIA_FIELD_NOT_FOUND,
  ERR_DOCUMENT_MIN_INDEX_REACHED,
+ ERR_DOCUMENT_NO_NEXT,
+ ERR_DOCUMENT_HAS_NEXT,
+ ERR_DOCUMENT_HAS_PREV,
+ ERR_DOCUMENT_NO_PREV,
+ ERR_DOCUMENT_BAD_GAME_ID,
+ 
  
  //--------------------------------------------------------
  //                  Neo4j Error Codes
