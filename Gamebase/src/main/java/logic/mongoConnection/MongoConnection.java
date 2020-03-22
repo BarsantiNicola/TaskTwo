@@ -7,7 +7,7 @@ import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.LoggerFactory;
 
 import logic.StatusCode;
-import logic.StatusObject;
+import logic.data.StatusObject;
 import logic.data.Game;
 import logic.data.PreviewGame;
 import logic.data.Statistics;

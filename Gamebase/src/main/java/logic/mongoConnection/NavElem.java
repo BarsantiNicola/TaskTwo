@@ -1,8 +1,6 @@
 package logic.mongoConnection;
 
 import java.util.List;
-
-import logic.StatusObject;
 import logic.data.PreviewGame;
 
 class NavElem {
