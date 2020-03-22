@@ -1,11 +1,8 @@
 package logic;
 
-import java.awt.Image;
-import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 
-import logic.*;
 import logic.data.*;
 import logic.graphConnector.*;
 import logic.mongoConnection.DataNavigator;
@@ -29,7 +26,7 @@ public class LogicBridge {
 	 {
 		 try 
 		  {
-			  MONGO = new MongoConnection("127.0.0.1",27018);
+			  MONGO = new MongoConnection("127.0.0.1",27027);
 			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       //Connessione a Neo4j (ricordare di avere la VPN attiva)
 			 }
 		 catch( Exception e )
@@ -53,24 +50,21 @@ public class LogicBridge {
 		return MONGO.incrementGameViews(gameId);
 	}
 	
-	private StatusCode addGameDescription( int ID , String DESCRIPTION ) { 
-		return MONGO.addGameDescription( ID ,DESCRIPTION);
+	private StatusCode addGameDescription( int gameId , String description ) { 
+		return MONGO.addGameDescription( gameId , description);
 	}
 	
-	public StatusCode deleteGame( int ID ) { 
-		return MONGO.deleteGame(ID);
+	public StatusCode deleteGame( int gameId ) { 
+		return MONGO.deleteGame( gameId );
 	}
 	
 	public StatusCode voteGame( int gameId , int vote ) { 
 		return MONGO.voteGame( gameId, vote );
 	}
 	
-	//return the total number of games; -1 in case of failure
 	public StatusObject<Long> getGameCount() { return MONGO.getTotalGamesCount(); }
 	
-	//return a list filled with all possible genres
 	public StatusObject<List<String>> getGenres(){ return MONGO.getGenres(); }
-	
 	
 	public StatusObject<PreviewGame> getMostViewedGame() { return MONGO.getMostViewedPreview(); }
 	
@@ -82,7 +76,7 @@ public class LogicBridge {
 	
 	public StatusObject<DataNavigator> getMostRecentGames(){ return MONGO.getMostRecentPreviews(); }
 	
-	public StatusObject<DataNavigator> searchGames( String SEARCHED_STRING ){ return MONGO.searchGames(SEARCHED_STRING); }
+	public StatusObject<DataNavigator> searchGames( String searchedString ){ return MONGO.searchGames( searchedString ); }
 	
 	//  STATISTICS
 	

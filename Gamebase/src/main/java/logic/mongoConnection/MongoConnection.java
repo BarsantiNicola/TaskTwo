@@ -31,6 +31,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import com.mongodb.client.model.Updates;
@@ -249,8 +250,8 @@ public class MongoConnection {
 		}
    		
     	try {
-    	
-    		Game game = getGame( gameId ).getValue();
+
+    		Game game = getGame( gameId ).element;
     		
     		if( game == null ) {
     			
@@ -569,7 +570,7 @@ public class MongoConnection {
 	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){
 
 		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
-	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate"))).append("generes", "$genres");
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
 	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
@@ -714,7 +715,7 @@ public class MongoConnection {
 	
 	public StatusObject<HashMap<String,Double>> getGeneresGameCountStats(){
 		
-		Long total = getTotalGamesCount().getValue();
+		Long total = getTotalGamesCount().element;
 		if( total == null ) {
 			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
 		}
@@ -759,7 +760,7 @@ public class MongoConnection {
 	// DA FINIRE
 	//  Percentage of the total views give for each generes(sum of the viewsCount of the generes/total views)
 	public StatusObject<HashMap<String,Double>> getGeneresMostViewedCountStats(){
-		Long total = getTotalGamesCount().getValue();
+		Long total = getTotalGamesCount().element;
 		if( total == null ) {
 			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
 		}
@@ -895,9 +896,10 @@ public class MongoConnection {
     	String[] ipAddr = { "127.0.0.1" , "172.16.0.80","305.0.0.0","0..2.0","5,2:3,4","-1.0.0.0","0.0.0.0","255.255.255.255","","50.50.256.50","0.0.0.1000"};
     	int[] ports = { 27017,27018,80};
     	MongoConnection client;
+    	long timer; 
     	
     	boolean[] cResults = { true,true,false,false,false,false,true,true,false,false,false};
-    /*	for( int a = 0; a<ports.length; a++ )
+    	for( int a = 0; a<ports.length; a++ )
     		for( int b = 0; b<ipAddr.length; b++ )
     			try {
     				System.out.println("--->[TEST][MongoConnection] Testing ADDR: " + ipAddr[b] +":" + ports[a]);
@@ -915,13 +917,13 @@ public class MongoConnection {
     					return;
     				}
     			}
-    	System.out.println("--->[TEST][MongoConnection] Test Correctly Executed");*/
+    	System.out.println("--->[TEST][MongoConnection] Test Correctly Executed");
     	try {
     		client = new MongoConnection( "127.0.0.1" , 27017 );
     	}catch(Exception e) {
     		return;
     	}
-    	/*
+    	
     	System.out.println("----> [TEST] MongoConnection.getGame()" );
     	int[] games = { 10,100,1000,10000,-1,31,54,97,600000,1};
     	boolean[] gResults = {true,true,true,true,false,true,true,true,false,true};
@@ -929,17 +931,17 @@ public class MongoConnection {
     	StatusObject<Game> code;
     	for( int a= 0; a<games.length;a++) {
     		code = client.getGame(games[a]);
-    		if( code.getOperationResult() == StatusCode.OK && gResults[a] == false ) {
+    		if( code.statusCode == StatusCode.OK && gResults[a] == false ) {
     			System.out.println("--->[TEST][MongoConnection] Error during the test on ID: " + games[a] + " RESULT: true EXPECTED RESULT: false" );
     			return;
     		}
-    		if( code.getOperationResult() == StatusCode.OK && code.getValue() == null ) {
+    		if( code.statusCode == StatusCode.OK && code.statusCode == null ) {
     			System.out.println("--->[TEST][MongoConnection] Error during the test on ID: " + games[a] + " RESULT: false EXPECTED RESULT: true" );
     			return;
     		}
     	}
     	code = client.getGame(1);
-    	System.out.println("--->[TEST][MongoConnection.getGame] GAME EXAMPLE:\n" + gson.toJson(code.getValue()) );
+    	System.out.println("--->[TEST][MongoConnection.getGame] GAME EXAMPLE:\n" + gson.toJson(code.statusCode) );
     	      	
     	System.out.println("--->[TEST][MongoConnection.getGame] Test Correctly Executed");        	
     	
@@ -947,7 +949,7 @@ public class MongoConnection {
     	Game game;
     	StatusCode rCode;
     	for( int a= 0; a<games.length;a++) {
-    		game = client.getGame(games[a]).getValue();
+    		game = client.getGame(games[a]).element;
     		rCode = client.incrementGameViews(games[a]);
     		if( rCode == StatusCode.OK && gResults[a] == false ){
     			System.out.println("--->[TEST][MongoConnection] Error during the test on ID: " + games[a] + " RESULT: true EXPECTED RESULT: false" );
@@ -958,65 +960,96 @@ public class MongoConnection {
     			return;
     		}
     		if( game != null )
-    			if( game.getViewsCount() != (client.getGame(games[a]).getValue().getViewsCount()-1)){
+    			if( game.getViewsCount() != (client.getGame(games[a]).element.getViewsCount()-1)){
     				System.out.println("--->[TEST][MongoConnection] Error during the test on ID: " + games[a] + " RESULT NOT UPDATED" );
     				return;
     			}
 
     	}
-    	System.out.println("----> [TEST][MongoConnection.incrementGameViews] Test Correctly Executed" );*/
+    	System.out.println("----> [TEST][MongoConnection.incrementGameViews] Test Correctly Executed" );
     	System.out.println("---> [TEST][Statistics]" );
-    /*	if( client.getMostViewedPreview().getOperationResult() == StatusCode.OK )
+    	timer = System.currentTimeMillis();
+    	if( client.getMostViewedPreview().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetMostViewedPreview] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetMostViewedPreview] RESULT: ERROR" );
+   
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
     	
-    	if( client.getMostPopularPreview().getOperationResult() == StatusCode.OK )
+    	if( client.getMostPopularPreview().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetMostPopularPreview] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetMostPopularPreview] RESULT: ERROR" );
     	
-    	if( client.getMostLikedGameByYearStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getMostLikedGameByYearStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetMostLikedGameByYearStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetMostLikedGameByYearStats] RESULT: ERROR" );
-    	*/
-    	if( client.getMostViewedGameByYearStats().getOperationResult() == StatusCode.OK )
+    	
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getMostViewedGameByYearStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetMostViewedGameByYearStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetMostViewedGameByYearStats] RESULT: ERROR" );
     	
-    	if( client.getMostLikedGamesByGenStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getMostLikedGamesByGenStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetMostLikedGamesByGenStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetMostLikedGamesByGenStats] RESULT: ERROR" );
     	
-    	if( client.getMostViewedGameByGenStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getMostViewedGameByGenStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetMostViewedGameByGenStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetMostViewedGameByGenStats] RESULT: ERROR" );
     	
-    	if( client.getGeneresGameCountStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getGeneresGameCountStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetGeneresGameCountStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetGeneresGameCountStats] RESULT: ERROR" );
     	
-    	if( client.getGeneresMostViewedCountStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getGeneresMostViewedCountStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetGeneresMostViewedCountStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetGeneresMostViewedCountStats] RESULT: ERROR" );
     	
-    	if( client.getGeneresPreferencesStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getGeneresPreferencesStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetGeneresPreferencesStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetGeneresPreferencesStats] RESULT: ERROR" );
     	
-    	if( client.getReleasedGameCountByYearAndGenStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getReleasedGameCountByYearAndGenStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetReleasedGameCountByYearAndGenStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetReleasedGameCountByYearAndGenStats] RESULT: ERROR" );
     	
-    	if( client.getReleasedGameCountByYearStats().getOperationResult() == StatusCode.OK )
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer));
+    	timer = System.currentTimeMillis();
+    	
+    	if( client.getReleasedGameCountByYearStats().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetReleasedGameCountByYearStats] RESULT: OK" );
     	else
     		System.out.println("----> [TEST][GetReleasedGameCountByYearStats] RESULT: ERROR" );
