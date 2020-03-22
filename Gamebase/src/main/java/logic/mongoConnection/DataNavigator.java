@@ -15,7 +15,7 @@ import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 
 import logic.StatusCode;
-import logic.StatusObject;
+import logic.data.StatusObject;
 import logic.data.Game;
 import logic.data.PreviewGame;
 

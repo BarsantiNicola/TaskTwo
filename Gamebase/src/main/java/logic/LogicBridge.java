@@ -5,7 +5,9 @@ import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 
+import logic.*;
 import logic.data.*;
+import logic.graphConnector.*;
 import logic.mongoConnection.DataNavigator;
 import logic.mongoConnection.MongoConnection;
 
@@ -21,86 +23,25 @@ import logic.mongoConnection.MongoConnection;
 public class LogicBridge {
 	
 	MongoConnection MONGO;
+	GraphConnector graph;
 	
-	public LogicBridge(){
-		
-		try {
-			
-			MONGO = new MongoConnection("127.0.0.1",27018);
-			
-		}catch( Exception e ) {
-			
-			System.out.println("-->[LogicBridge] Fatal Error, Invalid NET configuration");
-			System.exit(1);
-			
-		}
-		
-	}
-	
-	//////  GRAPH FUNCTIONS
-	
-	//return USER,ADMINISTRATOR,ANALYST,NO_USER( no user with the given username ), WRONG_PASSWORD( user exists, but password is wrong)
-	public UserType login( String USERNAME , String PASSWORD ) { return UserType.NO_USER; }
-	
-	//return false if the username is already used
-	public boolean signUp( String USERNAME, String PASSWORD ) { return false; }
-	
-	//in case of failure return -1
-	public int getFollowersNumber( String USERNAME ) { return 0; }
-	
-	//in case of failure return -1
-	public int getLikedGamesNumber( String USERNAME ) { return 0; }
-	
-	public List<User> getFriends( String USERNAME ) { return null; }
-	
-	//simply return a friend given his/her username
-	public User getFriend( String USERNAME ) { return null; }
-	
-	public boolean addFriend( String USERNAME ) { return false; }
-	
-	public boolean removeFriend( String USERNAME ) { return false; }
+	public LogicBridge()
+	 {
+		 try 
+		  {
+			  MONGO = new MongoConnection("127.0.0.1",27018);
+			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       //Connessione a Neo4j (ricordare di avere la VPN attiva)
+			 }
+		 catch( Exception e )
+		  {
+		   System.out.println("-->[LogicBridge] Fatal Error, Invalid NET configuration");
+			  System.exit(1);
+			 }
+	 }
 
-	public boolean deleteUser( String USERNAME ) { return false; }
 	
-	public boolean becomeAnalyst( String USERNAME ) { return false; }
+	/* Graph Functions moved in the appropriate GraphInterface.java (logic.graphConnector package) */
 	
-	public Image getUserPicture( String USERNAME ) {return null; }
-	
-	public List<PreviewGame> getMyGames( String USERNAME){ return null;}
-	
-	//if AGE==-1, don't update AGE whithin the db. The same if NAME, SURNAME, FAVORITE_GENRE, GENDER are NULL.
-	public boolean updateUserInformation( int AGE, String NAME, String SURNAME, String FAVORITE_GENRE, String GENDER, String EMAIL ) { return false; }
-	
-	//USERNAME follow FOLLOWED?
-	public boolean isFollowed( String USERNAME, String FOLLOWED ) { return false; }
-	
-	//return the total number of users; -1 in case of failure
-	public int getUserCount() { return -1;}
-	
-	public List<PreviewGame> getFeaturedGames( String USERNAME ){ return null; }
-	
-	public List<User> getFeaturedUsers( String USERNAME ){ return null; }
-	
-	//pass the username in order to avoid returning a list containing the username itself
-	public List<User> searchUsers( String USERNAME, String SEARCHED_STRING ){ return null; }
-	
-	public boolean follow( String USERNAME, String USERNAME_TO_FOLLOW ) { return false; }
-	
-	public boolean unfollow( String USERNAME, String USERNAME_TO_UNFOLLOW ) { return false; }
-	
-	public List<Game> getUserGames( String USERNAME ){ return null; }
-	
-	public boolean addUserGame( String USERNAME , String GAME ) { 
-
-		//MONGO.updateFavouritesCount( GAME , 1);  //  TO ACTIVATE WHEN GRAPH PART IS READY
-		return false; 
-	}
-	
-	public boolean removeUserGame( String USERNAME , String GAME ) {
-	
-		//MONGO.updateFavouritesCount( GAME , -1);  // TO ACTIVATE WHEN GRAPH PART IS READY
-		return false;
-	}
 	
 	//////  DOCUMENT FUNCTIONS
 	
@@ -185,5 +126,6 @@ public class LogicBridge {
 	
 	public void closeConnection(){
 		MONGO.closeConnection();
+		graph.close();                 //Chiude la connessione a Neo4j
 	}
 }
