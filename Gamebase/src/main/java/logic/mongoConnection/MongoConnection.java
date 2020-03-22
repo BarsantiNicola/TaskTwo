@@ -435,7 +435,7 @@ public class MongoConnection {
 	@SuppressWarnings("deprecation")
 	public StatusObject<List<Statistics>> getMostLikedGameByYearStats(){
 		
-		BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))));
+		BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year",  new BasicDBObject("$year", "$releaseDate")));
 	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
 	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.rating", 1));
 	    
@@ -481,7 +481,7 @@ public class MongoConnection {
 	@SuppressWarnings({ "deprecation" })
 	public StatusObject<List<Statistics>> getMostViewedGameByYearStats(){
 		
-	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))));
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year",  new BasicDBObject("$year", "$releaseDate")));
 	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
 	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.viewsCount", 1));
 	    
@@ -528,7 +528,7 @@ public class MongoConnection {
 	@SuppressWarnings("deprecation")
 	public StatusObject<HashMap<Integer,Integer>>  getReleasedGameCountByYearStats(){
 	
-	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))));
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")));
 	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
@@ -569,7 +569,7 @@ public class MongoConnection {
 	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){
 
 		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
-	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", new BasicDBObject("$arrayElemAt" ,  Arrays.asList("$releases.releaseDate",0)))).append("generes", "$genres"));
+	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate"))).append("generes", "$genres");
 	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
@@ -887,7 +887,7 @@ public class MongoConnection {
 	
     public static void main(String[] args) throws InterruptedException {
     	
-    	System.out.println( "--- Testing function for MongoDB connector ---" );
+   	System.out.println( "--- Testing function for MongoDB connector ---" );
     	System.out.println("------  [Mongo Connection test]  ------");
     	
     	System.out.println("----> [TEST] MongoConnection Costructor" );
@@ -897,7 +897,7 @@ public class MongoConnection {
     	MongoConnection client;
     	
     	boolean[] cResults = { true,true,false,false,false,false,true,true,false,false,false};
-    	for( int a = 0; a<ports.length; a++ )
+    /*	for( int a = 0; a<ports.length; a++ )
     		for( int b = 0; b<ipAddr.length; b++ )
     			try {
     				System.out.println("--->[TEST][MongoConnection] Testing ADDR: " + ipAddr[b] +":" + ports[a]);
@@ -915,12 +915,13 @@ public class MongoConnection {
     					return;
     				}
     			}
-    	System.out.println("--->[TEST][MongoConnection] Test Correctly Executed");
+    	System.out.println("--->[TEST][MongoConnection] Test Correctly Executed");*/
     	try {
     		client = new MongoConnection( "127.0.0.1" , 27017 );
     	}catch(Exception e) {
     		return;
     	}
+    	/*
     	System.out.println("----> [TEST] MongoConnection.getGame()" );
     	int[] games = { 10,100,1000,10000,-1,31,54,97,600000,1};
     	boolean[] gResults = {true,true,true,true,false,true,true,true,false,true};
@@ -963,8 +964,65 @@ public class MongoConnection {
     			}
 
     	}
-    	System.out.println("----> [TEST][MongoConnection.incrementGameViews] Test Correctly Executed" );
-
+    	System.out.println("----> [TEST][MongoConnection.incrementGameViews] Test Correctly Executed" );*/
+    	System.out.println("---> [TEST][Statistics]" );
+    /*	if( client.getMostViewedPreview().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetMostViewedPreview] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetMostViewedPreview] RESULT: ERROR" );
+    	
+    	if( client.getMostPopularPreview().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetMostPopularPreview] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetMostPopularPreview] RESULT: ERROR" );
+    	
+    	if( client.getMostLikedGameByYearStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetMostLikedGameByYearStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetMostLikedGameByYearStats] RESULT: ERROR" );
+    	*/
+    	if( client.getMostViewedGameByYearStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetMostViewedGameByYearStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetMostViewedGameByYearStats] RESULT: ERROR" );
+    	
+    	if( client.getMostLikedGamesByGenStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetMostLikedGamesByGenStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetMostLikedGamesByGenStats] RESULT: ERROR" );
+    	
+    	if( client.getMostViewedGameByGenStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetMostViewedGameByGenStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetMostViewedGameByGenStats] RESULT: ERROR" );
+    	
+    	if( client.getGeneresGameCountStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetGeneresGameCountStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetGeneresGameCountStats] RESULT: ERROR" );
+    	
+    	if( client.getGeneresMostViewedCountStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetGeneresMostViewedCountStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetGeneresMostViewedCountStats] RESULT: ERROR" );
+    	
+    	if( client.getGeneresPreferencesStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetGeneresPreferencesStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetGeneresPreferencesStats] RESULT: ERROR" );
+    	
+    	if( client.getReleasedGameCountByYearAndGenStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetReleasedGameCountByYearAndGenStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetReleasedGameCountByYearAndGenStats] RESULT: ERROR" );
+    	
+    	if( client.getReleasedGameCountByYearStats().getOperationResult() == StatusCode.OK )
+    		System.out.println("----> [TEST][GetReleasedGameCountByYearStats] RESULT: OK" );
+    	else
+    		System.out.println("----> [TEST][GetReleasedGameCountByYearStats] RESULT: ERROR" );
+    	
+    	System.out.println("------ Testing correctly ended. All the function works correctly ------");
+    	
     }        	
     
     

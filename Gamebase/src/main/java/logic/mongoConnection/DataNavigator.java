@@ -32,8 +32,9 @@ public class DataNavigator{
 	private final Bson viewsSort;
 	private NavElem cache;
 	private int cacheSize;
-	private final int MAX_CACHE=20;
-	private final int CACHE_RESIZE = 5;
+	private final int MAX_CACHE=50;
+	private final int CACHE_RESIZE = 25;
+	
 	DataNavigator( MongoCollection<Game> data , int maxNumGames , NavType type , String search ){
 		
 		this.data = data;

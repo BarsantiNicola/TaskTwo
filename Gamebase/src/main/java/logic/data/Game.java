@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.bson.Document;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,10 @@ public class Game implements Serializable{
     private Integer viewsCount;
     private Integer favouritesCount;
     private String  description;
+    private Date    releaseDate;
 
     private ArrayList<String> genres;
-    private ArrayList<ReleaseInfo> releases;
+    private ArrayList<String> releases;
     private ArrayList<PlatformInfo> sales;
     private Multimedia multimedia;
 
@@ -73,8 +75,12 @@ public class Game implements Serializable{
     public String getDescription() {
     	return description;
     }
+    
+    public Date getReleaseDate() {
+    	return releaseDate;
+    }
 
-    public ArrayList<ReleaseInfo> getReleases() {
+    public ArrayList<String> getReleases() {
         return releases;
     }
 
@@ -155,7 +161,7 @@ public class Game implements Serializable{
     	this.description = description;
     }
 
-    public void setReleases(ArrayList<ReleaseInfo> releases) {
+    public void setReleases(ArrayList<String> releases) {
         this.releases = releases;
     }
 
@@ -165,6 +171,10 @@ public class Game implements Serializable{
 
     public void setMultimedia(Multimedia multimedia) {
         this.multimedia = multimedia;
+    }
+    
+    public void setReleaseDate(Date releaseDate) {
+    	this.releaseDate = releaseDate;
     }
 
 
