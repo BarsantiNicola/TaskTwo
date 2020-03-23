@@ -26,7 +26,10 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
@@ -37,6 +40,7 @@ import org.bson.conversions.Bson;
 import com.mongodb.client.model.Updates;
 import static com.mongodb.client.model.Filters.*;
 
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -53,7 +57,8 @@ public class MongoConnection {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     
-    public MongoConnection( String ipAddr , int port ) throws UnknownHostException{
+    @SuppressWarnings("deprecation")
+	public MongoConnection( String ipAddr , int port ) throws UnknownHostException{
     	
     	LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     	Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
@@ -66,10 +71,10 @@ public class MongoConnection {
     		System.out.println( "---> [MongoConnection] Creation of the database connection" );
         	ServerAddress server = new ServerAddress( ipAddr , port );
     		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-    		mongoClient = new MongoClient( server , MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
-
-    		gamesCollection = mongoClient.getDatabase("myDb2").getCollection("games",Game.class); 
-    		statisticsCollection = mongoClient.getDatabase("myDb2").getCollection("games",Document.class);
+    		mongoClient = new MongoClient( server , MongoClientOptions.builder().readConcern(ReadConcern.LOCAL).readPreference(ReadPreference.nearest()).writeConcern(WriteConcern.W3).codecRegistry(pojoCodecRegistry).build());
+    		
+    		gamesCollection = mongoClient.getDatabase("myDb").getCollection("games",Game.class); 
+    		statisticsCollection = mongoClient.getDatabase("myDb").getCollection("games",Document.class);
     		System.out.println( "---> [MongoConnection] Connection created" );
     		
     	}
@@ -437,12 +442,12 @@ public class MongoConnection {
 	public StatusObject<List<Statistics>> getMostLikedGameByYearStats(){
 		
 		BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year",  new BasicDBObject("$year", "$releaseDate")));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
 	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.rating", 1));
 	    
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",-1));
 		         
 		List<Statistics> result = new ArrayList<>();
 		MongoCursor<Document> res = null;
@@ -483,12 +488,12 @@ public class MongoConnection {
 	public StatusObject<List<Statistics>> getMostViewedGameByYearStats(){
 		
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year",  new BasicDBObject("$year", "$releaseDate")));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
 	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.viewsCount", 1));
 	    
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",-1));
 		         
 		List<Statistics> result = new ArrayList<>();
 		MongoCursor<Document> res = null;
@@ -569,7 +574,6 @@ public class MongoConnection {
 	@SuppressWarnings("deprecation")
 	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){
 
-		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
 	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
@@ -585,7 +589,7 @@ public class MongoConnection {
 		
 		try {
 			System.out.println("---> [MongoConnection][GetReleasedGameCountByYearAndGenStats] Collecting data from the dataset...");
-			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 			
 		}catch(Exception e ) {
 			e.printStackTrace();
@@ -620,14 +624,13 @@ public class MongoConnection {
 	
 	public StatusObject<HashMap<String,Statistics>>  getMostViewedGameByGenStats(){
 		
-		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
 	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.viewsCount", 1));
 	    
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",-1));
 
 		MongoCursor<Document> res = null;
 		Document data;
@@ -636,7 +639,7 @@ public class MongoConnection {
 		try {
 			
 			System.out.println("---> [MongoConnection][GetMostViewedGameByGenStats] Collecting data from the dataset...");
-			res = statisticsCollection.aggregate(Arrays.asList(split,iniSort,group,project,sort)).allowDiskUse(true).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
 
 		}catch(Exception e ) {
 			
@@ -668,14 +671,13 @@ public class MongoConnection {
 	
 	public StatusObject<HashMap<String,Statistics>> getMostLikedGamesByGenStats(){
 
-		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$last" , "$$ROOT"));
+	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
 	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.rating", 1));
 	    
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",1));
+		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",-1));
 
 		MongoCursor<Document> res = null;
 		Document data;
@@ -684,7 +686,7 @@ public class MongoConnection {
 		try {
 			
 			System.out.println("---> [MongoConnection][GetMostLikedGamesByGenStats] Collecting data from the dataset...");
-			res = statisticsCollection.aggregate(Arrays.asList(split,iniSort,group,project,sort)).allowDiskUse(true).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
 
 		}catch(Exception e ) {
 			
@@ -720,7 +722,6 @@ public class MongoConnection {
 			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
 		}
 		
-		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));	    
 	    BasicDBObject groupFields = group_id.append("count",  new BasicDBObject("$sum" , 1));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
@@ -732,7 +733,7 @@ public class MongoConnection {
 		
 		try {
 			System.out.println("---> [MongoConnection][GetGeneresGameCountStats] Collecting data from the dataset..." );
-			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 			
 		}catch(Exception e ) {
 			
@@ -760,12 +761,12 @@ public class MongoConnection {
 	// DA FINIRE
 	//  Percentage of the total views give for each generes(sum of the viewsCount of the generes/total views)
 	public StatusObject<HashMap<String,Double>> getGeneresMostViewedCountStats(){
+		
 		Long total = getTotalGamesCount().element;
 		if( total == null ) {
 			return new StatusObject<HashMap<String,Double>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
 		}
 		
-		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));	    
 	    BasicDBObject groupFields = group_id.append("count",  new BasicDBObject("$sum" , "$viewsCount"));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
@@ -777,7 +778,7 @@ public class MongoConnection {
 		
 		try {
 			System.out.println("---> [MongoConnection][GetGeneresMostViewedCountStats] Collecting data from the dataset..." );
-			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 			
 		}catch(Exception e ) {
 			
@@ -805,7 +806,6 @@ public class MongoConnection {
 	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
 	public StatusObject<HashMap<String,Double>> getGeneresPreferencesStats(){
 		
-		BasicDBObject split = new BasicDBObject("$unwind" , "$genres" );
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));	    
 	    BasicDBObject groupFields = group_id.append("count",  new BasicDBObject("$sum" , "$favouritesCount"));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
@@ -817,7 +817,7 @@ public class MongoConnection {
 		
 		try {
 			System.out.println("---> [MongoConnection][GetGeneresPreferencesStats] Collecting data from the dataset..." );
-			res = statisticsCollection.aggregate(Arrays.asList(split,group,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 			
 		}catch(Exception e ) {
 			
@@ -897,7 +897,7 @@ public class MongoConnection {
     	int[] ports = { 27017,27018,80};
     	MongoConnection client;
     	long timer; 
-    	
+    	/*
     	boolean[] cResults = { true,true,false,false,false,false,true,true,false,false,false};
     	for( int a = 0; a<ports.length; a++ )
     		for( int b = 0; b<ipAddr.length; b++ )
@@ -917,13 +917,13 @@ public class MongoConnection {
     					return;
     				}
     			}
-    	System.out.println("--->[TEST][MongoConnection] Test Correctly Executed");
+    	System.out.println("--->[TEST][MongoConnection] Test Correctly Executed");*/
     	try {
-    		client = new MongoConnection( "127.0.0.1" , 27017 );
+    		client = new MongoConnection( "172.16.0.80" , 27018 );
     	}catch(Exception e) {
     		return;
     	}
-    	
+    	/*8
     	System.out.println("----> [TEST] MongoConnection.getGame()" );
     	int[] games = { 10,100,1000,10000,-1,31,54,97,600000,1};
     	boolean[] gResults = {true,true,true,true,false,true,true,true,false,true};
@@ -966,8 +966,9 @@ public class MongoConnection {
     			}
 
     	}
-    	System.out.println("----> [TEST][MongoConnection.incrementGameViews] Test Correctly Executed" );
-    	System.out.println("---> [TEST][Statistics]" );
+    	System.out.println("----> [TEST][MongoConnection.incrementGameViews] Test Correctly Executed" );*/
+ /*   	System.out.println("---> [TEST][Statistics]" );
+    	System.out.println("OK: " + client.getTotalGamesCount());
     	timer = System.currentTimeMillis();
     	if( client.getMostViewedPreview().statusCode == StatusCode.OK )
     		System.out.println("----> [TEST][GetMostViewedPreview] RESULT: OK" );
@@ -1055,9 +1056,28 @@ public class MongoConnection {
     		System.out.println("----> [TEST][GetReleasedGameCountByYearStats] RESULT: ERROR" );
     	
     	System.out.println("------ Testing correctly ended. All the function works correctly ------");
+*/
+    	client.updateViewsCount();
+    	client.closeConnection();
     	
     }        	
     
+    private void updateViewsCount() {
+    	
+    	MongoCursor<Game> games = this.gamesCollection.find().iterator();
+    	Game next;
+    	Bson filter;
+    	Bson update;
+    	ExponentialDistribution exp = new ExponentialDistribution(500);
+    	while(games.hasNext()) {
+    		next = games.next();
+    			filter = eq( "_id", next.getId() ); 
+    		update = Updates.set("viewsCount" , new Double(Math.floor(exp.sample())).intValue());
+    		System.out.println(next.getTitle());
+    		gamesCollection.updateOne(filter,update );
+    		System.out.println("ok");
+    	}
+    }
     
 
 

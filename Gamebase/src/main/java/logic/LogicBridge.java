@@ -26,7 +26,7 @@ public class LogicBridge {
 	 {
 		 try 
 		  {
-			  MONGO = new MongoConnection("127.0.0.1",27027);
+			  MONGO = new MongoConnection("172.16.0.80",27028);
 			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       //Connessione a Neo4j (ricordare di avere la VPN attiva)
 			 }
 		 catch( Exception e )
