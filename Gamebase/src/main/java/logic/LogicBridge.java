@@ -19,15 +19,17 @@ import logic.mongoConnection.MongoConnection;
 
 public class LogicBridge {
 	
-	MongoConnection MONGO;
-	GraphConnector graph;
+	private MongoConnection MONGO;
+	private GraphConnector graph;
 	
 	public LogicBridge()
 	 {
 		 try 
 		  {
-			  MONGO = new MongoConnection("172.16.0.80",27028);
-			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       //Connessione a Neo4j (ricordare di avere la VPN attiva)
+			 // ricordare di avere la VPN attiva
+			  MONGO = new MongoConnection("172.16.0.80",27028);					 //Connessione a MongoDb
+			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       //Connessione a Neo4j 
+
 			 }
 		 catch( Exception e )
 		  {
@@ -46,13 +48,17 @@ public class LogicBridge {
 		return MONGO.getGame( gameId );
 	}
 	
+	StatusCode addGame( Game game ) {
+		return MONGO.addGame(game);
+	}
 	public StatusCode updateGameViews( int gameId ){
 		return MONGO.incrementGameViews(gameId);
 	}
 	
-	private StatusCode addGameDescription( int gameId , String description ) { 
+	StatusCode addGameDescription( int gameId , String description ) { 
 		return MONGO.addGameDescription( gameId , description);
 	}
+	
 	
 	public StatusCode deleteGame( int gameId ) { 
 		return MONGO.deleteGame( gameId );
@@ -81,31 +87,40 @@ public class LogicBridge {
 	//  STATISTICS
 	
 	//  Most liked games year by year
-	public StatusObject<List<Statistics>> getMostLikedGameByYearStats(){ return MONGO.getMostLikedGameByYearStats(); }
+	public StatusObject<List<Statistics>> getMaxRatedGameByYear(){ return MONGO.statistics.getMaxRatedGameByYear(); }
 		
 	//  Most viewed games year by year
-	public StatusObject<List<Statistics>> getMostViewedGameByYearStats(){ return MONGO.getMostViewedGameByYearStats(); }
+	public StatusObject<List<Statistics>> getMaxViewedGameByYear(){ return MONGO.statistics.getMaxViewedGameByYear(); }
 		
 	//  Number of games released year by year
-	public StatusObject<HashMap<Integer,Integer>>  getReleasedGameCountByYearStats(){ return MONGO.getReleasedGameCountByYearStats(); }
+	public StatusObject<HashMap<Integer,Integer>>  getReleasedGameCountByYearStats(){ return MONGO.statistics.getGamesCountByYear(); }
 	
 	//  Number of games released year by year and grouped by genres
-	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){ return MONGO.getReleasedGameCountByYearAndGenStats(); }
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){ return MONGO.statistics.getGamesCountByYearGen(); }
 	
 	//  Most viewed games for each generes
-	public StatusObject<HashMap<String,Statistics>>  getMostViewedGameByGenStats(){ return MONGO.getMostViewedGameByGenStats();	}
+	public StatusObject<HashMap<String,Statistics>>  getMaxViewedGameByGen(){ return MONGO.statistics.getMaxViewedGameByGen();	}
 		
 	//  Most liked games for each generes
-	public StatusObject<HashMap<String,Statistics>> getMostLikedGamesByGenStats(){ return MONGO.getMostLikedGamesByGenStats(); }
+	public StatusObject<HashMap<String,Statistics>> getMaxRatedGamesByGen(){ return MONGO.statistics.getMaxRatedGameByGen(); }
 			
 	//  Percentage of the total games used by each generes(games of the generes/total games)
-	public StatusObject<HashMap<String,Double>> getGeneresGameCountStats(){ return MONGO.getGeneresGameCountStats(); }
+	public StatusObject<HashMap<String,Integer>> getGamesCountByGen(){ return MONGO.statistics.getGamesCountByGen(); }
 		
 	//  Percentage of the total views give for each generes(sum of the viewsCount of the generes/total views)
-	public StatusObject<HashMap<String,Double>> getGeneresMostViewedCountStats(){ return MONGO.getGeneresMostViewedCountStats(); }
+	public StatusObject<HashMap<Integer,Integer>> getGamesCountByYear(){ return MONGO.statistics.getGamesCountByYear(); }
 		
 	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
-	public StatusObject<HashMap<String,Double>> getGeneresPreferencesStats(){ return MONGO.getGeneresPreferencesStats(); }
+	public StatusObject<HashMap<String,Integer>> getViewsCountByGen(){ return MONGO.statistics.getViewsCountByGen(); }
+	
+	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
+	public StatusObject<HashMap<Integer,Integer>> getViewsCountByYear(){ return MONGO.statistics.getViewsCountByYear(); }
+	
+	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
+	public StatusObject<HashMap<String,Integer>> getRatingsCountByGen(){ return MONGO.statistics.getRatingsCountByGen(); }
+	
+	//  Percentage of games add to favourites for each generes(sum of the favouritesCount of the generes/total favouritesCount)
+	public StatusObject<HashMap<Integer,Integer>> getRatingsCountByYear(){ return MONGO.statistics.getRatingsCountByYear(); }
 	
 	
 	//  DATASCRAPER FUNCTIONS

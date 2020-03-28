@@ -2,12 +2,10 @@ package logic.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.bson.Document;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class Game implements Serializable{
 
@@ -192,12 +190,6 @@ public class Game implements Serializable{
     //                                               FUNCTIONS                                                        //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	@SuppressWarnings("unchecked")
-	public Document toMongo() {
-        Gson gson = new Gson();
-        
-        return new Document(gson.fromJson(gson.toJson(this),Map.class));
-    }
 	
 	public PreviewGame getPreview() {
 		return new PreviewGame(id,title,background_image);
