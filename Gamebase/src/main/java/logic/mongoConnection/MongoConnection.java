@@ -84,7 +84,6 @@ public class MongoConnection {
     		
     		Bson filter = eq( "_id", gameId );
     		Game game = gamesCollection.find( filter ).first();
-			System.out.println( "---> [MongoConnector][GetGame] Searching game: " + gameId );
 			
     		if( game == null ) {
     			

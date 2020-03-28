@@ -57,7 +57,6 @@ public class DataNavigator{
 		MongoCursor<Game> games;
 		
 		if( cache != null && cache.hasNext()) {
-			
 			cache = cache.getNext();
 			position += numGames;
 			return new StatusObject<List<PreviewGame>>(StatusCode.OK, cache.getData());
@@ -68,13 +67,13 @@ public class DataNavigator{
 			switch(queryType) {
 		
 				case PREVIEW_LIKED:
-					games = data.find().sort(idSort).projection(projection).skip(position).limit(numGames).iterator();
+					games = data.find().sort(ratingSort).projection(projection).skip(position).limit(numGames).iterator();
 					position += numGames;
 					while(games.hasNext())
 						previews.add(games.next().getPreview());
 					break;
 				case PREVIEW_VIEWED:
-					games = data.find().sort(idSort).projection(projection).skip(position).limit(numGames).iterator();
+					games = data.find().sort(viewsSort).projection(projection).skip(position).limit(numGames).iterator();
 					position += numGames;
 					while(games.hasNext())
 						previews.add(games.next().getPreview());
@@ -94,12 +93,17 @@ public class DataNavigator{
 	
 			}
 			
-			if( this.cache == null )
+			if( this.cache == null ) 
+				
 				this.cache = new NavElem(previews);
-			else {
-				if( this.cache.hasNext() == false )
+				
+			else
+				if( this.cache.hasNext() == false ) {
 					this.cache.setNext(new NavElem(previews));
-			}
+					this.cache.getNext().setPrev(this.cache);
+					this.cache = this.cache.getNext();
+				}
+			
 			this.cacheSize++;
 			if( cacheSize> MAX_CACHE )
 				dropCache();
@@ -107,7 +111,6 @@ public class DataNavigator{
 			return new StatusObject<List<PreviewGame>>( StatusCode.OK , previews );
 			
 		}catch( Exception e ) {
-			
 			System.out.println("--->[DataNavigator][GetNextData] Error, network unreachable" );
 			return new StatusObject<List<PreviewGame>>(StatusCode.ERR_NETWORK_PARTIAL_UNREACHABLE, previews );
 			
@@ -118,9 +121,9 @@ public class DataNavigator{
 	public StatusObject<List<PreviewGame>> getPrevData(){
 		
 		List<PreviewGame> previews = new ArrayList<>();
-		if( position == 0 ) 
+		if( position == 0 || position == numGames ) 
 			return new StatusObject<List<PreviewGame>>(StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED , null);
-		
+
 		if( cache != null && cache.hasPrev()) {
 			cache = cache.getPrev();
 			position-=numGames;
@@ -160,8 +163,11 @@ public class DataNavigator{
 			if( this.cache == null )
 				this.cache = new NavElem(previews);
 			else 
-				if( this.cache.hasPrev() == false )
+				if( this.cache.hasPrev() == false ) {
 					this.cache.setPrev(new NavElem(previews));
+					this.cache.getPrev().setNext(this.cache);
+					this.cache = this.cache.getPrev();
+				}
 			this.cacheSize++;
 			
 			if( cacheSize> MAX_CACHE )
@@ -170,7 +176,7 @@ public class DataNavigator{
 			return new StatusObject<List<PreviewGame>>(StatusCode.OK,previews);
 			
 		}catch( Exception e ) {
-			
+
 			System.out.println("--->[DataNavigator][GetNextData] Error, network unreachable" );
 			return new StatusObject<List<PreviewGame>>(StatusCode.ERR_NETWORK_PARTIAL_UNREACHABLE, previews );
 			
@@ -179,7 +185,6 @@ public class DataNavigator{
 	
 	private void dropCache() {
 		
-		
 		NavElem leftApp = this.cache;
 		NavElem rightApp = this.cache;
 		int leftElems = 0,rightElems = 0;
@@ -187,16 +192,16 @@ public class DataNavigator{
 		if( this.cache == null ) return;
 
 		if( cacheSize>MAX_CACHE && MAX_CACHE > CACHE_RESIZE ){
-			System.out.println("---> [DataNavigator][DropCache] Cache memory exceed max size, resizing cache");
+
 			while( rightApp.hasNext()) { 
 				rightApp = rightApp.getNext();
 				rightElems++;
 			}
 			while( leftApp.hasPrev()) {
 				leftApp = leftApp.getPrev();
-				rightElems++;
+				leftElems++;
 			}
-			
+
 			if( rightElems > leftElems ) {
 				
 				for( int a = 0; a<CACHE_RESIZE;a++) 
@@ -205,9 +210,64 @@ public class DataNavigator{
 			}else {
 				for( int a = 0; a<CACHE_RESIZE;a++) 
 					leftApp = leftApp.getNext();
-				leftApp.setPrev(null);	
+
+				leftApp.setPrev(null);
+			}
+			this.cacheSize-=CACHE_RESIZE;
+		}
+	}
+	
+	public static void main(String[] args) {
+		MongoConnection client = null;
+		int[] testBehavior = {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1};
+		boolean[] results = {true,true,true,false,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true};
+		
+		try {
+			client = new MongoConnection("172.16.0.80",27018);
+		}catch(Exception e) {
+			System.out.println("Error trying to connecto to Mongo");
+			return;
+		}
+		System.out.println("------- DataNavigator Test -------");
+		
+		DataNavigator nav = client.getMostLikedPreviews().element;
+		List<PreviewGame> app;
+		if( nav == null ) {
+			System.out.println("Error trying to get navigator");
+			return;
+		}
+		for( int a=0; a<testBehavior.length;a++) {
+			if( testBehavior[a] == 0  ) {
+				app = nav.getNextData().element;
+				if(( app == null && results[a] == true )|| ( app != null && results[a] == false )){
+					System.out.println("Error in the data navigator at " +a+" trial");
+					return;
+				}else {
+					if( app != null ){
+						System.out.println("POSITION: " + nav.position);
+						for( PreviewGame game : app )
+							System.out.println("Title: " + game.getTitle() + " Id: " + game.getId() + " Pic: " +game.getPreviewPicURL() );
+					}
+				}
+			}
+			if( testBehavior[a] == 1 ) {
+				app = nav.getPrevData().element;
+				if(( app == null && results[a] == true )|| ( app != null && results[a] == false )){
+					System.out.println("Error in the data navigator at " +a+" trial");
+					return;
+				}else {
+					if( app != null ) {
+						System.out.println("POSITION: " + nav.position);
+						for( PreviewGame game : app )
+							System.out.println("Title: " + game.getTitle() + " Id: " + game.getId() + " Pic: " +game.getPreviewPicURL() );
+					}
+				}
 			}
 		}
+		System.out.println("Test correctly executed");
+		
+		
+	
 	}
 	
 	

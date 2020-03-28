@@ -18,9 +18,6 @@ class NavElem {
 	
 	boolean setNext( NavElem next ){
 		
-		if( this.next != null )
-			return false;
-		next.setPrev(this);
 		this.next = next;
 		 
 		return true;
@@ -29,9 +26,6 @@ class NavElem {
 	
 	boolean setPrev( NavElem prev ){
 		
-		if( this.prev != null )
-			return false;
-		next.setNext(this);
 		this.prev = prev;
 		return true;
 		 
