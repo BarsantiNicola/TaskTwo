@@ -25,10 +25,10 @@ public class MongoStatistics {
 		this.cache= new Object[11];
 		for( int a= 0; a<11;a++)
 			cache[a] = null;
-		new Thread(new CacheThread(this)).start();
-		
 		
 	}
+	
+	public void enableCaching() {new Thread(new CacheThread(this)).start();}
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	public StatusObject<List<Statistics>> getMaxRatedGameByYear(){

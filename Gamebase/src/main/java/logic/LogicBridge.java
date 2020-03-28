@@ -48,7 +48,7 @@ public class LogicBridge {
 	
 	public StatusObject<Game> getGame( int gameId ){ return MONGO.getGame( gameId );}
 	
-	public StatusCode updateGameViews( int gameId ){return MONGO.incrementGameViews(gameId);}
+	public StatusCode incrementGameViews( int gameId ){return MONGO.incrementGameViews(gameId);}
 	
 	public StatusCode voteGame( int gameId , int vote ) { return MONGO.voteGame( gameId, vote );}
 	
