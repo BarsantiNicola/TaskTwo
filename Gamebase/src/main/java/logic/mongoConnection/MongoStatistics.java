@@ -22,13 +22,15 @@ public class MongoStatistics {
 	MongoStatistics( MongoConnection connection , com.mongodb.MongoClient mongoClient ) throws Exception{
 		
 		this.statisticsCollection = mongoClient.getDatabase("myDb").getCollection("games",Document.class);
-		this.cache= new Object[11];
-		for( int a= 0; a<11;a++)
+		this.cache= new Object[13];
+		for( int a= 0; a<13;a++)
 			cache[a] = null;
 		
 	}
 	
-	public void enableCaching() {new Thread(new CacheThread(this)).start();}
+	public void enableCaching(CachingPolicy policy) {
+		new Thread(new CacheThread(this,policy)).start();
+		}
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	public StatusObject<List<Statistics>> getMaxRatedGameByYear(){
@@ -166,9 +168,7 @@ public class MongoStatistics {
 				if(data.get("_id",Document.class).getString("generes") != null )
 					result.put(data.get("_id",Document.class).getString("generes"), new Statistics(null,null,data.get("max",Document.class).getString("title"),data.get("max",Document.class).getDouble("rating")));
 
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
+			}catch(Exception e) {}
 		
 		}
 
@@ -214,9 +214,7 @@ public class MongoStatistics {
 				if(data.get("_id",Document.class).getString("generes") != null )
 					result.put(data.get("_id",Document.class).getString("generes"), new Statistics(null,data.get("max",Document.class).getInteger("viewsCount"),data.get("max",Document.class).getString("title"),null));
 
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
+			}catch(Exception e) {}
 		
 		}
 
@@ -330,7 +328,7 @@ public class MongoStatistics {
 			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 			
 		}catch(Exception e ) {
-			e.printStackTrace();
+
 			System.out.println("---> [MongoConnection][getGamesCountByYearGen] Error, network unreachable" );
 			return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
 			
@@ -340,7 +338,7 @@ public class MongoStatistics {
 			
 			data = res.next();
 			try {
-				if( data.get("_id",Document.class).getInteger("year") == null ) continue;
+				if( data.get("_id",Document.class).getInteger("year") == null || data.get("_id",Document.class).getString("generes") == null ) continue;
 				year = df1.parse(String.valueOf(data.get("_id",Document.class).getInteger("year"))).getYear();
 				if( result.containsKey(year))
 					genresGames = result.remove(year);
@@ -349,9 +347,7 @@ public class MongoStatistics {
 				genresGames.put(data.get("_id",Document.class).getString("generes") , data.getInteger("count"));
 				result.put(year,genresGames);
 			
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
+			}catch(Exception e) {}
 		
 		}
 
@@ -443,9 +439,63 @@ public class MongoStatistics {
 	}
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	public StatusObject<HashMap<Integer,Integer>>  getRatingsCountByYear(){
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>>  getViewsCountByYearGen(){
 	
 		if( cache[9] != null )
+			return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.OK,(HashMap<Integer,HashMap<String,Integer>>)cache[7]);
+		
+		 BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
+
+	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , "$viewsCount"));
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+
+		MongoCursor<Document> res = null;
+		Document data;
+		DateFormat df1 = new SimpleDateFormat("yyyy");
+		HashMap<Integer,HashMap<String,Integer>> result = new HashMap<>();
+		HashMap<String,Integer> genresGames;
+		
+		Integer year= null;
+		try {
+
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
+			
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][getViewsCountByYear] Error, network unreachable" );
+			return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+
+
+				
+				while( res.hasNext()) {
+					
+					data = res.next();
+					try {
+						if( data.get("_id",Document.class).getInteger("year") == null || data.get("_id",Document.class).getString("generes") == null ) continue;
+						year = df1.parse(String.valueOf(data.get("_id",Document.class).getInteger("year"))).getYear();
+						if( result.containsKey(year))
+							genresGames = result.remove(year);
+						else
+							genresGames = new HashMap<String,Integer>();
+						genresGames.put(data.get("_id",Document.class).getString("generes") , data.getInteger("count"));
+						result.put(year,genresGames);
+					
+					}catch(Exception e) {}
+			
+		
+		}
+
+		return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.OK,result);
+		
+	}
+	
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	public StatusObject<HashMap<Integer,Integer>>  getRatingsCountByYear(){
+	
+		if( cache[10] != null )
 			return new StatusObject<HashMap<Integer,Integer>>(StatusCode.OK,(HashMap<Integer,Integer>)cache[9]);
 		
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")));
@@ -486,7 +536,7 @@ public class MongoStatistics {
 	@SuppressWarnings({ "unchecked" })
 	public StatusObject<HashMap<String,Integer>> getRatingsCountByGen(){
 	
-		if( cache[10] != null )
+		if( cache[11] != null )
 			return new StatusObject<HashMap<String,Integer>>(StatusCode.OK,(HashMap<String,Integer>)cache[10]);
 		
 	    BasicDBObject group_id = new BasicDBObject("_id", "$genres" );
@@ -524,6 +574,61 @@ public class MongoStatistics {
 		
 	}
 	
+
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>>  getRatingsCountByYearGen(){
+	
+		if( cache[12] != null )
+			return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.OK,(HashMap<Integer,HashMap<String,Integer>>)cache[9]);
+		
+		BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
+	    BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , "$ratingCount"));
+	    BasicDBObject group = new BasicDBObject("$group", groupFields);
+		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+
+		
+		MongoCursor<Document> res = null;
+		Document data;
+		DateFormat df1 = new SimpleDateFormat("yyyy");
+		HashMap<Integer,HashMap<String,Integer>> result = new HashMap<>();
+		HashMap<String,Integer> genresGames;
+		
+
+		Integer year= null;
+		try {
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
+			
+		}catch(Exception e ) {
+			
+			System.out.println("---> [MongoConnection][getRatingsCountByYear] Error, network unreachable" );
+			return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.ERR_NETWORK_UNREACHABLE, null);
+			
+		}
+				
+		while( res.hasNext()) {
+					
+			data = res.next();
+			try {
+				if( data.get("_id",Document.class).getInteger("year") == null || data.get("_id",Document.class).getString("generes") == null ) continue;
+				year = df1.parse(String.valueOf(data.get("_id",Document.class).getInteger("year"))).getYear();
+				if( result.containsKey(year))
+					genresGames = result.remove(year);
+				else
+					genresGames = new HashMap<String,Integer>();
+				genresGames.put(data.get("_id",Document.class).getString("generes") , data.getInteger("count"));
+				result.put(year,genresGames);
+					
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		
+		}
+
+		return new StatusObject<HashMap<Integer,HashMap<String,Integer>>>(StatusCode.OK,result);
+		
+	}
+	
     public boolean statsTest() {
 
     	long timer; 
@@ -532,6 +637,7 @@ public class MongoStatistics {
     	StatusObject<HashMap<String,Statistics>> result2;
     	StatusObject<HashMap<String,Integer>> result3;
     	StatusObject<HashMap<Integer,Integer>> result4;
+    	StatusObject<HashMap<Integer,HashMap<String,Integer>>> result5;
     	
     	timer = System.currentTimeMillis();
     	result = getMaxRatedGameByYear(); 	
@@ -643,6 +749,48 @@ public class MongoStatistics {
     	    	System.out.println("Genres:" + year + " RatingCount: " + result4.element.get(year));
     	}else
     	    System.out.println("----> [TEST][getRatingsCountByYear] RESULT: ERROR" );    	
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer)+" ms");
+    	
+    	timer = System.currentTimeMillis();
+    	result5 = getGamesCountByYearGen(); 	
+    	if( result5.statusCode == StatusCode.OK ){
+    	    System.out.println("----> [TEST][getGamesCountByYearGen] RESULT: OK" );
+    	    System.out.println("RESULT");
+    	    for( Integer year : result5.element.keySet()) {
+    	    	HashMap<String,Integer> res2 = result5.element.get(year);
+    	    	for( String gen : res2.keySet())
+    	    		System.out.println("Year: " + year + " Genres: " + gen + " Count: " + res2.get(gen));
+    	    }
+    	}else
+    	    System.out.println("----> [TEST][getGamesCountByYearGen] RESULT: ERROR" );    	
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer)+" ms");
+    	
+    	timer = System.currentTimeMillis();
+    	result5 = getViewsCountByYearGen(); 	
+    	if( result5.statusCode == StatusCode.OK ){
+    	    System.out.println("----> [TEST][getViewsCountByYearGen] RESULT: OK" );
+    	    System.out.println("RESULT");
+    	    for( Integer year : result5.element.keySet()) {
+    	    	HashMap<String,Integer> res2 = result5.element.get(year);
+    	    	for( String gen : res2.keySet())
+    	    		System.out.println("Year: " + year + " Genres: " + gen + " Count: " + res2.get(gen));
+    	    }
+    	}else
+    	    System.out.println("----> [TEST][getViewsCountByYearGen] RESULT: ERROR" );    	
+    	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer)+" ms");
+    	
+    	timer = System.currentTimeMillis();
+    	result5 = getRatingsCountByYearGen(); 	
+    	if( result5.statusCode == StatusCode.OK ){
+    	    System.out.println("----> [TEST][getRatingsCountByYearGen] RESULT: OK" );
+    	    System.out.println("RESULT");
+    	    for( Integer year : result5.element.keySet()) {
+    	    	HashMap<String,Integer> res2 = result5.element.get(year);
+    	    	for( String gen : res2.keySet())
+    	    		System.out.println("Year: " + year + " Genres: " + gen + " Count: " + res2.get(gen));
+    	    }
+    	}else
+    	    System.out.println("----> [TEST][getRatingsCountByYearGen] RESULT: ERROR" );    	
     	System.out.println("----------- TEMPO IMPIEGATO: " + (System.currentTimeMillis()-timer)+" ms");
     	
     	return true;

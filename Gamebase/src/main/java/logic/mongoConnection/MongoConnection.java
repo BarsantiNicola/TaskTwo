@@ -472,10 +472,8 @@ public class MongoConnection {
     public static void main(String[] args) throws InterruptedException {
 
     	try {
-    		long timer = System.currentTimeMillis();
-    		MongoConnection client = new MongoConnection("172.16.0.80",27018);
 
-    		while((System.currentTimeMillis()-timer)<32000);
+    		MongoConnection client = new MongoConnection("172.16.0.80",27018);
 
     		client.statistics.statsTest();
     		

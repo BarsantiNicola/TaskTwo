@@ -43,7 +43,8 @@ public class LogicBridge {
 	
 	
 	///////////////  DOCUMENT FUNCTIONS
-	//////  STATISTICS(Description of each statistic usage could be found in MongoDb.docx)
+	//  Description of each function(errors,timing,description) could be found in MongoDb.docx
+	//  Example of usage of the function could be found into MongoConnection.acidTest, MongoStatistics.statsTest, DataNavigator.navTest
 	//////  USER INTERFACE
 	
 	public StatusObject<Game> getGame( int gameId ){ return MONGO.getGame( gameId );}
@@ -56,17 +57,17 @@ public class LogicBridge {
 	
 	public StatusObject<List<String>> getGenres(){ return MONGO.getGenres(); }
 	
-	public StatusObject<PreviewGame> getMostViewedGame() { return MONGO.getMostViewedPreview(); }
+	public StatusObject<PreviewGame> getMostViewedPreview() { return MONGO.getMostViewedPreview(); }
 	
-	public StatusObject<PreviewGame> getMostPopularGame() { return MONGO.getMostPopularPreview(); }
+	public StatusObject<PreviewGame> getMostPopularPreview() { return MONGO.getMostPopularPreview(); }
 	
-	public StatusObject<DataNavigator> getMostViewedGames(){ return MONGO.getMostViewedPreviews(); }
+	public StatusObject<DataNavigator> getMostViewedPreviews(){ return MONGO.getMostViewedPreviews(); }
 	
-	public StatusObject<DataNavigator> getMostLikedGames(){ return MONGO.getMostLikedPreviews(); }
+	public StatusObject<DataNavigator> getMostLikedPreviews(){ return MONGO.getMostLikedPreviews(); }
 	
-	public StatusObject<DataNavigator> getMostRecentGames(){ return MONGO.getMostRecentPreviews(); }
+	public StatusObject<DataNavigator> getMostRecentPreviews(){ return MONGO.getMostRecentPreviews(); }
 	
-	public StatusObject<DataNavigator> searchGames( String searchedString ){ return MONGO.searchGames( searchedString ); }
+	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( searchedString ); }
 	
 	//////  SCRAPER & ADMIN INTERFACE
 	StatusCode addGameDescription( int gameId , String description ) { return MONGO.addGameDescription( gameId , description);}
@@ -76,15 +77,13 @@ public class LogicBridge {
 	public StatusCode deleteGame( int gameId ) { return MONGO.deleteGame( gameId );}
 	
 	
-	//////  STATISTICS(Description of each statistic usage could be found in Statistics.docx)
+	//////  STATISTICS
 	
 	public StatusObject<List<Statistics>> getMaxRatedGameByYear(){ return MONGO.statistics.getMaxRatedGameByYear(); }
 		
 	public StatusObject<List<Statistics>> getMaxViewedGameByYear(){ return MONGO.statistics.getMaxViewedGameByYear(); }
-		
-	public StatusObject<HashMap<Integer,Integer>>  getReleasedGameCountByYearStats(){ return MONGO.statistics.getGamesCountByYear(); }
 	
-	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getReleasedGameCountByYearAndGenStats(){ return MONGO.statistics.getGamesCountByYearGen(); }
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>> getGamesCountByYearGen(){ return MONGO.statistics.getGamesCountByYearGen(); }
 	
 	public StatusObject<HashMap<String,Statistics>> getMaxViewedGameByGen(){ return MONGO.statistics.getMaxViewedGameByGen();	}
 		
@@ -98,9 +97,13 @@ public class LogicBridge {
 	
 	public StatusObject<HashMap<Integer,Integer>>   getViewsCountByYear(){ return MONGO.statistics.getViewsCountByYear(); }
 	
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>>   getViewsCountByYearGen(){ return MONGO.statistics.getViewsCountByYearGen(); }
+	
 	public StatusObject<HashMap<String,Integer>>    getRatingsCountByGen(){ return MONGO.statistics.getRatingsCountByGen(); }
 	
 	public StatusObject<HashMap<Integer,Integer>>   getRatingsCountByYear(){ return MONGO.statistics.getRatingsCountByYear(); }
+	
+	public StatusObject<HashMap<Integer,HashMap<String,Integer>>>   getRatingsCountByYearGen(){ return MONGO.statistics.getRatingsCountByYearGen(); }
 	
 	
 	///////////////  DATASCRAPER FUNCTIONS
