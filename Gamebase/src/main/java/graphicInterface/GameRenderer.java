@@ -29,7 +29,7 @@ public class GameRenderer extends JLabel implements ListCellRenderer<PreviewGame
     public Component getListCellRendererComponent(JList<? extends PreviewGame> list, PreviewGame game, int index, 
             boolean isSelected, boolean cellHasFocus) { 
  
-        String gameTitle = game.getGameTitle(); 
+        String gameTitle = game.getTitle(); 
         ImageIcon imageIcon = null;
         
         try {

@@ -17,8 +17,8 @@ public class User
 	 //Variable Attributes 
 	 private String firstName;              //The user's first name              
 	 private String lastName;               //The user's last name
-  private Long age;                      //The user's age (where as described below a Long is used for compatibility reasons)
-  private String email;                  //The user's email
+     private Long age;                      //The user's age (where as described below a Long is used for compatibility reasons)
+     private String email;                  //The user's email
 	 private Character gender;              //The user's gender (M or F)
 	 private String country;                //The user's country
 	 private String favouriteGenre;         //The user's favourite videogame genre
@@ -109,6 +109,9 @@ public class User
   public Long getFollowedCount()
    { return followedCount; }
 
+  public String getCompleteName() {
+	  return firstName + lastName;
+  }
   //---------------------------------------------------------------------------------
   //                      Setters (non-final attributes only)
   //---------------------------------------------------------------------------------

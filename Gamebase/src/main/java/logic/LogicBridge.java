@@ -69,6 +69,37 @@ public class LogicBridge {
 	
 	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( searchedString ); }
 	
+	//////////// GRAPH FUNCTIONS
+	
+	//something to verify if a user follow another one ( parameters: current user, target user )
+	
+	//something to retrieve the list of favourite games of a certain user
+	
+	//something to retrieve a user object given the username
+	
+	//something to follow another user (parameters: current user, target user)
+	
+	//something to unfollow a user (parameters: current user, target user)
+	
+	//something to get the number of favourite games of a certain user (parameter: username)
+	
+	//something to get the number of followers of a certain user (parameter: username)
+	
+	//something to retrieve the list of the users followed by the current user (parameter: current username )
+	
+	//something to get the list of featured users given a certain user (parameter: current user)
+	
+	//something to count the number of total users
+	
+	//something to retrieve a list of featured games (parameter: user)
+
+	//something to sign up a new user (parameters: username and password)
+	
+	//something to perform the login (parameters: username and password)
+	
+	//something to become an analyst (parameter: username)
+	
+	//something to delete a user (parameter: target username)
 	//////  SCRAPER & ADMIN INTERFACE
 	StatusCode addGameDescription( int gameId , String description ) { return MONGO.addGameDescription( gameId , description);}
 	

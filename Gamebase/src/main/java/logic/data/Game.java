@@ -2,6 +2,8 @@ package logic.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.awt.Image;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +22,7 @@ public class Game implements Serializable{
     private Integer favouritesCount;
     private String  description;
     private Date    releaseDate;
-    private String genres;
+    private String genre;
     
     private ArrayList<String> subgenres;
     private ArrayList<String> releases;
@@ -60,14 +62,20 @@ public class Game implements Serializable{
         return metacritic;
     }
 
-    public String getGenres() {
-    	return genres;
+    public String getGenre() {
+    	return genre;
     }
     
     public ArrayList<String> getSubGenres() {
         return subgenres;
     }
 
+    public ArrayList<String> getGenres(){
+    	ArrayList<String> genres = subgenres;
+    	genres.add(0, genre);
+    	return genres;
+    }
+    
     public Integer getViewsCount() {
         return viewsCount;
     }
@@ -123,6 +131,13 @@ public class Game implements Serializable{
     	return URLs;
     }
 
+    public List<String> getImagesURLs(){
+    	if( multimedia == null ) {
+    		return new ArrayList<>();
+    	}
+    	return multimedia.getImages();	
+    }
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                               SETTER                                                           //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,8 +164,8 @@ public class Game implements Serializable{
         this.metacritic = metacritic;
     }
 
-    public void setGenres(String genres) {
-    	this.genres = genres;
+    public void setGenres(String genre) {
+    	this.genre = genre;
     }
     
     public void setSubGenres(ArrayList<String> subgenres) {

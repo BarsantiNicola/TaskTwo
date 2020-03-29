@@ -379,7 +379,7 @@ public class GraphicInterface {
 		
 		usernameHPLabel.setText(username);
 		
-		String mostViewedGameImageURL = logicHandler.getMostViewedGame().getPreviewPicURL();
+		String mostViewedGameImageURL = logicHandler.getMostViewedPreview().element.getPreviewPicURL();
 				
 		if( mostViewedGameImageURL == null ) {
 			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
@@ -391,7 +391,7 @@ public class GraphicInterface {
 		    }
 		}	
 		
-		String mostPopularGameImageURL = logicHandler.getMostPopularGame().getPreviewPicURL();
+		String mostPopularGameImageURL = logicHandler.getMostPopularPreview().element.getPreviewPicURL();
 		
 		if( mostPopularGameImageURL == null ) {
 			mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
@@ -451,7 +451,7 @@ public class GraphicInterface {
 	
 	private void initializeGamePage( String title ) {
 		
-		Game game = logicHandler.getGame(title,true);
+		Game game = logicHandler.getGame(title);
 		
 		if( game == null ) {
 			
@@ -552,7 +552,7 @@ public class GraphicInterface {
 			playStationButton.setEnabled(false);
 		}
 		
-		List<String> imagesURL = logicHandler.getGamePicsURL(game.getTitle());
+		List<String> imagesURL = game.getImagesURLs();
 		
 		fillImagesList(imagesURL);
 		
@@ -657,7 +657,7 @@ public class GraphicInterface {
 		
 		String userCount, gameCount;
 		int userC = logicHandler.getUserCount();
-		long gameC = logicHandler.getGameCount();
+		StatusObject<Long> gameCounter = logicHandler.getGameCount();
 		
 		if( userC == -1 ) {
 			userCount = "N/A";
@@ -665,10 +665,10 @@ public class GraphicInterface {
 			userCount = Integer.toString(userC);
 		}
 		
-		if( gameC == -1 ) {
+		if( gameCounter.statusCode == StatusCode.OK ) {
 			gameCount = "N/A";
 		} else {
-			gameCount = Long.toString(gameC);
+			gameCount = Long.toString(gameCounter.element);
 		}
 		
 		userCountLabel.setText("User Count: " + userCount);
@@ -700,19 +700,18 @@ public class GraphicInterface {
 		
 		searchTextField.setText("Search");
 		
-		List<String> genres = logicHandler.getGenres();
+		StatusObject<List<String>>genresStatus = logicHandler.getGenres();
 		
-		if( genres != null ) {
+		if( genresStatus.statusCode == StatusCode.OK ) {
 			
-			for( final String genre : genres ) {
+			for( final String genre : genresStatus.element ) {
 
 				JMenuItem item = new JMenuItem(genre);
 				item.setFont(new Font("Corbel", Font.BOLD, 15));
 				item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						
-						//scorro la support list, metto in un'altra lista quelli che matchano il genere e faccio la fill
+
 						List<PreviewGame> genreList = new ArrayList<PreviewGame>();
 						PreviewGame previewGame;
 						
@@ -720,14 +719,17 @@ public class GraphicInterface {
 							
 							previewGame = supportGamesList.get(i);
 							
-							///// CORREGGERE, UN GIOCO NON HA SOLO UN GENERE MA UNA LISTA DI GENERI
-							//  IL TIPO IN RITORNO È CAMBIATO IN LIST<STRING>
-							List<String> genres = logicHandler.getGame(previewGame.getGameTitle(),false).getGenres();
-							for( String gen: genres)
+							StatusObject<Game> gameStatus = logicHandler.getGame(previewGame.getId());
+							
+							if( gameStatus.statusCode == StatusCode.OK ) {
+								List<String> genres = gameStatus.element.getGenres();
+								for( String gen: genres)
 								if( gen.compareTo(genre) == 0 ) {
 									genreList.add(previewGame);
 									break;
+							    }
 							}
+							
 						}
 						
 						fillSearchedGamesList(genreList);
@@ -739,7 +741,6 @@ public class GraphicInterface {
 		}
 		fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
 		
-		//ci vorrebbe pure un menu item per rimuovere il filtro, ossia ripristinare la lista completa
 	}
 	
 	private void cleanSearchGamePage() {
@@ -751,32 +752,33 @@ public class GraphicInterface {
 	
 	private void initializeUserInformationPage() {
 		
-		//caricare nome user
 		updateInfoLabel.setText("Hi " + currentUser + ", update your information");
 		
-		User friend = logicHandler.getFriend(currentUser);
+		User user = logicHandler.getFriend(currentUser);
 		
-		String currentAge = Integer.toString(friend.getAge());
-		String currentName = friend.getName();
-		String currentSurname = friend.getSurname();
-		String currentFavoriteGenre = friend.getFavoriteGenre();
-		String gender = friend.getGender();
+		String currentAge = Long.toString(user.getAge());
+		String currentName = user.getFirstName();
+		String currentSurname = user.getLastName();
+		String currentFavoriteGenre = user.getFavouriteGenre();
+		String currentEmail = user.getEmail();
+		Character gender = user.getGender();
 		
-		//caricare valori attuali nei textfield
 		ageTextField.setText("Age - Current Value " + currentAge!=null?currentAge:"null");
 		nameTextField.setText("Name - Current Value " + currentName!=null?currentName:"null");
 		surnameTextfield.setText("Surname - Current Value " + currentSurname!=null?currentSurname:"null");
-
-		if( gender == "M" ) {
+		emailTextField.setText("Email - Current Value " + currentEmail!=null?currentEmail:"null");
+		
+		if( gender == 'M' ) {
 			genderMenu.setText("M");
-		} else if( gender == "F" ) {
+		} else if( gender == 'F' ) {
 			genderMenu.setText("F");
 		}
 		
-		//caricare i generi
-		List<String> genres = logicHandler.getGenres();
+		StatusObject<List<String>> genresStatus = logicHandler.getGenres();
 		
-		if( genres != null ) {
+		if( genresStatus.statusCode == StatusCode.OK ) {
+			
+			List<String> genres = genresStatus.element;
 			
 			for( int i = 0; i < genres.size(); i++ ) {
 				
@@ -1169,7 +1171,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "gamePanel");
 				
-				initializeGamePage(game.getGameTitle());
+				initializeGamePage(game.getTitle());
 			}
 		});
 		myGamesList.setName("myGamesList");
@@ -1221,7 +1223,13 @@ public class GraphicInterface {
 				
 				cl.show(panel, "gamePanel");
 				
-				initializeGamePage(logicHandler.getMostPopularGame().getGameTitle());
+				StatusObject<PreviewGame> viewedGameStatus = logicHandler.getMostPopularPreview();
+				
+				if( viewedGameStatus.statusCode == StatusCode.OK ) {
+					initializeGamePage(viewedGameStatus.element.getTitle());
+				} else {
+					initializeGamePage(null);
+				}
 			}
 		});
 		mostViewedGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -1248,7 +1256,13 @@ public class GraphicInterface {
 				
 				cl.show(panel, "gamePanel");
 				
-				initializeGamePage(logicHandler.getMostPopularGame().getGameTitle());
+				StatusObject<PreviewGame> popularGameStatus = logicHandler.getMostPopularPreview();
+				
+				if( popularGameStatus.statusCode == StatusCode.OK ) {
+					initializeGamePage(popularGameStatus.element.getTitle());
+				} else {
+					initializeGamePage(null);
+				}
 			
 			}
 		});
@@ -1424,7 +1438,7 @@ public class GraphicInterface {
 				if( game == "" ) {
 					deleteGameResultLabel.setText("Failure!");
 					deleteGameResultLabel.setVisible(true);
-				}else if( logicHandler.deleteUser(game) ) {
+				}else if( logicHandler.deleteGame(game) ) {
 					deleteGameResultLabel.setText("Success!");
 					deleteGameResultLabel.setVisible(true);
 				} else {
@@ -1689,7 +1703,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				List<PreviewGame> searchedList = logicHandler.getMostRecentGames();
+				List<PreviewGame> searchedList = logicHandler.getMostRecentPreviews();
 						
 				if( fillSearchedGamesList(searchedList) ) {
 					supportGamesList = searchedList;
