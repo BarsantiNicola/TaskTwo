@@ -8,6 +8,8 @@ import java.util.List;
 
 import logic.*;
 import logic.data.*;
+import logic.mongoConnection.DataNavigator;
+
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +80,8 @@ public class GraphicInterface {
 			}
 		};
 	
-	//admin panel
+	///////// ADMIN PANEL
+		
 	private JPanel adminPanel;	
 	private JButton homeADButton;
 	private JButton deleteGameButton;
@@ -94,10 +97,10 @@ public class GraphicInterface {
 	private JLabel deleteGameResultLabel;
 	private JLabel updateDatabaseResultLabel;
 	
-	//analyst panel
+	///////// ANALYST PANEL
 	private JPanel analystPanel;
 		
-	//search game panel
+	///////// SEARCH GAME PANEL
 	private JPanel searchGamePanel;	
 	private JButton homeSEButton;
 	private JButton featuredButton;
@@ -111,6 +114,9 @@ public class GraphicInterface {
 	private DefaultListModel<PreviewGame> searchListModel = new DefaultListModel<PreviewGame>();
 	private JMenu gameGenreMenu;
 	private JMenuBar gameGenreMenuBar;
+	private AdjustmentListener searchGamesVerticalScrollBarListener;
+	private JScrollBar searchGamesVerticalScrollBar;
+	private DataNavigator searchGamesDataNavigator;
 	
 	//game panel
 	private JPanel gamePanel;	
@@ -698,6 +704,8 @@ public class GraphicInterface {
 		featuredButton.setForeground(Color.WHITE);
 		featuredButton.setBackground(new Color(30,144,255));
 		
+		searchGamesDataNavigator = null;
+		
 		searchTextField.setText("Search");
 		
 		StatusObject<List<String>>genresStatus = logicHandler.getGenres();
@@ -747,6 +755,8 @@ public class GraphicInterface {
 		
 		searchListModel.removeAllElements();
 		gameGenreMenu.removeAll();
+		
+		searchGamesDataNavigator = null;
 		
 	}
 	
@@ -851,6 +861,8 @@ public class GraphicInterface {
 		panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new CardLayout(0, 0));
+		
+		///////LOGIN PANEL
 		
 		loginPanel = new JPanel();
 		loginPanel.setName("loginPanel");
@@ -988,6 +1000,12 @@ public class GraphicInterface {
 		myGamesLabel.setName("myGamesLabel");
 		myGamesLabel.setBounds(304, 51, 318, 170);
 		loginPanel.add(myGamesLabel);
+		
+		
+		
+		///////// HOME PAGE PANEL
+		
+		
 		
 		homePagePanel = new JPanel();
 		homePagePanel.setName("homePagePanel");
@@ -1326,6 +1344,12 @@ public class GraphicInterface {
 		userInfoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/info.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(userInfoButton);
 		
+		
+		
+		////////// ADMIN PANEL
+		
+		
+		
 		adminPanel = new JPanel();
 		adminPanel.setName("adminPanel");
 		adminPanel.setBackground(new Color(87, 86, 82));
@@ -1533,10 +1557,22 @@ public class GraphicInterface {
 		updateDatabaseResultLabel.setBounds(418, 461, 57, 21);
 		adminPanel.add(updateDatabaseResultLabel);
 		
+		
+		
+		/////////  ANALYST PANEL
+		
+		
+		
 		analystPanel = new JPanel();
 		analystPanel.setBackground(new Color(87, 86, 82));
 		panel.add(analystPanel, "analystPanel");
 		analystPanel.setLayout(null);
+		
+		
+		
+		///////// SEARCH GAMES PANEL
+		
+		
 		
 		searchGamePanel = new JPanel();
 		searchGamePanel.setFont(new Font("Corbel", Font.BOLD, 13));
@@ -1594,10 +1630,20 @@ public class GraphicInterface {
 					return;
 				}
 				
-				List<PreviewGame> searchedList = logicHandler.searchGames(searchedString);
+				StatusObject<DataNavigator> searchStatusObject  = logicHandler.searchGamesPreviews(searchedString);
 				
-				if( fillSearchedGamesList(searchedList) ) {
-					supportGamesList = searchedList;
+				if( searchStatusObject.statusCode == StatusCode.OK ) {
+					
+					searchGamesDataNavigator = searchStatusObject.element;
+					
+					StatusObject<List <PreviewGame>> listStatusObject = searchStatusObject.element.getNextData();
+					
+					if( listStatusObject.statusCode == StatusCode.OK ) {
+						
+						if( fillSearchedGamesList(listStatusObject.element) ) {
+							supportGamesList = listStatusObject.element;
+					    }
+					}	
 				}
 				
 				mostViewedButton.setBackground(Color.LIGHT_GRAY);
@@ -1637,10 +1683,20 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				List<PreviewGame> searchedList = logicHandler.getMostViewedGames();
+				StatusObject<DataNavigator> viewedStatusObject  = logicHandler.getMostViewedPreviews();
+				
+				if( viewedStatusObject.statusCode == StatusCode.OK ) {
+					
+					searchGamesDataNavigator = viewedStatusObject.element;
+					
+					StatusObject<List <PreviewGame>> listStatusObject = viewedStatusObject.element.getNextData();
+					
+					if( listStatusObject.statusCode == StatusCode.OK ) {
 						
-				if( fillSearchedGamesList(searchedList) ) {
-						supportGamesList = searchedList;
+						if( fillSearchedGamesList(listStatusObject.element) ) {
+							supportGamesList = listStatusObject.element;
+					    }
+					}	
 				}
 			}
 		});
@@ -1670,10 +1726,20 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				List<PreviewGame> searchedList = logicHandler.getMostLikedGames();
+				StatusObject<DataNavigator> likedStatusObject  = logicHandler.getMostViewedPreviews();
+				
+				if( likedStatusObject.statusCode == StatusCode.OK ) {
+					
+					searchGamesDataNavigator = likedStatusObject.element;
+					
+					StatusObject<List <PreviewGame>> listStatusObject = likedStatusObject.element.getNextData();
+					
+					if( listStatusObject.statusCode == StatusCode.OK ) {
 						
-				if( fillSearchedGamesList(searchedList) ) {
-					supportGamesList = searchedList;
+						if( fillSearchedGamesList(listStatusObject.element) ) {
+							supportGamesList = listStatusObject.element;
+					    }
+					}	
 				}
 			}
 		});
@@ -1703,10 +1769,20 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				List<PreviewGame> searchedList = logicHandler.getMostRecentPreviews();
+				StatusObject<DataNavigator> recentStatusObject  = logicHandler.getMostViewedPreviews();
+				
+				if( recentStatusObject.statusCode == StatusCode.OK ) {
+					
+					searchGamesDataNavigator = recentStatusObject.element;
+					
+					StatusObject<List <PreviewGame>> listStatusObject = recentStatusObject.element.getNextData();
+					
+					if( listStatusObject.statusCode == StatusCode.OK ) {
 						
-				if( fillSearchedGamesList(searchedList) ) {
-					supportGamesList = searchedList;
+						if( fillSearchedGamesList(listStatusObject.element) ) {
+							supportGamesList = listStatusObject.element;
+					    }
+					}	
 				}
 			}
 		});
@@ -1736,10 +1812,20 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				List<PreviewGame> searchedList = logicHandler.getFeaturedGames(currentUser);
+				StatusObject<DataNavigator> featuredStatusObject  = logicHandler.getMostViewedPreviews();
+				
+				if( featuredStatusObject.statusCode == StatusCode.OK ) {
+					
+					searchGamesDataNavigator = featuredStatusObject.element;
+					
+					StatusObject<List <PreviewGame>> listStatusObject = featuredStatusObject.element.getNextData();
+					
+					if( listStatusObject.statusCode == StatusCode.OK ) {
 						
-				if( fillSearchedGamesList(searchedList) ) {
-					supportGamesList = searchedList;
+						if( fillSearchedGamesList(listStatusObject.element) ) {
+							supportGamesList = listStatusObject.element;
+					    }
+					}	
 				}
 			}
 		});
@@ -1765,6 +1851,42 @@ public class GraphicInterface {
 		searchGamesJList.setVisibleRowCount(-1);
 		searchGamesJList.setName("searchGameJList");
 		searchGameScrollPane.setViewportView(searchGamesJList);
+		
+		searchGamesVerticalScrollBarListener =  new AdjustmentListener() {
+		      public void adjustmentValueChanged(AdjustmentEvent e) {
+		    	  JScrollBar bar = (JScrollBar)e.getAdjustable();
+			      int extent = bar.getModel().getExtent();
+			      int value = bar.getValue();
+			      int max = bar.getMaximum();
+			      
+			      if( value == 0 ) {
+			    	  
+			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getPrevData();
+			    	  
+			    	  if( status.statusCode == StatusCode.OK ) {
+			    		  
+			    		  fillSearchedGamesList(status.element);
+			    		  bar.setValue(1);
+			    	  }
+			    	  
+			    	  
+			      }
+			      
+			      if( value+extent == 0 ) {
+			    	  
+			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
+			    	  
+			    	  if( status.statusCode == StatusCode.OK ) {
+			    		  
+			    		  fillSearchedGamesList(status.element);
+			    		  bar.setValue(1);
+			    	  }
+
+			      }
+		      }
+		};
+		searchGamesVerticalScrollBar = searchGameScrollPane.getVerticalScrollBar();
+		searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
 		
 		gameGenreMenuBar = new JMenuBar();
 		gameGenreMenuBar.setBorder(new LineBorder(Color.BLACK, 1, true));
