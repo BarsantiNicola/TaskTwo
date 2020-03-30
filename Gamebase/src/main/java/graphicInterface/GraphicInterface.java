@@ -63,7 +63,7 @@ public class GraphicInterface {
 			new Object[][] {
 			},
 			new String[] {
-				"Username", "Name", "Last Activity"
+				"Username", "Name", "Email"
 			}
 		) {
 			/**
@@ -231,8 +231,8 @@ public class GraphicInterface {
 			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
-			object[1] = friend.getCompleteName();
-			object[2] = friend.getLastAccess();
+			object[1] = friend.getCompleteName()!=null?friend.getCompleteName():"N/A";
+			object[2] = friend.getEmail()!=null?friend.getEmail():"N/A";
 			ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
@@ -291,15 +291,15 @@ public class GraphicInterface {
 					fillUserGamesList(logicHandler.getMyGames(selectedUsername));
 					
 					User selectedFriend = logicHandler.getFriend(selectedUsername);
-					String lastAccess;
+					String email;
 					
-					if( selectedFriend == null ) {
-						lastAccess = selectedFriend.getLastAccess();
+					if( selectedFriend != null && selectedFriend.getEmail() != null ) {
+						email = selectedFriend.getEmail();
 					}else {
-						lastAccess = "N/A";
+						email = "N/A";
 					}
 					
-					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games. Last access:" + lastAccess);
+					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games. E-Mail: " + email);
 					
 				}
 			},1);
@@ -409,13 +409,8 @@ public class GraphicInterface {
 		    }
 		}	
 				
-		Image profilePicture = logicHandler.getUserPicture(username);
+		userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultProfilePicture.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
 		
-		if( profilePicture != null ) {
-			userTypeIconHPLabel.setIcon(new ImageIcon(profilePicture.getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
-		} else {
-			userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultProfilePicture.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
-		}
 		
 		fillGamesList(logicHandler.getMyGames(username));
 		
@@ -644,7 +639,7 @@ public class GraphicInterface {
 		
 		fillUserGamesList(logicHandler.getMyGames(displayedUser));
 		
-		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games. Last Access: " + logicHandler.getFriend(displayedUser).getLastAccess());
+		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games. E-Mail: " + logicHandler.getFriend(displayedUser).getEmail() );
 		
 		searchUserTextField.setText("Search User");
 	}
@@ -1867,12 +1862,10 @@ public class GraphicInterface {
 			    		  
 			    		  fillSearchedGamesList(status.element);
 			    		  bar.setValue(1);
-			    	  }
-			    	  
-			    	  
+			    	  }  
 			      }
 			      
-			      if( value+extent == 0 ) {
+			      if( value+extent == max ) {
 			    	  
 			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
 			    	  
@@ -1881,7 +1874,6 @@ public class GraphicInterface {
 			    		  fillSearchedGamesList(status.element);
 			    		  bar.setValue(1);
 			    	  }
-
 			      }
 		      }
 		};
@@ -2310,7 +2302,7 @@ public class GraphicInterface {
 		usersTableHeader.setBackground(new Color(121,166,210));
 		usersScrollPane.setViewportView(usersTable);
 		
-		displayedUserLabel = new JLabel("Currently Displayed: Gianni's Games. Last Access: 10/10/1001");
+		displayedUserLabel = new JLabel("Currently Displayed: Gianni's Games. E-Mail: gianni@giannimail.com");
 		displayedUserLabel.setForeground(Color.WHITE);
 		displayedUserLabel.setFont(new Font("Corbel", Font.BOLD, 15));
 		displayedUserLabel.setName("displayedUserLabel");
