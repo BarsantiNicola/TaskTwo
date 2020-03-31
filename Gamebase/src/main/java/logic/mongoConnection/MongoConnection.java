@@ -209,19 +209,22 @@ public class MongoConnection {
     	
     }
     
-    public StatusCode deleteGame( int gameId ) {
+    public StatusCode deleteGame( String gameTitle ) {
     	
-		if( gameId<0 ){
-			
-			System.out.println( "---> [MongoConnector][DeleteGame] Error, bad game id" );
-			return StatusCode.ERR_DOCUMENT_BAD_GAME_ID;
-			
-		}
+    	gameTitle = gameTitle + ".*";
+    	Bson findFilter = regex("title", gameTitle , "i");
+		Bson projection = Projections.include( "_id");		
+		Game game;
 		
     	try {
-			
-    		Bson filter = eq( "_id" , gameId );
-    		DeleteResult res = gamesCollection.deleteOne( filter );
+    		
+    		game = gamesCollection.find(findFilter).projection(projection).first();
+
+    		if( game == null || game.getId() == null)
+    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
+
+    		Bson deleteFilter = eq( "_id" , game.getId() );
+    		DeleteResult res = gamesCollection.deleteOne( deleteFilter );
     		
     		if( res.getDeletedCount() == 0 ) {
     			
@@ -474,8 +477,9 @@ public class MongoConnection {
     	try {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
-
-    		client.statistics.statsTest();
+    		System.out.println("testing");
+    		client.deleteGame("witcher");
+    		//client.statistics.statsTest();
     		
     		client.closeConnection();
     		

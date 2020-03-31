@@ -1,19 +1,14 @@
 package logic.mongoConnection;
 
-import static com.mongodb.client.model.Filters.elemMatch;
-import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
-
+import static com.mongodb.client.model.Filters.regex;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bson.conversions.Bson;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
-
 import logic.StatusCode;
 import logic.data.StatusObject;
 import logic.data.Game;
@@ -25,7 +20,7 @@ public class DataNavigator{
 	private final int numGames;
 	private int position;
 	private final NavType queryType;
-	private final String optString;
+	private final Bson like;
 	private final Bson projection;
 	private final Bson idSort;
 	private final Bson ratingSort;
@@ -41,11 +36,11 @@ public class DataNavigator{
 		this.numGames = maxNumGames;
 		this.queryType = type;
 		this.position = 0;
-		this.optString = search;
 		this.projection = Projections.include( "_id", "title", "background_image" );
 		this.idSort = Sorts.descending( "_id" );
 		this.ratingSort = Sorts.descending("rating");
 		this.viewsSort = Sorts.descending( "viewsCount" );
+		this.like = or(regex("title" , ".*"+search+".*","i") , regex("genres", ".*"+search+".*","i"));
 		this.cache = null;
 		this.cacheSize = 0;
 		
@@ -85,7 +80,7 @@ public class DataNavigator{
 						previews.add(games.next().getPreview());
 					break;
 				case PREVIEW_SEARCH:
-					games = data.find(or(eq("title" , optString) , elemMatch("genres", eq(optString)))).projection(projection).skip(position).limit(numGames).iterator();
+					games = data.find(like).projection(projection).skip(position).limit(numGames).iterator();
 					position += numGames;
 					while(games.hasNext())
 						previews.add(games.next().getPreview());
@@ -153,7 +148,7 @@ public class DataNavigator{
 					break;
 				case PREVIEW_SEARCH:
 					position -= numGames;
-					games = data.find(or(eq("title" , optString) , elemMatch("genres", eq(optString)))).projection(projection).skip(position).limit(numGames).iterator();
+					games = data.find(like).projection(projection).skip(position).limit(numGames).iterator();
 					while(games.hasNext())
 						previews.add(games.next().getPreview());
 					break;

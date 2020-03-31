@@ -22,7 +22,7 @@ public class Game implements Serializable{
     private Integer favouritesCount;
     private String  description;
     private Date    releaseDate;
-    private String genre;
+    private String genres;
     
     private ArrayList<String> subgenres;
     private ArrayList<String> releases;
@@ -62,17 +62,17 @@ public class Game implements Serializable{
         return metacritic;
     }
 
-    public String getGenre() {
-    	return genre;
+    public String getGenres() {
+    	return genres;
     }
     
     public ArrayList<String> getSubGenres() {
         return subgenres;
     }
 
-    public ArrayList<String> getGenres(){
+    public ArrayList<String> getAllGenres(){
     	ArrayList<String> genres = subgenres;
-    	genres.add(0, genre);
+    	genres.add(0, this.genres);
     	return genres;
     }
     
@@ -164,8 +164,8 @@ public class Game implements Serializable{
         this.metacritic = metacritic;
     }
 
-    public void setGenres(String genre) {
-    	this.genre = genre;
+    public void setGenres(String genres) {
+    	this.genres = genres;
     }
     
     public void setSubGenres(ArrayList<String> subgenres) {
