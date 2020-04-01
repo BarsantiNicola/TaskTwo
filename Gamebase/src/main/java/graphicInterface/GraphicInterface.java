@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import java.net.*;
+import java.time.LocalDate;
 import java.util.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
@@ -295,8 +296,10 @@ public class GraphicInterface {
 					
 					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 					
+					//WAIT UNTIL PREVIEW IMAGE ISSUE IS RESOLVED
 					fillUserGamesList(logicHandler.getMyGames(selectedUsername));
 					
+					//HOW TO GET A USER FROM USERNAME?
 					User selectedFriend = logicHandler.getFriend(selectedUsername);
 					String email;
 					
@@ -319,19 +322,29 @@ public class GraphicInterface {
 					
 					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 					
-					if( logicHandler.isFollowed(currentUser, selectedUsername)) {
+					StatusObject<Boolean> followStatus = graphHandler.doIFollow(selectedUsername);
+					
+					if( followStatus.statusCode == StatusCode.OK ) {
 						
-						if( !logicHandler.follow(currentUser,selectedUsername) ) {
-							return;
-						}
+						if( followStatus.element ) {
+							
+							if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
+								return;
+							}
+							
 						usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
-					} else {
+						} else {
 						
-						if( !logicHandler.unfollow(currentUser,selectedUsername)) {
-							return;
+							if( graphHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
+								return;
+							}
+							usersTableModel.setValueAt("FOLLOW", modelRow, 2);
 						}
-						usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+					} else {
+						usersTableModel.setValueAt("N/A", modelRow, 2);
 					}
+					
+					
 				}
 			},2);
 			followedTableModel.addRow(object);
@@ -379,10 +392,26 @@ public class GraphicInterface {
 		}
 	}
 	
-	private void initializeHomePage( UserType user, String username ) {
+	private void initializeHomePage() {
 		
-		String gamesNumber = logicHandler.getLikedGamesNumber(username)!=-1?Integer.toString(logicHandler.getLikedGamesNumber(username)):"N/A";
-		String followersNumber = logicHandler.getFollowersNumber(username)!=-1?Integer.toString(logicHandler.getFollowersNumber(username)):"N/A";
+		long followersLong = currentUser.getFollowedCount();
+		String followersNumber = Long.toString(followersLong);
+		
+		//PREVIEW IMAGE OR NOT PREVIEW IMAGE?
+		StatusObject<List<Gaaaaaames>> gamesListStatus = graphHandler.getFavouritesGamesList();
+		
+		String gamesNumber = null;
+		
+		if( gamesListStatus.statusCode == StatusCode.OK ) {
+			
+			long favGamesNumber = gamesListStatus.element.size();
+			gamesNumber = Long.toString(favGamesNumber);
+			
+			fillGamesList(gamesListStatus.element);
+		} else {
+			
+			gamesNumber = "N/A";
+		}
 		
 		gamesNumberHPLabel.setText(gamesNumber);
 		followerNumberHPLabel.setText(followersNumber);
@@ -390,40 +419,54 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setToolTipText("You Have " + gamesNumber + " preferred games");
 		followerNumberHPLabel.setToolTipText(followersNumber + " people follow you");
 		
-		usernameHPLabel.setText(username);
+		usernameHPLabel.setText(currentUser.getUsername());
 		
-		String mostViewedGameImageURL = logicHandler.getMostViewedPreview().element.getPreviewPicURL();
-				
-		if( mostViewedGameImageURL == null ) {
-			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		} else {
-			try {
-				mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL))));
-			} catch (Exception e){
+		StatusObject<PreviewGame> mostViewedStatus = logicHandler.getMostViewedPreview();
+		
+		if( mostViewedStatus.statusCode == StatusCode.OK ) {
+			
+			String mostViewedGameImageURL = mostViewedStatus.element.getPreviewPicURL();
+			
+			if( mostViewedGameImageURL == null ) {
 				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		    }
-		}	
+			} else {
+				try {
+					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL))));
+				} catch (Exception e){
+					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+			    }
+			}
+		}
 		
-		String mostPopularGameImageURL = logicHandler.getMostPopularPreview().element.getPreviewPicURL();
+		StatusObject<PreviewGame> mostPopularStatus = logicHandler.getMostPopularPreview();
 		
-		if( mostPopularGameImageURL == null ) {
-			mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		} else {
-			try {
-				mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL))));
-			} catch (Exception e){
+		if( mostPopularStatus.statusCode == StatusCode.OK ) {
+			
+			String mostPopularGameImageURL = mostPopularStatus.element.getPreviewPicURL();
+			
+			if( mostPopularGameImageURL == null ) {
 				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		    }
-		}	
-				
+			} else {
+				try {
+					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL))));
+				} catch (Exception e){
+					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+			    }
+			}	
+		}
+			
 		userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultProfilePicture.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
 		
+		StatusObject<List<User>> friendListStatus = graphHandler.getFollowedUsersList();
 		
-		fillGamesList(logicHandler.getMyGames(username));
+		if( friendListStatus.statusCode == StatusCode.OK ) {
+			
+			fillFollowedTable(friendListStatus.element);
+		}
 		
-		fillFollowedTable(logicHandler.getFriends(username));
+		UserType type = graphHandler.getUserType();
 		
-		switch(user) {
+		switch(type) {
 			case ADMINISTRATOR:
 				adminHPButton.setVisible(true);
 				becomeAnalystButton.setVisible(false);
@@ -457,11 +500,11 @@ public class GraphicInterface {
 		
 	}
 	
-	private void initializeGamePage( String title ) {
+	private void initializeGamePage( int id ) {
 		
-		Game game = logicHandler.getGame(title);
+		StatusObject<Game> gameStatus = logicHandler.getGame(id);
 		
-		if( game == null ) {
+		if( gameStatus.statusCode != StatusCode.OK ) {
 			
 			cleanGamePage();
 			
@@ -469,7 +512,10 @@ public class GraphicInterface {
 			
 			cl.show(panel, "homePagePanel");
 			
+			return;
 		}
+		
+		Game game = gameStatus.element;
 		
 		currentGame = game;
 		
@@ -633,18 +679,25 @@ public class GraphicInterface {
 		previousVideoButton.setEnabled(true);
 	}
 	
-	private void initializeUserPage( String currentUser, String searchedUser ) {
+	private void initializeUserPage( String searchedUser ) {
 		
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
 		
-		List<User> featuredUsers = logicHandler.getFeaturedUsers(currentUser);
+		StatusObject<List<User>> featuredUsersStatus = graphHandler.getSuggestedUsersList();
 		
-		fillUsersTable(featuredUsers);
+		String displayedUser = searchedUser==null?null:searchedUser;
 		
-		String displayedUser = searchedUser==null?featuredUsers.get(0).getUsername():searchedUser;
+		if( featuredUsersStatus.statusCode == StatusCode.OK ) {
+			
+			fillUsersTable(featuredUsersStatus.element);
+			
+			displayedUser = searchedUser==null?featuredUsersStatus.element.get(0).getUsername():searchedUser;
+		}
 		
-		fillUserGamesList(logicHandler.getMyGames(displayedUser));
+		if( displayedUser != null ) {
+			fillUserGamesList(/*SOMETHING TO GET THE LIST OF DISPLAYED USER GAMES*/);
+		}
 		
 		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games. E-Mail: " + logicHandler.getFriend(displayedUser).getEmail() );
 		
@@ -664,19 +717,25 @@ public class GraphicInterface {
 	private void initializeAdminPage() {
 		
 		String userCount, gameCount;
-		int userC = logicHandler.getUserCount();
-		StatusObject<Long> gameCounter = logicHandler.getGameCount();
 		
-		if( userC == -1 ) {
-			userCount = "N/A";
+		StatusObject<Long> userCountStatus = graphHandler.getTotalUsersCount();
+		
+		if( userCountStatus.statusCode == StatusCode.OK ) {
+			
+			userCount = Long.toString(userCountStatus.element);
 		} else {
-			userCount = Integer.toString(userC);
+			
+			userCount = "N/A";
 		}
 		
-		if( gameCounter.statusCode == StatusCode.OK ) {
-			gameCount = "N/A";
+		StatusObject<Long> gameCountStatus = logicHandler.getGameCount();
+		
+		if( gameCountStatus.statusCode == StatusCode.OK ) {
+			
+			gameCount = Long.toString(gameCountStatus.element);
 		} else {
-			gameCount = Long.toString(gameCounter.element);
+			
+			gameCount = "N/A";
 		}
 		
 		userCountLabel.setText("User Count: " + userCount);
@@ -732,14 +791,16 @@ public class GraphicInterface {
 							StatusObject<Game> gameStatus = logicHandler.getGame(previewGame.getId());
 							
 							if( gameStatus.statusCode == StatusCode.OK ) {
-								List<String> genres = gameStatus.element.getGenres();
-								for( String gen: genres)
-								if( gen.compareTo(genre) == 0 ) {
-									genreList.add(previewGame);
-									break;
-							    }
-							}
-							
+								
+								List<String> genres = gameStatus.element.getAllGenres();
+								
+								for( String gen: genres) {
+									if( gen.compareTo(genre) == 0 ) {
+										genreList.add(previewGame);
+										break;
+								    }
+								}	
+							}					
 						}
 						
 						fillSearchedGamesList(genreList);
@@ -749,7 +810,14 @@ public class GraphicInterface {
 				gameGenreMenu.add(item);
 			}
 		}
-		fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
+		
+		StatusObject<List<Gaaames>> featuredGamesStatus = graphHandler.getFeaturedGamesList();
+		
+		if( featuredGamesStatus.statusCode == StatusCode.OK ) {
+			
+			fillSearchedGamesList(featuredGamesStatus.element);
+		}
+		
 		
 	}
 	
@@ -925,6 +993,20 @@ public class GraphicInterface {
 					return;
 				}
 				
+				
+				//rivedi
+				User registeredUser = new User(username, password,LocalDate.now());
+				
+				StatusObject<UserInfo> registrationStatus = graphHandler.register(registeredUser);
+				
+				if( registrationStatus.statusCode == StatusCode.OK ) {
+					
+					if( registrationStatus.element.userType != UserType.NO_USER ) {
+						
+						//registration OK
+					}
+				}
+				
 				if( !logicHandler.signUp(username,password) ) {
 					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed: username " + username + " already exists");
 					errorMessageLabel.setText("Username already used");
@@ -933,9 +1015,8 @@ public class GraphicInterface {
 				} else {
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->sign up completed: username " + username + " registered");
 					cl.show(panel, "homePagePanel");
-					initializeHomePage(UserType.USER,username);
+					initializeHomePage();
 					currentUser = username;
-					currentUsertype = UserType.USER;
 				}
 			}
 		});
@@ -969,7 +1050,11 @@ public class GraphicInterface {
 					return;
 				}
 				
-				UserType usertype = logicHandler.login(username,password);
+				//rivedi
+				
+				StatusObject<UserInfo> loginStatus = graphHandler.login(username, password);
+				
+				if( loginStatus.statusCode )
 				
 				if( usertype == UserType.NO_USER ) {
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: no user " + username + " found");
@@ -984,7 +1069,6 @@ public class GraphicInterface {
 					cl.show(panel, "homePagePanel");
 					initializeHomePage( usertype, username );
 					currentUser = username;
-					currentUsertype = usertype;
 				}				
 			}
 		});
@@ -1116,11 +1200,13 @@ public class GraphicInterface {
 		becomeAnalystButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.becomeAnalyst(currentUser) ) {
+				StatusObject<UserInfo> upgradeStatus = graphHandler.upgradeToAnalyst();
+				
+				if( upgradeStatus.statusCode == StatusCode.OK ) {
 					
+					currentUser = upgradeStatus.element.user;
 					becomeAnalystButton.setVisible(false);
 					analystHPButton.setVisible(true);
-					currentUsertype = UserType.ANALYST;
 				}
 			}
 		});
@@ -1192,7 +1278,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "gamePanel");
 				
-				initializeGamePage(game.getTitle());
+				initializeGamePage(game.getId());
 			}
 		});
 		myGamesList.setName("myGamesList");
@@ -1247,10 +1333,9 @@ public class GraphicInterface {
 				StatusObject<PreviewGame> viewedGameStatus = logicHandler.getMostPopularPreview();
 				
 				if( viewedGameStatus.statusCode == StatusCode.OK ) {
-					initializeGamePage(viewedGameStatus.element.getTitle());
-				} else {
-					initializeGamePage(null);
-				}
+					
+					initializeGamePage(viewedGameStatus.element.getId());
+				} 
 			}
 		});
 		mostViewedGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -1280,10 +1365,9 @@ public class GraphicInterface {
 				StatusObject<PreviewGame> popularGameStatus = logicHandler.getMostPopularPreview();
 				
 				if( popularGameStatus.statusCode == StatusCode.OK ) {
-					initializeGamePage(popularGameStatus.element.getTitle());
-				} else {
-					initializeGamePage(null);
-				}
+					
+					initializeGamePage(popularGameStatus.element.getId());
+				} 
 			
 			}
 		});
@@ -1312,7 +1396,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "userPanel");
 				
-				initializeUserPage(currentUser,null);
+				initializeUserPage(null);
 			}
 		});
 		userButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -1369,7 +1453,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(UserType.ADMINISTRATOR,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeADButton.setToolTipText("Return to Homepage");
@@ -1430,7 +1514,10 @@ public class GraphicInterface {
 				if( username == "" ) {
 					deleteUserResultLabel.setText("Failure!");
 					deleteUserResultLabel.setVisible(true);
-				}else if( logicHandler.deleteUser(username) ) {
+					return;
+				}
+				
+				if( graphHandler.deleteUser(username) == StatusCode.OK ) {
 					deleteUserResultLabel.setText("Success!");
 					deleteUserResultLabel.setVisible(true);
 				} else {
@@ -1465,7 +1552,10 @@ public class GraphicInterface {
 				if( game == "" ) {
 					deleteGameResultLabel.setText("Failure!");
 					deleteGameResultLabel.setVisible(true);
-				}else if( logicHandler.deleteGame(game) ) {
+					return;
+				}
+				
+				if( logicHandler.deleteGame(game) == StatusCode.OK ) {
 					deleteGameResultLabel.setText("Success!");
 					deleteGameResultLabel.setVisible(true);
 				} else {
@@ -1596,7 +1686,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeSEButton.setToolTipText("Return to Homepage");
@@ -1995,7 +2085,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeGameButton.setToolTipText("Return to Homepage");
@@ -2058,7 +2148,8 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 1);
+				graphHandler.rateGame(currentGame.getTitle(), 1);
+					
 			}
 		});
 		vote1.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2069,7 +2160,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 2);
+				graphHandler.rateGame(currentGame.getTitle(), 2);
 			}
 		});
 		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2080,7 +2171,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 3);
+				graphHandler.rateGame(currentGame.getTitle(), 3);
 			}
 		});
 		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2091,7 +2182,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 4);
+				graphHandler.rateGame(currentGame.getTitle(), 4);
 			}
 		});
 		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2102,7 +2193,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 5);
+				graphHandler.rateGame(currentGame.getTitle(), 5);
 			}
 		});
 		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2209,8 +2300,14 @@ public class GraphicInterface {
 				
 				featuredUserButton.setBackground(new Color(30, 144, 255));
 				featuredUserButton.setForeground(Color.WHITE);
-
-				fillUsersTable(logicHandler.getFeaturedUsers(currentUser));
+				
+				StatusObject<List<User>> featuredUserStatus = graphHandler.getSuggestedUsersList();
+				
+				if( featuredUserStatus.statusCode == StatusCode.OK ) {
+					
+					fillUsersTable(featuredUserStatus.element);
+				}
+				
 			}
 		});
 		featuredUserButton.setBackground(new Color(30, 144, 255));
@@ -2252,7 +2349,12 @@ public class GraphicInterface {
 				featuredUserButton.setBackground(Color.WHITE);
 				featuredUserButton.setForeground(Color.BLACK);
 				
-				fillUsersTable(logicHandler.searchUsers(searchedString, currentUser));
+				StatusObject<List<User>> searchedUserStatus = graphHandler.searchUsers(searchedString);
+				
+				if( searchedUserStatus.statusCode == StatusCode.OK ) {
+					
+					fillUsersTable(searchedUserStatus.element);
+				}
 			}
 		});
 		searchUserButton.setToolTipText("Search for New Users");
@@ -2276,7 +2378,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeUserButton.setToolTipText("Return to Homepage");
@@ -2350,7 +2452,7 @@ public class GraphicInterface {
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				int age;
+				Long age;
 				String ageString = ageTextField.getText();
 				String name = nameTextField.getText();
 				String surname = surnameTextfield.getText();
@@ -2358,38 +2460,40 @@ public class GraphicInterface {
 				String gender = genderMenu.getText();
 				String email = emailTextField.getText();
 
-				if( ageString == "" || ageString.startsWith("Age")) {
-					age = -1;
-				} else {
+				if( ageString != "" && ageString.startsWith("Age")) {
 					try {
-						age = Integer.parseInt(ageString);
+						age = Long.parseLong(ageString);
+						currentUser.setAge(age);
 					} catch (NumberFormatException e) {
-						age = -1;
+						
 					}
 				}
 				
-				if( name == "" || name.startsWith("Name") ) {
-					name = null;
+				if( name != "" && !name.startsWith("Name") ) {
+					currentUser.setFirstName(name);
 				}
 				
-				if( surname == "" || surname.startsWith("Surname") ) {
-					surname = null;
+				if( surname != "" && !surname.startsWith("Surname") ) {
+					currentUser.setLastName(surname);
 				}
 				
-				if( gender != "M" && gender != "F" ) {
-					gender = null;
+				if( gender == "M" || gender == "F" ) {
+					currentUser.setGender(gender.charAt(0));
 				}
 				
-				if( genre == "Genre" ) {
-					genre = null;
+				if( genre != "Genre" ) {
+					currentUser.setFavouriteGenre(genre);
 				}
 				
-				if( email == "" || email.startsWith("E-Mail")) {
-					email = null;
+				if( email != "" && !email.startsWith("E-Mail")) {
+					currentUser.setEmail(email);
 				}
 				
-				logicHandler.updateUserInformation(age,name,surname,genre,gender,email);
-				initializeUserInformationPage();
+				if( graphHandler.saveUser() == StatusCode.OK ) {
+					
+					initializeUserInformationPage();
+				}
+				
 			}
 		});
 		saveButton.setName("saveButton");
@@ -2499,7 +2603,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeUserInformationButton.setToolTipText("Return to Homepage");
