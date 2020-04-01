@@ -8,6 +8,7 @@ import java.util.List;
 
 import logic.*;
 import logic.data.*;
+import logic.graphConnector.GraphConnector;
 import logic.mongoConnection.DataNavigator;
 
 import java.awt.event.*;
@@ -201,7 +202,8 @@ public class GraphicInterface {
 	
 	//Logic and support info
 	private LogicBridge logicHandler = new LogicBridge();
-	private String currentUser = null;
+	private GraphConnector graphHandler = new GraphConnector();
+	private User currentUser = null;
 	private UserType currentUsertype = null;
 	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
@@ -246,7 +248,7 @@ public class GraphicInterface {
 					
 					cl.show(panel, "userPanel");
 					
-					initializeUserPage(currentUser,followerUsername);
+					initializeUserPage(currentUser.getUsername(),followerUsername);
 				}
 			},0);
 			followedTableModel.addRow(object);
@@ -275,10 +277,15 @@ public class GraphicInterface {
 		
 		for( User friend: usersList ) {
 			
+			StatusObject<Boolean> followStatus = graphHandler.doIFollow(friend.getUsername());
+			if( followStatus.statusCode != StatusCode.OK ) {
+				continue;
+			}
+			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
 			object[1] = "SEE GAMES";
-			object[2] = logicHandler.isFollowed(currentUser,friend.getUsername())?"UNFOLLOW":"FOLLOW";
+			object[2] = followStatus.element?"UNFOLLOW":"FOLLOW";
 			ButtonColumn buttonColumnGames = new ButtonColumn(followedTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
@@ -846,8 +853,9 @@ public class GraphicInterface {
 		frame = new JFrame();
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent arg0) {
+			public void windowClosing(WindowEvent arg0) {
 				logicHandler.closeConnection();
+				graphHandler.close();
 			}
 		});
 		frame.setBounds(100, 100, 952, 615);
