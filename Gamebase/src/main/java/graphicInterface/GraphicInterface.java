@@ -201,6 +201,9 @@ public class GraphicInterface {
 	private JMenuBar genderMenuBar;
 	private JTextField emailTextField;
 	
+	//analyst panel
+	private JButton analystHomeButton;
+	
 	//Logic and support info
 	private LogicBridge logicHandler = new LogicBridge();
 	private GraphConnector graphHandler = new GraphConnector();
@@ -212,6 +215,7 @@ public class GraphicInterface {
 	private List<String> currentVideosURLlist = null;
 	private int currentVideoIndex = 0;
 	private int lastVideoIndex = 0;
+	private JTextField countryTextField;
 	
 	//support functions
 	
@@ -249,7 +253,7 @@ public class GraphicInterface {
 					
 					cl.show(panel, "userPanel");
 					
-					initializeUserPage(currentUser.getUsername(),followerUsername);
+					initializeUserPage(followerUsername);
 				}
 			},0);
 			followedTableModel.addRow(object);
@@ -993,30 +997,30 @@ public class GraphicInterface {
 					return;
 				}
 				
-				
-				//rivedi
 				User registeredUser = new User(username, password,LocalDate.now());
 				
 				StatusObject<UserInfo> registrationStatus = graphHandler.register(registeredUser);
 				
 				if( registrationStatus.statusCode == StatusCode.OK ) {
 					
-					if( registrationStatus.element.userType != UserType.NO_USER ) {
-						
-						//registration OK
-					}
-				}
-				
-				if( !logicHandler.signUp(username,password) ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed: username " + username + " already exists");
-					errorMessageLabel.setText("Username already used");
-					errorMessageLabel.setVisible(true);
-					return;
-				} else {
+					currentUser = registrationStatus.element.user; //or currentUser = registeredUser;
+					
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->sign up completed: username " + username + " registered");
 					cl.show(panel, "homePagePanel");
 					initializeHomePage();
-					currentUser = username;
+				} else {
+					
+					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed.");
+					
+					if( registrationStatus.statusCode == StatusCode.ERR_GRAPH_USER_ALREADYEXISTS ) {
+						
+						errorMessageLabel.setText("Error occured during registration");
+					} else {
+						
+						errorMessageLabel.setText("Generic Error");
+					}
+					
+					errorMessageLabel.setVisible(true);
 				}
 			}
 		});
@@ -1050,26 +1054,21 @@ public class GraphicInterface {
 					return;
 				}
 				
-				//rivedi
-				
 				StatusObject<UserInfo> loginStatus = graphHandler.login(username, password);
 				
-				if( loginStatus.statusCode )
-				
-				if( usertype == UserType.NO_USER ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: no user " + username + " found");
-					errorMessageLabel.setText("No User " + username + " found");
-					errorMessageLabel.setVisible(true);
-				} else if( usertype == UserType.WRONG_PASSWORD ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: wrong password for username " + username);
-					errorMessageLabel.setText("Uncorrect Password for User " + username );
-					errorMessageLabel.setVisible(true);
-				} else {
+				if( loginStatus.statusCode == StatusCode.OK ) {
+					
+					currentUser = loginStatus.element.user;
+					
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
 					cl.show(panel, "homePagePanel");
-					initializeHomePage( usertype, username );
-					currentUser = username;
-				}				
+					initializeHomePage();
+				} else {
+					
+					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed");
+					errorMessageLabel.setText("Login failed");
+					errorMessageLabel.setVisible(true);
+				}			
 			}
 		});
 		loginPanel.add(loginButton);
@@ -1230,6 +1229,8 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				cl.show(panel, "analystPanel");
+				
+				initializeAnalystPanel();
 			}
 		});
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -1660,6 +1661,41 @@ public class GraphicInterface {
 		analystPanel.setBackground(new Color(87, 86, 82));
 		panel.add(analystPanel, "analystPanel");
 		analystPanel.setLayout(null);
+		
+		analystHomeButton = new JButton("");
+		analystHomeButton.setName("analystHomeButton");
+		analystHomeButton.setBounds(83, 34, 97, 73);
+		analystHomeButton.setToolTipText("Return to Homepage");
+		analystHomeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				cleanAnalystPage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "homePagePanel");
+				
+				initializeHomePage();
+			}
+		});
+		analystHomeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		analystHomeButton.setBackground(SystemColor.controlDkShadow);
+		analystHomeButton.setBorder(null);
+		analystHomeButton.setContentAreaFilled(false);
+		analystHomeButton.setOpaque(true);
+		analystHomeButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		analystPanel.add(analystHomeButton);
+		
+		JPanel plotContainer = new JPanel();
+		plotContainer.setBounds(83, 140, 764, 381);
+		analystPanel.add(plotContainer);
+		plotContainer.setLayout(new CardLayout(0, 0));
+		
+		JButton topUserButton = new JButton("Top Users");
+		topUserButton.setName("topUserButton");
+		topUserButton.setBounds(197, 70, 97, 37);
+		analystPanel.add(topUserButton);
+		
 		
 		
 		
@@ -2459,7 +2495,8 @@ public class GraphicInterface {
 				String genre = genreMenu.getText();
 				String gender = genderMenu.getText();
 				String email = emailTextField.getText();
-
+				String country = countryTextField.getText();
+				
 				if( ageString != "" && ageString.startsWith("Age")) {
 					try {
 						age = Long.parseLong(ageString);
@@ -2489,6 +2526,10 @@ public class GraphicInterface {
 					currentUser.setEmail(email);
 				}
 				
+				if( country !="" && !country.startsWith("Country") ) {
+					currentUser.setCountry(country);
+				}
+				
 				if( graphHandler.saveUser() == StatusCode.OK ) {
 					
 					initializeUserInformationPage();
@@ -2497,7 +2538,7 @@ public class GraphicInterface {
 			}
 		});
 		saveButton.setName("saveButton");
-		saveButton.setBounds(396, 409, 127, 48);
+		saveButton.setBounds(520, 397, 127, 48);
 		userInformationPanel.add(saveButton);
 		
 		nameTextField = new JTextField();
@@ -2622,6 +2663,14 @@ public class GraphicInterface {
 		emailTextField.setColumns(10);
 		emailTextField.setBounds(233, 348, 233, 37);
 		userInformationPanel.add(emailTextField);
+		
+		countryTextField = new JTextField();
+		countryTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
+		countryTextField.setName("countryTextField");
+		countryTextField.setText("Country");
+		countryTextField.setBounds(231, 408, 235, 37);
+		userInformationPanel.add(countryTextField);
+		countryTextField.setColumns(10);
 		
 	}
 }
