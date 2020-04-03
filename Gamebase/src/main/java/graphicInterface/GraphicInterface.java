@@ -101,6 +101,11 @@ public class GraphicInterface {
 	
 	///////// ANALYST PANEL
 	private JPanel analystPanel;
+	private JButton analystHomeButton;
+	private JButton topUsersButton;
+	private JPanel plotContainer;
+	private BarChartPanel topUsersPanel;
+	private BarChartPanel topGamesPanel;
 		
 	///////// SEARCH GAME PANEL
 	private JPanel searchGamePanel;	
@@ -200,22 +205,20 @@ public class GraphicInterface {
 	private JMenu genderMenu;
 	private JMenuBar genderMenuBar;
 	private JTextField emailTextField;
-	
-	//analyst panel
-	private JButton analystHomeButton;
+	private JTextField countryTextField;
 	
 	//Logic and support info
 	private LogicBridge logicHandler = new LogicBridge();
 	private GraphConnector graphHandler = new GraphConnector();
 	private User currentUser = null;
-	private UserType currentUsertype = null;
 	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	private List<PreviewGame> supportGamesList = null;
 	private List<String> currentVideosURLlist = null;
 	private int currentVideoIndex = 0;
 	private int lastVideoIndex = 0;
-	private JTextField countryTextField;
+	@SuppressWarnings("null")
+	private boolean isGameFavourite = (Boolean) null;
 	
 	//support functions
 	
@@ -301,7 +304,12 @@ public class GraphicInterface {
 					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 					
 					//WAIT UNTIL PREVIEW IMAGE ISSUE IS RESOLVED
-					fillUserGamesList(logicHandler.getMyGames(selectedUsername));
+					StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
+					
+					if( favGamesStatus.statusCode == StatusCode.OK ) {
+						
+						fillUserGamesList(favGamesStatus.element);
+					}
 					
 					//HOW TO GET A USER FROM USERNAME?
 					User selectedFriend = logicHandler.getFriend(selectedUsername);
@@ -610,6 +618,34 @@ public class GraphicInterface {
 			playStationButton.setEnabled(false);
 		}
 		
+		StatusObject<List<GraphGame>> myGamesStatus = graphHandler.getFavouritesGamesList();
+		
+		if( myGamesStatus.statusCode == StatusCode.OK ) {
+			
+			boolean favourite = false;
+			
+			for( int i = 0; i < myGamesStatus.element.size(); i++ ) {
+				
+				if( Integer.parseInt(myGamesStatus.element.get(i)._id) == game.getId() ) {
+					
+					favourite = true;
+					break;
+				}
+			}
+			
+			isGameFavourite = favourite;
+			
+			if( favourite ) {
+				
+				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+				isGameFavourite = true;
+			} else {
+				
+				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+				isGameFavourite = false;
+			}
+		}
+			
 		List<String> imagesURL = game.getImagesURLs();
 		
 		fillImagesList(imagesURL);
@@ -647,6 +683,7 @@ public class GraphicInterface {
 		
 	}
 	
+	@SuppressWarnings("null")
 	private void cleanGamePage() {
 		
 		gameDescriptionTextArea.setText("");
@@ -681,6 +718,8 @@ public class GraphicInterface {
 		
 		nextVideoButton.setEnabled(true);
 		previousVideoButton.setEnabled(true);
+		
+		isGameFavourite = (Boolean) null;
 	}
 	
 	private void initializeUserPage( String searchedUser ) {
@@ -700,7 +739,13 @@ public class GraphicInterface {
 		}
 		
 		if( displayedUser != null ) {
-			fillUserGamesList(/*SOMETHING TO GET THE LIST OF DISPLAYED USER GAMES*/);
+			
+			StatusObject<List<GraphGame>> friendGamesStatus = graphHandler.getFavouritesGamesList(displayedUser);
+			
+			if( friendGamesStatus.statusCode == StatusCode.OK ) {
+				
+				fillUserGamesList(friendGamesStatus.element);
+			}	
 		}
 		
 		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games. E-Mail: " + logicHandler.getFriend(displayedUser).getEmail() );
@@ -836,21 +881,21 @@ public class GraphicInterface {
 	
 	private void initializeUserInformationPage() {
 		
-		updateInfoLabel.setText("Hi " + currentUser + ", update your information");
+		updateInfoLabel.setText("Hi " + currentUser.getUsername() + ", update your information");
 		
-		User user = logicHandler.getFriend(currentUser);
-		
-		String currentAge = Long.toString(user.getAge());
-		String currentName = user.getFirstName();
-		String currentSurname = user.getLastName();
-		String currentFavoriteGenre = user.getFavouriteGenre();
-		String currentEmail = user.getEmail();
-		Character gender = user.getGender();
+		String currentAge = Long.toString(currentUser.getAge());
+		String currentName = currentUser.getFirstName();
+		String currentSurname = currentUser.getLastName();
+		String currentFavoriteGenre = currentUser.getFavouriteGenre();
+		String currentEmail = currentUser.getEmail();
+		Character gender = currentUser.getGender();
+		String currentCountry = currentUser.getCountry();
 		
 		ageTextField.setText("Age - Current Value " + currentAge!=null?currentAge:"null");
 		nameTextField.setText("Name - Current Value " + currentName!=null?currentName:"null");
 		surnameTextfield.setText("Surname - Current Value " + currentSurname!=null?currentSurname:"null");
 		emailTextField.setText("Email - Current Value " + currentEmail!=null?currentEmail:"null");
+		countryTextField.setText("Country - Current Value " + currentCountry!=null?currentCountry:"null");
 		
 		if( gender == 'M' ) {
 			genderMenu.setText("M");
@@ -894,6 +939,49 @@ public class GraphicInterface {
 		genreMenu.removeAll();
 	}
 	
+	private void initializeAnalystPanel() {
+		
+		boolean somethingToShow = false;
+		
+		StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
+		
+		if( topUsersStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> topUsersHashmap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < topUsersStatus.element.size(); i++ ){
+				
+				topUsersHashmap.put(topUsersStatus.element.get(i).getUsername(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
+			}
+			
+			topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false);
+			topUsersPanel.setName("topUsersPanel");
+			
+			topUsersButton.setEnabled(true);
+			
+			plotContainer.add(topUsersPanel);
+			
+			CardLayout cl = (CardLayout)(plotContainer.getLayout());
+			
+			cl.show(plotContainer, "topUsersPanel");
+			
+			somethingToShow = true;
+			
+		} else {
+			
+			topUsersButton.setEnabled(false);
+		}
+		
+		StatusObje
+		
+		fai la stessa cosa per gli altri pannelli
+	}
+	
+	private void cleanAnalystPanel() {
+		
+		topUsersPanel = null;
+		topUsersButton.setEnabled(true);
+	}
 	
 	/**
 	 * Launch the application.
@@ -1120,9 +1208,12 @@ public class GraphicInterface {
 				
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
-				currentUser = null;
-				currentUsertype = null;
-				cl.show(panel, "loginPanel");
+				if( graphHandler.logout() == StatusCode.OK ) {
+					
+					currentUser = null;
+					cl.show(panel, "loginPanel");
+				}
+
 			}
 		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
@@ -1686,15 +1777,23 @@ public class GraphicInterface {
 		analystHomeButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		analystPanel.add(analystHomeButton);
 		
-		JPanel plotContainer = new JPanel();
+		plotContainer = new JPanel();
 		plotContainer.setBounds(83, 140, 764, 381);
 		analystPanel.add(plotContainer);
 		plotContainer.setLayout(new CardLayout(0, 0));
 		
-		JButton topUserButton = new JButton("Top Users");
-		topUserButton.setName("topUserButton");
-		topUserButton.setBounds(197, 70, 97, 37);
-		analystPanel.add(topUserButton);
+		topUsersButton = new JButton("Top Users");
+		topUsersButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topUsersPanel");
+			}
+		});
+		topUsersButton.setName("topUserButton");
+		topUsersButton.setBounds(197, 70, 97, 37);
+		analystPanel.add(topUsersButton);
 		
 		
 		
@@ -2039,6 +2138,12 @@ public class GraphicInterface {
 		gameGenreMenu.setName("gameGenreMenu");
 		gameGenreMenuBar.add(gameGenreMenu);
 		
+		
+		
+		/////////// GAME PANEL
+		
+		
+		
 		gamePanel = new JPanel();
 		gamePanel.setBackground(new Color(87, 86, 82));
 		gamePanel.setName("gamePanel");
@@ -2134,13 +2239,41 @@ public class GraphicInterface {
 		gamePanel.add(homeGameButton);
 		
 		actionButton = new JButton("");
-		actionButton.setToolTipText("Click Here to Add this Game to Your Games");
+		actionButton.setToolTipText("Click Here to Add/Remove to/from Your Favourite Games");
 		actionButton.setName("actionButton");
 		actionButton.setBounds(477, 257, 63, 37);
 		actionButton.setBackground(SystemColor.controlDkShadow);
 		actionButton.setContentAreaFilled(false);
 		actionButton.setOpaque(true);
 		actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+		actionButton.addActionListener(new ActionListener() {
+			@SuppressWarnings("null")
+			public void actionPerformed(ActionEvent e) {
+				
+				if( isGameFavourite ) {
+					
+					if( graphHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+						
+						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+						isGameFavourite = false;
+					}else {
+						
+						isGameFavourite = (Boolean) null;
+					}
+				} else if( !isGameFavourite ){
+					
+					if( graphHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+						
+						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+						isGameFavourite = false;
+					} else {
+						
+						isGameFavourite = (Boolean) null;
+					}
+				} 
+				
+			}
+		});
 		gamePanel.add(actionButton);
 		
 		developerLabel = new JLabel("Developer: testDeveloper");
