@@ -106,6 +106,12 @@ public class GraphicInterface {
 	private JPanel plotContainer;
 	private BarChartPanel topUsersPanel;
 	private BarChartPanel topGamesPanel;
+	private PieChartPanel topGenresPanel;
+	private BarChartPanel topRatedGameByYearPanel;
+	private BarChartPanel topViewedGameByYearPanel;
+	
+	private JButton topGamesButton;
+	private JButton topGenresButton;
 		
 	///////// SEARCH GAME PANEL
 	private JPanel searchGamePanel;	
@@ -219,6 +225,9 @@ public class GraphicInterface {
 	private int lastVideoIndex = 0;
 	@SuppressWarnings("null")
 	private boolean isGameFavourite = (Boolean) null;
+	private JButton topRatedGameByYearButton;
+	private JButton topViewedGameByYearButton;
+
 	
 	//support functions
 	
@@ -969,18 +978,154 @@ public class GraphicInterface {
 			
 		} else {
 			
-			topUsersButton.setEnabled(false);
+			topGamesButton.setEnabled(false);
 		}
 		
-		StatusObje
+		StatusObject<List<GraphGame>> topGamesStatus = graphHandler.getMostFavouriteGames(6);
 		
-		fai la stessa cosa per gli altri pannelli
+		if( topGamesStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> topGamesHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < topGamesStatus.element.size(); i++ ){
+				
+				topGamesHashMap.put(topGamesStatus.element.get(i).title, topGamesStatus.element.get(i).favouriteCount.doubleValue());
+			}
+			
+			topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false);
+			topUsersPanel.setName("topGamesPanel");
+			
+			topGamesButton.setEnabled(true);
+			
+			plotContainer.add(topGamesPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGamesPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
+		StatusObject<List<UserStats>> userStatsStatus = graphHandler.getUsersSummaryStats();
+		
+		if( userStatsStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> topGenresHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < userStatsStatus.element.size(); i++ ) {
+				
+				String genre = userStatsStatus.element.get(i).favouriteGenre;
+				
+				Double value = topGenresHashMap.get(genre);
+				
+				if( value == null ) {
+					
+					topGenresHashMap.put(genre, new Integer(1).doubleValue());
+				} else {
+					
+					value++;
+					topGenresHashMap.put(genre, value);
+				}
+			}
+			
+			topGenresPanel = new PieChartPanel("Most Liked Genres", "Genre", "Favourite Count", topGenresHashMap, "V", true, false, false);
+			topGenresPanel.setName("topGenresPanel");
+			
+			topGenresButton.setEnabled(true);
+			
+			plotContainer.add(topGenresPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGenresPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
+		StatusObject<List<Statistics>> maxRatedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
+		
+		if( maxRatedGameByYearStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> maxRatedYearHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < maxRatedGameByYearStatus.element.size(); i++ ){
+				
+				maxRatedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
+						maxRatedGameByYearStatus.element.get(i).getRating());
+			}
+			
+			topRatedGameByYearPanel = new BarChartPanel("Most Rated Games by Year", "Game - Year", "Rate", maxRatedYearHashMap, "V", true, false, false);
+			topRatedGameByYearPanel.setName("topRatedGamesByYearPanel");
+			
+			topRatedGameByYearButton.setEnabled(true);
+			
+			plotContainer.add(topRatedGameByYearPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topRatedGamesByYearPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
+		StatusObject<List<Statistics>> maxViewedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
+		
+		if( maxViewedGameByYearStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> maxViewedYearHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < maxViewedGameByYearStatus.element.size(); i++ ){
+				
+				maxViewedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
+						maxRatedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
+			}
+			
+			topViewedGameByYearPanel = new BarChartPanel("Most Viewed Games by Year", "Game - Year", "Views", maxViewedYearHashMap, "V", true, false, false);
+			topViewedGameByYearPanel.setName("topViewedGamesByYearPanel");
+			
+			topViewedGameByYearButton.setEnabled(true);
+			
+			plotContainer.add(topViewedGameByYearPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topViewedGamesByYearPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
 	}
 	
 	private void cleanAnalystPanel() {
 		
 		topUsersPanel = null;
 		topUsersButton.setEnabled(true);
+		
+		topGamesPanel = null;
+		topGamesButton.setEnabled(true);
+		
+		topGenresPanel = null;
+		topGenresButton.setEnabled(true);
+		
+		topRatedGameByYearPanel = null;
+		topRatedGameByYearButton.setEnabled(true);
+		
+		topViewedGameByYearPanel = null;
+		topViewedGameByYearButton.setEnabled(true);
+		
+		
 	}
 	
 	/**
@@ -1755,7 +1900,7 @@ public class GraphicInterface {
 		
 		analystHomeButton = new JButton("");
 		analystHomeButton.setName("analystHomeButton");
-		analystHomeButton.setBounds(83, 34, 97, 73);
+		analystHomeButton.setBounds(83, 23, 97, 84);
 		analystHomeButton.setToolTipText("Return to Homepage");
 		analystHomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1783,6 +1928,7 @@ public class GraphicInterface {
 		plotContainer.setLayout(new CardLayout(0, 0));
 		
 		topUsersButton = new JButton("Top Users");
+		topUsersButton.setToolTipText("Click Here to see the most followed users");
 		topUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -1792,8 +1938,64 @@ public class GraphicInterface {
 			}
 		});
 		topUsersButton.setName("topUserButton");
-		topUsersButton.setBounds(197, 70, 97, 37);
+		topUsersButton.setBounds(192, 23, 97, 37);
 		analystPanel.add(topUsersButton);
+		
+		topGamesButton = new JButton("Top Games");
+		topGamesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGamesPanel");
+			}
+		});
+		topGamesButton.setToolTipText("Click Here to See the most liked games");
+		topGamesButton.setName("topGamesButton");
+		topGamesButton.setBounds(192, 70, 97, 37);
+		analystPanel.add(topGamesButton);
+		
+		topGenresButton = new JButton("Top Genres");
+		topGenresButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGenresPanel");
+			}
+		});
+		topGenresButton.setToolTipText("Click Here to see the most liked genres");
+		topGenresButton.setName("topGenresButton");
+		topGenresButton.setBounds(301, 23, 97, 37);
+		analystPanel.add(topGenresButton);
+		
+		topRatedGameByYearButton = new JButton("Top Rated Game (Year)");
+		topRatedGameByYearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topRatedGamesByYearPanel");
+			}
+		});
+		topRatedGameByYearButton.setToolTipText("Click Here to See the mos rated games for each year");
+		topRatedGameByYearButton.setName("topRatedGameByYearButton");
+		topRatedGameByYearButton.setBounds(301, 70, 97, 37);
+		analystPanel.add(topRatedGameByYearButton);
+		
+		topViewedGameByYearButton = new JButton("Top Viewed Game By Year");
+		topViewedGameByYearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topViewedGamesByYearPanel");
+			}
+		});
+		topViewedGameByYearButton.setToolTipText("Click Here to see the most viewed games (by year)");
+		topViewedGameByYearButton.setName("topViewedGameByYearButton");
+		topViewedGameByYearButton.setBounds(410, 23, 97, 37);
+		analystPanel.add(topViewedGameByYearButton);
 		
 		
 		
