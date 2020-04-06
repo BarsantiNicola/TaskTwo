@@ -27,7 +27,7 @@ public class LogicBridge {
 		 try 
 		  {
 			 // ricordare di avere la VPN attiva
-			  MONGO = new MongoConnection("172.16.0.80",27028);					 
+			  MONGO = new MongoConnection("172.16.0.80",27017);					 
 			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       
 
 			 }
