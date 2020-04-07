@@ -27,7 +27,7 @@ public class LogicBridge {
 		 try 
 		  {
 			 // ricordare di avere la VPN attiva
-			  MONGO = new MongoConnection("172.16.0.80",27028);					 
+			  MONGO = new MongoConnection("172.16.0.80",27018);					 
 			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       
 
 			 }
@@ -105,7 +105,7 @@ public class LogicBridge {
 	
 	public StatusCode addGame( Game game ) {return MONGO.addGame(game);}
 	
-	public StatusCode deleteGame( int gameId ) { return MONGO.deleteGame( gameId );}
+	public StatusCode deleteGame( String gameTitle ) { return MONGO.deleteGame( gameTitle );}
 	
 	
 	//////  STATISTICS

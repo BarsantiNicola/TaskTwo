@@ -209,10 +209,10 @@ public class MongoConnection {
     	
     }
     
-    public StatusCode deleteGame( String gameTitle ) {
+    public StatusCode deleteGame( String gameId ) {
     	
-    	gameTitle = gameTitle + ".*";
-    	Bson findFilter = regex("title", gameTitle , "i");
+    	gameId = gameId + ".*";
+    	Bson findFilter = regex("title", gameId , "i");
 		Bson projection = Projections.include( "_id");		
 		Game game;
 		
@@ -478,8 +478,8 @@ public class MongoConnection {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
     		System.out.println("testing");
-    		client.deleteGame("witcher");
-    		//client.statistics.statsTest();
+
+    		client.statistics.statsTest();
     		
     		client.closeConnection();
     		
