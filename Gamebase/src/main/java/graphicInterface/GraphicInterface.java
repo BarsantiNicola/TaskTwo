@@ -8,6 +8,7 @@ import java.util.List;
 
 import logic.*;
 import logic.data.*;
+import logic.graphConnector.GraphConnector;
 import logic.mongoConnection.DataNavigator;
 
 import java.awt.event.*;
@@ -16,6 +17,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import java.net.*;
+import java.time.LocalDate;
 import java.util.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
@@ -99,6 +101,17 @@ public class GraphicInterface {
 	
 	///////// ANALYST PANEL
 	private JPanel analystPanel;
+	private JButton analystHomeButton;
+	private JButton topUsersButton;
+	private JPanel plotContainer;
+	private BarChartPanel topUsersPanel;
+	private BarChartPanel topGamesPanel;
+	private PieChartPanel topGenresPanel;
+	private BarChartPanel topRatedGameByYearPanel;
+	private BarChartPanel topViewedGameByYearPanel;
+	
+	private JButton topGamesButton;
+	private JButton topGenresButton;
 		
 	///////// SEARCH GAME PANEL
 	private JPanel searchGamePanel;	
@@ -198,17 +211,23 @@ public class GraphicInterface {
 	private JMenu genderMenu;
 	private JMenuBar genderMenuBar;
 	private JTextField emailTextField;
+	private JTextField countryTextField;
 	
 	//Logic and support info
 	private LogicBridge logicHandler = new LogicBridge();
-	private String currentUser = null;
-	private UserType currentUsertype = null;
+	private GraphConnector graphHandler = new GraphConnector();
+	private User currentUser = null;
 	private Game currentGame = null;
 	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
 	private List<PreviewGame> supportGamesList = null;
 	private List<String> currentVideosURLlist = null;
 	private int currentVideoIndex = 0;
 	private int lastVideoIndex = 0;
+	@SuppressWarnings("null")
+	private boolean isGameFavourite = (Boolean) null;
+	private JButton topRatedGameByYearButton;
+	private JButton topViewedGameByYearButton;
+
 	
 	//support functions
 	
@@ -246,7 +265,7 @@ public class GraphicInterface {
 					
 					cl.show(panel, "userPanel");
 					
-					initializeUserPage(currentUser,followerUsername);
+					initializeUserPage(followerUsername);
 				}
 			},0);
 			followedTableModel.addRow(object);
@@ -275,10 +294,15 @@ public class GraphicInterface {
 		
 		for( User friend: usersList ) {
 			
+			StatusObject<Boolean> followStatus = graphHandler.doIFollow(friend.getUsername());
+			if( followStatus.statusCode != StatusCode.OK ) {
+				continue;
+			}
+			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
 			object[1] = "SEE GAMES";
-			object[2] = logicHandler.isFollowed(currentUser,friend.getUsername())?"UNFOLLOW":"FOLLOW";
+			object[2] = followStatus.element?"UNFOLLOW":"FOLLOW";
 			ButtonColumn buttonColumnGames = new ButtonColumn(followedTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
@@ -288,8 +312,15 @@ public class GraphicInterface {
 					
 					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 					
-					fillUserGamesList(logicHandler.getMyGames(selectedUsername));
+					//WAIT UNTIL PREVIEW IMAGE ISSUE IS RESOLVED
+					StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
 					
+					if( favGamesStatus.statusCode == StatusCode.OK ) {
+						
+						fillUserGamesList(favGamesStatus.element);
+					}
+					
+					//HOW TO GET A USER FROM USERNAME?
 					User selectedFriend = logicHandler.getFriend(selectedUsername);
 					String email;
 					
@@ -312,19 +343,29 @@ public class GraphicInterface {
 					
 					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 					
-					if( logicHandler.isFollowed(currentUser, selectedUsername)) {
+					StatusObject<Boolean> followStatus = graphHandler.doIFollow(selectedUsername);
+					
+					if( followStatus.statusCode == StatusCode.OK ) {
 						
-						if( !logicHandler.follow(currentUser,selectedUsername) ) {
-							return;
-						}
+						if( followStatus.element ) {
+							
+							if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
+								return;
+							}
+							
 						usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
-					} else {
+						} else {
 						
-						if( !logicHandler.unfollow(currentUser,selectedUsername)) {
-							return;
+							if( graphHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
+								return;
+							}
+							usersTableModel.setValueAt("FOLLOW", modelRow, 2);
 						}
-						usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+					} else {
+						usersTableModel.setValueAt("N/A", modelRow, 2);
 					}
+					
+					
 				}
 			},2);
 			followedTableModel.addRow(object);
@@ -372,10 +413,26 @@ public class GraphicInterface {
 		}
 	}
 	
-	private void initializeHomePage( UserType user, String username ) {
+	private void initializeHomePage() {
 		
-		String gamesNumber = logicHandler.getLikedGamesNumber(username)!=-1?Integer.toString(logicHandler.getLikedGamesNumber(username)):"N/A";
-		String followersNumber = logicHandler.getFollowersNumber(username)!=-1?Integer.toString(logicHandler.getFollowersNumber(username)):"N/A";
+		long followersLong = currentUser.getFollowedCount();
+		String followersNumber = Long.toString(followersLong);
+		
+		//PREVIEW IMAGE OR NOT PREVIEW IMAGE?
+		StatusObject<List<Gaaaaaames>> gamesListStatus = graphHandler.getFavouritesGamesList();
+		
+		String gamesNumber = null;
+		
+		if( gamesListStatus.statusCode == StatusCode.OK ) {
+			
+			long favGamesNumber = gamesListStatus.element.size();
+			gamesNumber = Long.toString(favGamesNumber);
+			
+			fillGamesList(gamesListStatus.element);
+		} else {
+			
+			gamesNumber = "N/A";
+		}
 		
 		gamesNumberHPLabel.setText(gamesNumber);
 		followerNumberHPLabel.setText(followersNumber);
@@ -383,40 +440,54 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setToolTipText("You Have " + gamesNumber + " preferred games");
 		followerNumberHPLabel.setToolTipText(followersNumber + " people follow you");
 		
-		usernameHPLabel.setText(username);
+		usernameHPLabel.setText(currentUser.getUsername());
 		
-		String mostViewedGameImageURL = logicHandler.getMostViewedPreview().element.getPreviewPicURL();
-				
-		if( mostViewedGameImageURL == null ) {
-			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		} else {
-			try {
-				mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL))));
-			} catch (Exception e){
+		StatusObject<PreviewGame> mostViewedStatus = logicHandler.getMostViewedPreview();
+		
+		if( mostViewedStatus.statusCode == StatusCode.OK ) {
+			
+			String mostViewedGameImageURL = mostViewedStatus.element.getPreviewPicURL();
+			
+			if( mostViewedGameImageURL == null ) {
 				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		    }
-		}	
+			} else {
+				try {
+					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL))));
+				} catch (Exception e){
+					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+			    }
+			}
+		}
 		
-		String mostPopularGameImageURL = logicHandler.getMostPopularPreview().element.getPreviewPicURL();
+		StatusObject<PreviewGame> mostPopularStatus = logicHandler.getMostPopularPreview();
 		
-		if( mostPopularGameImageURL == null ) {
-			mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		} else {
-			try {
-				mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL))));
-			} catch (Exception e){
+		if( mostPopularStatus.statusCode == StatusCode.OK ) {
+			
+			String mostPopularGameImageURL = mostPopularStatus.element.getPreviewPicURL();
+			
+			if( mostPopularGameImageURL == null ) {
 				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
-		    }
-		}	
-				
+			} else {
+				try {
+					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL))));
+				} catch (Exception e){
+					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+			    }
+			}	
+		}
+			
 		userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultProfilePicture.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
 		
+		StatusObject<List<User>> friendListStatus = graphHandler.getFollowedUsersList();
 		
-		fillGamesList(logicHandler.getMyGames(username));
+		if( friendListStatus.statusCode == StatusCode.OK ) {
+			
+			fillFollowedTable(friendListStatus.element);
+		}
 		
-		fillFollowedTable(logicHandler.getFriends(username));
+		UserType type = graphHandler.getUserType();
 		
-		switch(user) {
+		switch(type) {
 			case ADMINISTRATOR:
 				adminHPButton.setVisible(true);
 				becomeAnalystButton.setVisible(false);
@@ -450,11 +521,11 @@ public class GraphicInterface {
 		
 	}
 	
-	private void initializeGamePage( String title ) {
+	private void initializeGamePage( int id ) {
 		
-		Game game = logicHandler.getGame(title);
+		StatusObject<Game> gameStatus = logicHandler.getGame(id);
 		
-		if( game == null ) {
+		if( gameStatus.statusCode != StatusCode.OK ) {
 			
 			cleanGamePage();
 			
@@ -462,7 +533,10 @@ public class GraphicInterface {
 			
 			cl.show(panel, "homePagePanel");
 			
+			return;
 		}
+		
+		Game game = gameStatus.element;
 		
 		currentGame = game;
 		
@@ -553,6 +627,34 @@ public class GraphicInterface {
 			playStationButton.setEnabled(false);
 		}
 		
+		StatusObject<List<GraphGame>> myGamesStatus = graphHandler.getFavouritesGamesList();
+		
+		if( myGamesStatus.statusCode == StatusCode.OK ) {
+			
+			boolean favourite = false;
+			
+			for( int i = 0; i < myGamesStatus.element.size(); i++ ) {
+				
+				if( Integer.parseInt(myGamesStatus.element.get(i)._id) == game.getId() ) {
+					
+					favourite = true;
+					break;
+				}
+			}
+			
+			isGameFavourite = favourite;
+			
+			if( favourite ) {
+				
+				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+				isGameFavourite = true;
+			} else {
+				
+				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+				isGameFavourite = false;
+			}
+		}
+			
 		List<String> imagesURL = game.getImagesURLs();
 		
 		fillImagesList(imagesURL);
@@ -590,6 +692,7 @@ public class GraphicInterface {
 		
 	}
 	
+	@SuppressWarnings("null")
 	private void cleanGamePage() {
 		
 		gameDescriptionTextArea.setText("");
@@ -624,20 +727,35 @@ public class GraphicInterface {
 		
 		nextVideoButton.setEnabled(true);
 		previousVideoButton.setEnabled(true);
+		
+		isGameFavourite = (Boolean) null;
 	}
 	
-	private void initializeUserPage( String currentUser, String searchedUser ) {
+	private void initializeUserPage( String searchedUser ) {
 		
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
 		
-		List<User> featuredUsers = logicHandler.getFeaturedUsers(currentUser);
+		StatusObject<List<User>> featuredUsersStatus = graphHandler.getSuggestedUsersList();
 		
-		fillUsersTable(featuredUsers);
+		String displayedUser = searchedUser==null?null:searchedUser;
 		
-		String displayedUser = searchedUser==null?featuredUsers.get(0).getUsername():searchedUser;
+		if( featuredUsersStatus.statusCode == StatusCode.OK ) {
+			
+			fillUsersTable(featuredUsersStatus.element);
+			
+			displayedUser = searchedUser==null?featuredUsersStatus.element.get(0).getUsername():searchedUser;
+		}
 		
-		fillUserGamesList(logicHandler.getMyGames(displayedUser));
+		if( displayedUser != null ) {
+			
+			StatusObject<List<GraphGame>> friendGamesStatus = graphHandler.getFavouritesGamesList(displayedUser);
+			
+			if( friendGamesStatus.statusCode == StatusCode.OK ) {
+				
+				fillUserGamesList(friendGamesStatus.element);
+			}	
+		}
 		
 		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games. E-Mail: " + logicHandler.getFriend(displayedUser).getEmail() );
 		
@@ -657,19 +775,25 @@ public class GraphicInterface {
 	private void initializeAdminPage() {
 		
 		String userCount, gameCount;
-		int userC = logicHandler.getUserCount();
-		StatusObject<Long> gameCounter = logicHandler.getGameCount();
 		
-		if( userC == -1 ) {
-			userCount = "N/A";
+		StatusObject<Long> userCountStatus = graphHandler.getTotalUsersCount();
+		
+		if( userCountStatus.statusCode == StatusCode.OK ) {
+			
+			userCount = Long.toString(userCountStatus.element);
 		} else {
-			userCount = Integer.toString(userC);
+			
+			userCount = "N/A";
 		}
 		
-		if( gameCounter.statusCode == StatusCode.OK ) {
-			gameCount = "N/A";
+		StatusObject<Long> gameCountStatus = logicHandler.getGameCount();
+		
+		if( gameCountStatus.statusCode == StatusCode.OK ) {
+			
+			gameCount = Long.toString(gameCountStatus.element);
 		} else {
-			gameCount = Long.toString(gameCounter.element);
+			
+			gameCount = "N/A";
 		}
 		
 		userCountLabel.setText("User Count: " + userCount);
@@ -725,14 +849,16 @@ public class GraphicInterface {
 							StatusObject<Game> gameStatus = logicHandler.getGame(previewGame.getId());
 							
 							if( gameStatus.statusCode == StatusCode.OK ) {
-								List<String> genres = gameStatus.element.getGenres();
-								for( String gen: genres)
-								if( gen.compareTo(genre) == 0 ) {
-									genreList.add(previewGame);
-									break;
-							    }
-							}
-							
+								
+								List<String> genres = gameStatus.element.getAllGenres();
+								
+								for( String gen: genres) {
+									if( gen.compareTo(genre) == 0 ) {
+										genreList.add(previewGame);
+										break;
+								    }
+								}	
+							}					
 						}
 						
 						fillSearchedGamesList(genreList);
@@ -742,7 +868,14 @@ public class GraphicInterface {
 				gameGenreMenu.add(item);
 			}
 		}
-		fillSearchedGamesList(logicHandler.getFeaturedGames(currentUser));
+		
+		StatusObject<List<Gaaames>> featuredGamesStatus = graphHandler.getFeaturedGamesList();
+		
+		if( featuredGamesStatus.statusCode == StatusCode.OK ) {
+			
+			fillSearchedGamesList(featuredGamesStatus.element);
+		}
+		
 		
 	}
 	
@@ -757,21 +890,21 @@ public class GraphicInterface {
 	
 	private void initializeUserInformationPage() {
 		
-		updateInfoLabel.setText("Hi " + currentUser + ", update your information");
+		updateInfoLabel.setText("Hi " + currentUser.getUsername() + ", update your information");
 		
-		User user = logicHandler.getFriend(currentUser);
-		
-		String currentAge = Long.toString(user.getAge());
-		String currentName = user.getFirstName();
-		String currentSurname = user.getLastName();
-		String currentFavoriteGenre = user.getFavouriteGenre();
-		String currentEmail = user.getEmail();
-		Character gender = user.getGender();
+		String currentAge = Long.toString(currentUser.getAge());
+		String currentName = currentUser.getFirstName();
+		String currentSurname = currentUser.getLastName();
+		String currentFavoriteGenre = currentUser.getFavouriteGenre();
+		String currentEmail = currentUser.getEmail();
+		Character gender = currentUser.getGender();
+		String currentCountry = currentUser.getCountry();
 		
 		ageTextField.setText("Age - Current Value " + currentAge!=null?currentAge:"null");
 		nameTextField.setText("Name - Current Value " + currentName!=null?currentName:"null");
 		surnameTextfield.setText("Surname - Current Value " + currentSurname!=null?currentSurname:"null");
 		emailTextField.setText("Email - Current Value " + currentEmail!=null?currentEmail:"null");
+		countryTextField.setText("Country - Current Value " + currentCountry!=null?currentCountry:"null");
 		
 		if( gender == 'M' ) {
 			genderMenu.setText("M");
@@ -815,6 +948,185 @@ public class GraphicInterface {
 		genreMenu.removeAll();
 	}
 	
+	private void initializeAnalystPanel() {
+		
+		boolean somethingToShow = false;
+		
+		StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
+		
+		if( topUsersStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> topUsersHashmap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < topUsersStatus.element.size(); i++ ){
+				
+				topUsersHashmap.put(topUsersStatus.element.get(i).getUsername(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
+			}
+			
+			topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false);
+			topUsersPanel.setName("topUsersPanel");
+			
+			topUsersButton.setEnabled(true);
+			
+			plotContainer.add(topUsersPanel);
+			
+			CardLayout cl = (CardLayout)(plotContainer.getLayout());
+			
+			cl.show(plotContainer, "topUsersPanel");
+			
+			somethingToShow = true;
+			
+		} else {
+			
+			topGamesButton.setEnabled(false);
+		}
+		
+		StatusObject<List<GraphGame>> topGamesStatus = graphHandler.getMostFavouriteGames(6);
+		
+		if( topGamesStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> topGamesHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < topGamesStatus.element.size(); i++ ){
+				
+				topGamesHashMap.put(topGamesStatus.element.get(i).title, topGamesStatus.element.get(i).favouriteCount.doubleValue());
+			}
+			
+			topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false);
+			topUsersPanel.setName("topGamesPanel");
+			
+			topGamesButton.setEnabled(true);
+			
+			plotContainer.add(topGamesPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGamesPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
+		StatusObject<List<UserStats>> userStatsStatus = graphHandler.getUsersSummaryStats();
+		
+		if( userStatsStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> topGenresHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < userStatsStatus.element.size(); i++ ) {
+				
+				String genre = userStatsStatus.element.get(i).favouriteGenre;
+				
+				Double value = topGenresHashMap.get(genre);
+				
+				if( value == null ) {
+					
+					topGenresHashMap.put(genre, new Integer(1).doubleValue());
+				} else {
+					
+					value++;
+					topGenresHashMap.put(genre, value);
+				}
+			}
+			
+			topGenresPanel = new PieChartPanel("Most Liked Genres", "Genre", "Favourite Count", topGenresHashMap, "V", true, false, false);
+			topGenresPanel.setName("topGenresPanel");
+			
+			topGenresButton.setEnabled(true);
+			
+			plotContainer.add(topGenresPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGenresPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
+		StatusObject<List<Statistics>> maxRatedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
+		
+		if( maxRatedGameByYearStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> maxRatedYearHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < maxRatedGameByYearStatus.element.size(); i++ ){
+				
+				maxRatedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
+						maxRatedGameByYearStatus.element.get(i).getRating());
+			}
+			
+			topRatedGameByYearPanel = new BarChartPanel("Most Rated Games by Year", "Game - Year", "Rate", maxRatedYearHashMap, "V", true, false, false);
+			topRatedGameByYearPanel.setName("topRatedGamesByYearPanel");
+			
+			topRatedGameByYearButton.setEnabled(true);
+			
+			plotContainer.add(topRatedGameByYearPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topRatedGamesByYearPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
+		StatusObject<List<Statistics>> maxViewedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
+		
+		if( maxViewedGameByYearStatus.statusCode == StatusCode.OK ) {
+			
+			HashMap<String,Double> maxViewedYearHashMap = new HashMap<String,Double>();
+			
+			for( int i = 0; i < maxViewedGameByYearStatus.element.size(); i++ ){
+				
+				maxViewedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
+						maxRatedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
+			}
+			
+			topViewedGameByYearPanel = new BarChartPanel("Most Viewed Games by Year", "Game - Year", "Views", maxViewedYearHashMap, "V", true, false, false);
+			topViewedGameByYearPanel.setName("topViewedGamesByYearPanel");
+			
+			topViewedGameByYearButton.setEnabled(true);
+			
+			plotContainer.add(topViewedGameByYearPanel);
+			
+			if( !somethingToShow ) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topViewedGamesByYearPanel");
+				
+				somethingToShow = true;
+			}
+		}
+		
+	}
+	
+	private void cleanAnalystPanel() {
+		
+		topUsersPanel = null;
+		topUsersButton.setEnabled(true);
+		
+		topGamesPanel = null;
+		topGamesButton.setEnabled(true);
+		
+		topGenresPanel = null;
+		topGenresButton.setEnabled(true);
+		
+		topRatedGameByYearPanel = null;
+		topRatedGameByYearButton.setEnabled(true);
+		
+		topViewedGameByYearPanel = null;
+		topViewedGameByYearButton.setEnabled(true);
+		
+		
+	}
 	
 	/**
 	 * Launch the application.
@@ -846,8 +1158,9 @@ public class GraphicInterface {
 		frame = new JFrame();
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent arg0) {
+			public void windowClosing(WindowEvent arg0) {
 				logicHandler.closeConnection();
+				graphHandler.close();
 			}
 		});
 		frame.setBounds(100, 100, 952, 615);
@@ -917,17 +1230,30 @@ public class GraphicInterface {
 					return;
 				}
 				
-				if( !logicHandler.signUp(username,password) ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed: username " + username + " already exists");
-					errorMessageLabel.setText("Username already used");
-					errorMessageLabel.setVisible(true);
-					return;
-				} else {
+				User registeredUser = new User(username, password,LocalDate.now());
+				
+				StatusObject<UserInfo> registrationStatus = graphHandler.register(registeredUser);
+				
+				if( registrationStatus.statusCode == StatusCode.OK ) {
+					
+					currentUser = registrationStatus.element.user; //or currentUser = registeredUser;
+					
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->sign up completed: username " + username + " registered");
 					cl.show(panel, "homePagePanel");
-					initializeHomePage(UserType.USER,username);
-					currentUser = username;
-					currentUsertype = UserType.USER;
+					initializeHomePage();
+				} else {
+					
+					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed.");
+					
+					if( registrationStatus.statusCode == StatusCode.ERR_GRAPH_USER_ALREADYEXISTS ) {
+						
+						errorMessageLabel.setText("Error occured during registration");
+					} else {
+						
+						errorMessageLabel.setText("Generic Error");
+					}
+					
+					errorMessageLabel.setVisible(true);
 				}
 			}
 		});
@@ -961,23 +1287,21 @@ public class GraphicInterface {
 					return;
 				}
 				
-				UserType usertype = logicHandler.login(username,password);
+				StatusObject<UserInfo> loginStatus = graphHandler.login(username, password);
 				
-				if( usertype == UserType.NO_USER ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: no user " + username + " found");
-					errorMessageLabel.setText("No User " + username + " found");
-					errorMessageLabel.setVisible(true);
-				} else if( usertype == UserType.WRONG_PASSWORD ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed: wrong password for username " + username);
-					errorMessageLabel.setText("Uncorrect Password for User " + username );
-					errorMessageLabel.setVisible(true);
-				} else {
+				if( loginStatus.statusCode == StatusCode.OK ) {
+					
+					currentUser = loginStatus.element.user;
+					
 					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
 					cl.show(panel, "homePagePanel");
-					initializeHomePage( usertype, username );
-					currentUser = username;
-					currentUsertype = usertype;
-				}				
+					initializeHomePage();
+				} else {
+					
+					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed");
+					errorMessageLabel.setText("Login failed");
+					errorMessageLabel.setVisible(true);
+				}			
 			}
 		});
 		loginPanel.add(loginButton);
@@ -1029,9 +1353,12 @@ public class GraphicInterface {
 				
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
-				currentUser = null;
-				currentUsertype = null;
-				cl.show(panel, "loginPanel");
+				if( graphHandler.logout() == StatusCode.OK ) {
+					
+					currentUser = null;
+					cl.show(panel, "loginPanel");
+				}
+
 			}
 		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
@@ -1108,11 +1435,13 @@ public class GraphicInterface {
 		becomeAnalystButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.becomeAnalyst(currentUser) ) {
+				StatusObject<UserInfo> upgradeStatus = graphHandler.upgradeToAnalyst();
+				
+				if( upgradeStatus.statusCode == StatusCode.OK ) {
 					
+					currentUser = upgradeStatus.element.user;
 					becomeAnalystButton.setVisible(false);
 					analystHPButton.setVisible(true);
-					currentUsertype = UserType.ANALYST;
 				}
 			}
 		});
@@ -1136,6 +1465,8 @@ public class GraphicInterface {
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
 				cl.show(panel, "analystPanel");
+				
+				initializeAnalystPanel();
 			}
 		});
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -1184,7 +1515,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "gamePanel");
 				
-				initializeGamePage(game.getTitle());
+				initializeGamePage(game.getId());
 			}
 		});
 		myGamesList.setName("myGamesList");
@@ -1239,10 +1570,9 @@ public class GraphicInterface {
 				StatusObject<PreviewGame> viewedGameStatus = logicHandler.getMostPopularPreview();
 				
 				if( viewedGameStatus.statusCode == StatusCode.OK ) {
-					initializeGamePage(viewedGameStatus.element.getTitle());
-				} else {
-					initializeGamePage(null);
-				}
+					
+					initializeGamePage(viewedGameStatus.element.getId());
+				} 
 			}
 		});
 		mostViewedGamesLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -1272,10 +1602,9 @@ public class GraphicInterface {
 				StatusObject<PreviewGame> popularGameStatus = logicHandler.getMostPopularPreview();
 				
 				if( popularGameStatus.statusCode == StatusCode.OK ) {
-					initializeGamePage(popularGameStatus.element.getTitle());
-				} else {
-					initializeGamePage(null);
-				}
+					
+					initializeGamePage(popularGameStatus.element.getId());
+				} 
 			
 			}
 		});
@@ -1304,7 +1633,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "userPanel");
 				
-				initializeUserPage(currentUser,null);
+				initializeUserPage(null);
 			}
 		});
 		userButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -1361,7 +1690,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(UserType.ADMINISTRATOR,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeADButton.setToolTipText("Return to Homepage");
@@ -1422,7 +1751,10 @@ public class GraphicInterface {
 				if( username == "" ) {
 					deleteUserResultLabel.setText("Failure!");
 					deleteUserResultLabel.setVisible(true);
-				}else if( logicHandler.deleteUser(username) ) {
+					return;
+				}
+				
+				if( graphHandler.deleteUser(username) == StatusCode.OK ) {
 					deleteUserResultLabel.setText("Success!");
 					deleteUserResultLabel.setVisible(true);
 				} else {
@@ -1457,7 +1789,10 @@ public class GraphicInterface {
 				if( game == "" ) {
 					deleteGameResultLabel.setText("Failure!");
 					deleteGameResultLabel.setVisible(true);
-				}else if( logicHandler.deleteGame(game) ) {
+					return;
+				}
+				
+				if( logicHandler.deleteGame(game) == StatusCode.OK ) {
 					deleteGameResultLabel.setText("Success!");
 					deleteGameResultLabel.setVisible(true);
 				} else {
@@ -1563,6 +1898,106 @@ public class GraphicInterface {
 		panel.add(analystPanel, "analystPanel");
 		analystPanel.setLayout(null);
 		
+		analystHomeButton = new JButton("");
+		analystHomeButton.setName("analystHomeButton");
+		analystHomeButton.setBounds(83, 23, 97, 84);
+		analystHomeButton.setToolTipText("Return to Homepage");
+		analystHomeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				cleanAnalystPage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "homePagePanel");
+				
+				initializeHomePage();
+			}
+		});
+		analystHomeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		analystHomeButton.setBackground(SystemColor.controlDkShadow);
+		analystHomeButton.setBorder(null);
+		analystHomeButton.setContentAreaFilled(false);
+		analystHomeButton.setOpaque(true);
+		analystHomeButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		analystPanel.add(analystHomeButton);
+		
+		plotContainer = new JPanel();
+		plotContainer.setBounds(83, 140, 764, 381);
+		analystPanel.add(plotContainer);
+		plotContainer.setLayout(new CardLayout(0, 0));
+		
+		topUsersButton = new JButton("Top Users");
+		topUsersButton.setToolTipText("Click Here to see the most followed users");
+		topUsersButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topUsersPanel");
+			}
+		});
+		topUsersButton.setName("topUserButton");
+		topUsersButton.setBounds(192, 23, 97, 37);
+		analystPanel.add(topUsersButton);
+		
+		topGamesButton = new JButton("Top Games");
+		topGamesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGamesPanel");
+			}
+		});
+		topGamesButton.setToolTipText("Click Here to See the most liked games");
+		topGamesButton.setName("topGamesButton");
+		topGamesButton.setBounds(192, 70, 97, 37);
+		analystPanel.add(topGamesButton);
+		
+		topGenresButton = new JButton("Top Genres");
+		topGenresButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topGenresPanel");
+			}
+		});
+		topGenresButton.setToolTipText("Click Here to see the most liked genres");
+		topGenresButton.setName("topGenresButton");
+		topGenresButton.setBounds(301, 23, 97, 37);
+		analystPanel.add(topGenresButton);
+		
+		topRatedGameByYearButton = new JButton("Top Rated Game (Year)");
+		topRatedGameByYearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topRatedGamesByYearPanel");
+			}
+		});
+		topRatedGameByYearButton.setToolTipText("Click Here to See the mos rated games for each year");
+		topRatedGameByYearButton.setName("topRatedGameByYearButton");
+		topRatedGameByYearButton.setBounds(301, 70, 97, 37);
+		analystPanel.add(topRatedGameByYearButton);
+		
+		topViewedGameByYearButton = new JButton("Top Viewed Game By Year");
+		topViewedGameByYearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				
+				cl.show(plotContainer, "topViewedGamesByYearPanel");
+			}
+		});
+		topViewedGameByYearButton.setToolTipText("Click Here to see the most viewed games (by year)");
+		topViewedGameByYearButton.setName("topViewedGameByYearButton");
+		topViewedGameByYearButton.setBounds(410, 23, 97, 37);
+		analystPanel.add(topViewedGameByYearButton);
+		
+		
 		
 		
 		///////// SEARCH GAMES PANEL
@@ -1588,7 +2023,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeSEButton.setToolTipText("Return to Homepage");
@@ -1905,6 +2340,12 @@ public class GraphicInterface {
 		gameGenreMenu.setName("gameGenreMenu");
 		gameGenreMenuBar.add(gameGenreMenu);
 		
+		
+		
+		/////////// GAME PANEL
+		
+		
+		
 		gamePanel = new JPanel();
 		gamePanel.setBackground(new Color(87, 86, 82));
 		gamePanel.setName("gamePanel");
@@ -1987,7 +2428,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeGameButton.setToolTipText("Return to Homepage");
@@ -2000,13 +2441,41 @@ public class GraphicInterface {
 		gamePanel.add(homeGameButton);
 		
 		actionButton = new JButton("");
-		actionButton.setToolTipText("Click Here to Add this Game to Your Games");
+		actionButton.setToolTipText("Click Here to Add/Remove to/from Your Favourite Games");
 		actionButton.setName("actionButton");
 		actionButton.setBounds(477, 257, 63, 37);
 		actionButton.setBackground(SystemColor.controlDkShadow);
 		actionButton.setContentAreaFilled(false);
 		actionButton.setOpaque(true);
 		actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+		actionButton.addActionListener(new ActionListener() {
+			@SuppressWarnings("null")
+			public void actionPerformed(ActionEvent e) {
+				
+				if( isGameFavourite ) {
+					
+					if( graphHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+						
+						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+						isGameFavourite = false;
+					}else {
+						
+						isGameFavourite = (Boolean) null;
+					}
+				} else if( !isGameFavourite ){
+					
+					if( graphHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+						
+						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+						isGameFavourite = false;
+					} else {
+						
+						isGameFavourite = (Boolean) null;
+					}
+				} 
+				
+			}
+		});
 		gamePanel.add(actionButton);
 		
 		developerLabel = new JLabel("Developer: testDeveloper");
@@ -2050,7 +2519,8 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 1);
+				graphHandler.rateGame(currentGame.getTitle(), 1);
+					
 			}
 		});
 		vote1.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2061,7 +2531,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 2);
+				graphHandler.rateGame(currentGame.getTitle(), 2);
 			}
 		});
 		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2072,7 +2542,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 3);
+				graphHandler.rateGame(currentGame.getTitle(), 3);
 			}
 		});
 		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2083,7 +2553,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 4);
+				graphHandler.rateGame(currentGame.getTitle(), 4);
 			}
 		});
 		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2094,7 +2564,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.voteGame(currentGame.getTitle(), 5);
+				graphHandler.rateGame(currentGame.getTitle(), 5);
 			}
 		});
 		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -2201,8 +2671,14 @@ public class GraphicInterface {
 				
 				featuredUserButton.setBackground(new Color(30, 144, 255));
 				featuredUserButton.setForeground(Color.WHITE);
-
-				fillUsersTable(logicHandler.getFeaturedUsers(currentUser));
+				
+				StatusObject<List<User>> featuredUserStatus = graphHandler.getSuggestedUsersList();
+				
+				if( featuredUserStatus.statusCode == StatusCode.OK ) {
+					
+					fillUsersTable(featuredUserStatus.element);
+				}
+				
 			}
 		});
 		featuredUserButton.setBackground(new Color(30, 144, 255));
@@ -2244,7 +2720,12 @@ public class GraphicInterface {
 				featuredUserButton.setBackground(Color.WHITE);
 				featuredUserButton.setForeground(Color.BLACK);
 				
-				fillUsersTable(logicHandler.searchUsers(searchedString, currentUser));
+				StatusObject<List<User>> searchedUserStatus = graphHandler.searchUsers(searchedString);
+				
+				if( searchedUserStatus.statusCode == StatusCode.OK ) {
+					
+					fillUsersTable(searchedUserStatus.element);
+				}
 			}
 		});
 		searchUserButton.setToolTipText("Search for New Users");
@@ -2268,7 +2749,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeUserButton.setToolTipText("Return to Homepage");
@@ -2342,50 +2823,57 @@ public class GraphicInterface {
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				int age;
+				Long age;
 				String ageString = ageTextField.getText();
 				String name = nameTextField.getText();
 				String surname = surnameTextfield.getText();
 				String genre = genreMenu.getText();
 				String gender = genderMenu.getText();
 				String email = emailTextField.getText();
-
-				if( ageString == "" || ageString.startsWith("Age")) {
-					age = -1;
-				} else {
+				String country = countryTextField.getText();
+				
+				if( ageString != "" && ageString.startsWith("Age")) {
 					try {
-						age = Integer.parseInt(ageString);
+						age = Long.parseLong(ageString);
+						currentUser.setAge(age);
 					} catch (NumberFormatException e) {
-						age = -1;
+						
 					}
 				}
 				
-				if( name == "" || name.startsWith("Name") ) {
-					name = null;
+				if( name != "" && !name.startsWith("Name") ) {
+					currentUser.setFirstName(name);
 				}
 				
-				if( surname == "" || surname.startsWith("Surname") ) {
-					surname = null;
+				if( surname != "" && !surname.startsWith("Surname") ) {
+					currentUser.setLastName(surname);
 				}
 				
-				if( gender != "M" && gender != "F" ) {
-					gender = null;
+				if( gender == "M" || gender == "F" ) {
+					currentUser.setGender(gender.charAt(0));
 				}
 				
-				if( genre == "Genre" ) {
-					genre = null;
+				if( genre != "Genre" ) {
+					currentUser.setFavouriteGenre(genre);
 				}
 				
-				if( email == "" || email.startsWith("E-Mail")) {
-					email = null;
+				if( email != "" && !email.startsWith("E-Mail")) {
+					currentUser.setEmail(email);
 				}
 				
-				logicHandler.updateUserInformation(age,name,surname,genre,gender,email);
-				initializeUserInformationPage();
+				if( country !="" && !country.startsWith("Country") ) {
+					currentUser.setCountry(country);
+				}
+				
+				if( graphHandler.saveUser() == StatusCode.OK ) {
+					
+					initializeUserInformationPage();
+				}
+				
 			}
 		});
 		saveButton.setName("saveButton");
-		saveButton.setBounds(396, 409, 127, 48);
+		saveButton.setBounds(520, 397, 127, 48);
 		userInformationPanel.add(saveButton);
 		
 		nameTextField = new JTextField();
@@ -2491,7 +2979,7 @@ public class GraphicInterface {
 				
 				cl.show(panel, "homePagePanel");
 				
-				initializeHomePage(currentUsertype,currentUser);
+				initializeHomePage();
 			}
 		});
 		homeUserInformationButton.setToolTipText("Return to Homepage");
@@ -2510,6 +2998,14 @@ public class GraphicInterface {
 		emailTextField.setColumns(10);
 		emailTextField.setBounds(233, 348, 233, 37);
 		userInformationPanel.add(emailTextField);
+		
+		countryTextField = new JTextField();
+		countryTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
+		countryTextField.setName("countryTextField");
+		countryTextField.setText("Country");
+		countryTextField.setBounds(231, 408, 235, 37);
+		userInformationPanel.add(countryTextField);
+		countryTextField.setColumns(10);
 		
 	}
 }

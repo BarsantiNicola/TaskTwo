@@ -24,7 +24,7 @@ public interface GraphInterface
     |   graph.login("username","usernamePassword");                        //Login (username e password)                               |
     |   ...                                                                   //USARE:                                                 |
     |                                                                        - "admin","adminPassword"   -->  Administrator            |
-    |   ...                                                                     - "adrian","adrianPassword" -->  Analyst               |
+    |   ...                                                                  - "adrian","adrianPassword" -->  Analyst                  |
     |                                                                        - "adri","adriPassword"     -->  Standard User            |
     |   ...                                                                                                                            |
     |   graph.logout();                                                    //Logout come utente corrente                               |
