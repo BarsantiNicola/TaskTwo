@@ -1,5 +1,4 @@
 package scraping;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,5 +121,24 @@ public class HttpClient {
   
             }
         }
+    
+    public void sendGetGameBackgroundImage(String GAME) throws Exception {
+    	
+    	 HttpGet request = new HttpGet("https://serpapi.com/search?q=" + GAME + "&tbm=isch&ijn=0");
+    		 try (CloseableHttpResponse response = httpClient.execute(request)) {
+
+    	        	System.out.println("HTTPCLIENT/SENDGETGAMEDESCRIPTION-->Request sent");
+    	            // Get HttpResponse Status
+    	            System.out.println(response.getStatusLine().toString());
+
+    	            HttpEntity entity = response.getEntity();
+    	            Header headers = entity.getContentType();
+    	            System.out.println(headers);
+    	            
+    	            String result = EntityUtils.toString(entity);
+    	            System.out.println(result);
+    		 }
+    }
+
 
     }

@@ -7,6 +7,7 @@ import logic.data.*;
 import logic.graphConnector.*;
 import logic.mongoConnection.DataNavigator;
 import logic.mongoConnection.MongoConnection;
+import scraping.*;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //  The class is used to bridge the graphic interface to the program logic.
@@ -112,11 +113,11 @@ public class LogicBridge {
 	
 	///////////////  DATASCRAPER FUNCTIONS
 	
-	public boolean updateDatabase() { return false; }
+	public boolean updateDatabase() { return WebScraping.updateDatabase(); }
 	
-	public static String getTwitchURLChannel( String GAME ) { return null; }
+	public static String getTwitchURLChannel( String GAME ) { return WebScraping.getTwitchURLChannel(GAME); }
 	
-	public String getGameDescription( int GAME_ID) { return null; }
+	public String getGameDescription( int GAME_ID) { return WebScraping.getGameDescription(GAME_ID); }
 	
 	
 	///////////////  OTHER

@@ -111,11 +111,39 @@ public class WebScraping {
 		return gameDescription; 
 	}
 	
+	
+	
+	public static void getBackgroundImage(String GAME) {
+		
+		//Replace spaces in the game title
+		GAME = GAME.replaceAll(" ", "%20");
+		
+		HttpClient objRequest = new HttpClient();
+		 try {
+	            System.out.println("WEBSCRAPING/GETBACKGROUNDIMAGE-->Sending Http GET request for image");
+	            try {
+					objRequest.sendGetGameBackgroundImage(GAME);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+	        } finally {
+	            try {
+					objRequest.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	        }
+		
+		 System.out.println("WEBSCRAPING/GETBACKGROUNDIMAGE--> Returning image");
+	}
 
 	
 	
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
+		 getBackgroundImage("Dark Souls");
 		 
 	 }
+	 
 }
