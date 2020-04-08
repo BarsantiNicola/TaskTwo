@@ -14,18 +14,36 @@ public class WebScraping {
 	//Update database using dynamic scraping (NEED TEST)
 	public static boolean updateDatabase() { 
 		
-		int NPage = getGameCount()/40;
-		if (NPage < 3750 )
-			NPage = 3750;
+		List<JSONObject> newGames = new ArrayList<JSONObject>();
+		
+		int newGameID=1;
+	
+		searchNewGame(newGameID);
+
+		//Save on file
+		try (PrintWriter out = new PrintWriter("src/main/java/resources/New_games.txt")) {
+		    out.println(newGames);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("WEBSCRAPING/UPDATEDATABASE-->New game saved on file");
+		
+		return false; 
+	}
+	
+	
+	//Search new game
+	public static JSONObject searchNewGame(int ID_GAME) {
 		
 		//Create http object for request
 		HttpClient objRequest = new HttpClient();
-		List<JSONObject> newGames = new ArrayList<JSONObject>();
-		
+		JSONObject newGame = new JSONObject();
+			
 		try {
-	           System.out.println("WEBSCRAPING/UPDATEDATABASE-->Sending Http GET request for new games");
+	           System.out.println("WEBSCRAPING/SEARCHNEWGAME-->Sending Http GET request for new game. ID:" + ID_GAME);
 	           try {
-				newGames = objRequest.sendGetNewGames(NPage);
+				newGame = objRequest.sendGetNewGame(ID_GAME);
 	           } catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -38,16 +56,9 @@ public class WebScraping {
 				}
 	        }
 		
-		//Save on file
-		try (PrintWriter out = new PrintWriter("src/main/java/resources/New_games.txt")) {
-		    out.println(newGames);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		System.out.println("WEBSCRAPING/SEARCHNEWGAME-->New game obtained:" + newGame);
 		
-		System.out.println("WEBSCRAPING/UPDATEDATABASE-->New games saved on file");
-		
-		return false; 
+		return newGame;
 	}
 	
 	

@@ -26,14 +26,14 @@ public class HttpClient {
     }
     
     
-    public List<JSONObject> sendGetNewGames(int NPage) throws Exception {
-    	System.out.println("HTTPCLIENT/SENDGETNEWGAMES-->Preparing request for new games");
+    public JSONObject sendGetNewGame(int GAME_ID) throws Exception {
+    	System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Preparing request for new game");
     	
-        HttpGet request = new HttpGet("https://api.rawg.io/api/games?&page_size=40&page=" + Integer.toString(NPage));
+        HttpGet request = new HttpGet("https://api.rawg.io/api/games/" + GAME_ID);
 
         try (CloseableHttpResponse response = httpClient.execute(request)) {
 
-        	System.out.println("HTTPCLIENT/SENDGETNEWGAMES-->Request sent");
+        	System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Request sent");
             // Get HttpResponse Status
             System.out.println(response.getStatusLine().toString());
 
@@ -42,19 +42,10 @@ public class HttpClient {
             System.out.println(headers);
 
             String result = EntityUtils.toString(entity);
-            JSONObject jsonObject = new JSONObject(result);
-            //Extract the list of new games from the page
-            JSONArray results = jsonObject.getJSONArray("results");
-            
-            List<JSONObject> newGames = new ArrayList<JSONObject>();
-
-            for (int i = 0; i <results.length(); i++) {
-            	JSONObject game = results.getJSONObject(i);
-            	newGames.add(game);
-            }
-            
-            System.out.println("HTTPCLIENT/SENDGETNEWGAMES-->Returning list of new games");
-            return newGames;
+            JSONObject newGame = new JSONObject(result);
+           
+            System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Returning a new game");
+            return newGame;
         }
     }
 
