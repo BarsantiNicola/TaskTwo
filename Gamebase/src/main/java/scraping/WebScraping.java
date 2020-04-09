@@ -20,7 +20,7 @@ public class WebScraping {
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
 		
-		int newGameID=99999999;
+		int newGameID=4200;
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
@@ -48,6 +48,11 @@ public class WebScraping {
 		System.out.println(newGame.getString("name")); //title
 		System.out.println(newGame.getString("background_image"));
 		System.out.println(newGame.getDouble("rating"));
+		System.out.println(newGame.getInt("ratings_count"));
+		System.out.println(newGame.getInt("metacritic"));
+		System.out.println(newGame.getJSONArray("genres"));
+		//Manca subgenres
+		System.out.println(newGame.getInt("views_count"));
 		
 		
 		//Add Games to database
@@ -55,8 +60,9 @@ public class WebScraping {
 		for(int k = 0; k < newGames.size(); k++) {
 			
 			Game gameToAdd = new Game();
-			JSONObject newGame = newGames.get(k);
+			//JSONObject newGame = newGames.get(k);
 			
+			//Ricordati di aggiungere la background image anche al Graph
 		}
 		
 		return false; 
@@ -180,11 +186,11 @@ public class WebScraping {
 	}
 */
 	
-	
+	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
 		updateDatabase();
 		 
-	 }
+	 }*/
 	 
 }
