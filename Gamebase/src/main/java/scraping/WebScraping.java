@@ -8,26 +8,56 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import logic.data.Game;
+
 public class WebScraping {
 
 	
 	//Update database using dynamic scraping (NEED TEST)
 	public static boolean updateDatabase() { 
-		
+		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Starting.");
+		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new games");
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
-		int newGameID=1;
-	
-		searchNewGame(newGameID);
-
-		//Save on file
-		try (PrintWriter out = new PrintWriter("src/main/java/resources/New_games.txt")) {
-		    out.println(newGames);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		
+		int newGameID=99999999;
+		int i = 0;
+		int failed=0;
+		while (i < 10) {
+			System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new game: ID=" + newGameID);
+			JSONObject newGame = searchNewGame(newGameID);
+			System.out.println("WEBSCRAPING/UPDATEDATABASE--> New game obtained");
+			newGameID++;
+			if(newGame.has("detail")) {
+				System.out.println("WEBSCRAPING/UPDATEDATABASE--> Game not suitable");
+				continue;
+			}
+			i++;
+			System.out.println(i);
+			newGames.add(newGame);
 		}
 		
-		System.out.println("WEBSCRAPING/UPDATEDATABASE-->New game saved on file");
+		System.out.println("WEBSCRAPING/UPDATEDATABASE--> lista:"+ newGames.size());
+		for(int j =0; j < newGames.size(); j++) {
+			System.out.println(newGames.get(j));
+			
+		}
+		
+		JSONObject newGame = newGames.get(0);
+		System.out.println(newGame.getInt("id"));
+		System.out.println(newGame.getString("name")); //title
+		System.out.println(newGame.getString("background_image"));
+		System.out.println(newGame.getDouble("rating"));
+		
+		
+		//Add Games to database
+		List<Game> gamesToAdd = new ArrayList<Game>();
+		for(int k = 0; k < newGames.size(); k++) {
+			
+			Game gameToAdd = new Game();
+			JSONObject newGame = newGames.get(k);
+			
+		}
 		
 		return false; 
 	}
@@ -123,8 +153,8 @@ public class WebScraping {
 	}
 	
 	
-	
-	public static void getBackgroundImage(String GAME) {
+	//UNUSED
+	/*public static void getBackgroundImage(String GAME) {
 		
 		//Replace spaces in the game title
 		GAME = GAME.replaceAll(" ", "%20");
@@ -148,12 +178,12 @@ public class WebScraping {
 		
 		 System.out.println("WEBSCRAPING/GETBACKGROUNDIMAGE--> Returning image");
 	}
-
+*/
 	
 	
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 getBackgroundImage("Dark Souls");
+		updateDatabase();
 		 
 	 }
 	 

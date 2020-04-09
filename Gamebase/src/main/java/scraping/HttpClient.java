@@ -26,6 +26,7 @@ public class HttpClient {
     }
     
     
+    //Get a new game
     public JSONObject sendGetNewGame(int GAME_ID) throws Exception {
     	System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Preparing request for new game");
     	
@@ -49,6 +50,7 @@ public class HttpClient {
         }
     }
 
+    
     //Get twitch channel for a game
     public String sendGetTwitch(String GAME) throws Exception {
     	System.out.println("HTTPCLIENT/SENDGETTWITCH-->Preparing request for twitch channel");
@@ -88,6 +90,7 @@ public class HttpClient {
             }
         }
     
+    
     //Get game description
     public String sendGetGameDescription(int GAME_ID) throws Exception {
     	System.out.println("HTTPCLIENT/SENDGETGAMEDESCRIPTION-->Preparing request for game description");
@@ -113,7 +116,8 @@ public class HttpClient {
             }
         }
     
-    public void sendGetGameBackgroundImage(String GAME) throws Exception {
+    //UNUSED
+   /* public void sendGetGameBackgroundImage(String GAME) throws Exception {
     	
     	 HttpGet request = new HttpGet("https://serpapi.com/search?q=" + GAME + "&tbm=isch&ijn=0");
     		 try (CloseableHttpResponse response = httpClient.execute(request)) {
@@ -129,7 +133,7 @@ public class HttpClient {
     	            String result = EntityUtils.toString(entity);
     	            System.out.println(result);
     		 }
-    }
+    }*/
 
 
     }
