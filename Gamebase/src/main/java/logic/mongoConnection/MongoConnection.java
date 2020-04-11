@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.MongoClient;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import com.mongodb.ServerAddress;
@@ -477,10 +481,10 @@ public class MongoConnection {
     	try {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
-    		System.out.println("testing");
+    		//System.out.println("testing");
 
-    		client.statistics.statsTest();
-    		
+    		//client.statistics.statsTest();
+    		client.riccardoRequest("C:\\Users\\Nicola\\Desktop\\prova.json");
     		client.closeConnection();
     		
     	}catch(Exception e) {
@@ -607,6 +611,36 @@ public class MongoConnection {
     		}
     	}
     	System.out.println("ERRORE SU: " + counter);
+    }
+    
+    public void riccardoRequest(String file) {
+    	DataNavigator nav = this.getMostLikedPreviews().element;
+    	List<PreviewGame> games=null;
+    	int counter = 0;
+    	if(nav == null ) return;
+    	try {
+    		PrintWriter out = new PrintWriter(new FileOutputStream(file),true);
+    		while(true) {
+    			games = nav.getNextData().element;
+    			counter+=50;
+    			if(games.size() == 0 ) {
+    				out.close();
+    				return;
+    			}
+    			
+    			for( PreviewGame game: games)
+    				if(game.getPreviewPicURL() != null )
+    					out.println(game.getId() + " , " + game.getId() + " , " + game.getPreviewPicURL() );
+    				else
+    					out.println(game.getId()+ " , " + game.getTitle() + " , ");
+    			
+    			if( counter % 1000 == 0 )
+    				System.out.println(counter + " games exported");
+    		}
+    	}catch(IOException e ) {
+    		e.printStackTrace();
+    		return;
+    	}
     }
     
 }
