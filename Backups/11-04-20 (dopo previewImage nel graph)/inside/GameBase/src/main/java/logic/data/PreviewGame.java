@@ -1,0 +1,36 @@
+package logic.data;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  The class stored the basic information of a game to be showed on the graphic interface.
+//  The class is designed to reduce the load on the mongoDb database and speed up the data logic.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+public class PreviewGame {
+	
+	private final Integer id;
+	private final String title;         //  the name of the game to be showed
+	private final String previewPicURL;     //  the picture to be showed for the game
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//                                           COSTRUCTOR                                                   //
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public PreviewGame( int id , String title , String previewPicURL ){
+		
+		this.id = id;
+		this.title = title;
+		this.previewPicURL = previewPicURL;
+	
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//                                           GETTERS                                                      //
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public String getTitle() { return title; }
+	
+	public String getPreviewPicURL() { return previewPicURL; }
+	
+	public Integer getId() { return id; }
+
+}

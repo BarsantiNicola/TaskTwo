@@ -1,0 +1,40 @@
+package logic.data;
+
+import java.io.Serializable;
+
+public class Video implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	private String resolution;
+    private String mediaUrl;
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                             COSTRUCTORS                                                        //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public Video(){}
+    Video( String resolution , String mediaUrl ){
+
+        this.resolution = resolution;
+        this.mediaUrl = mediaUrl;
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                               GETTER                                                           //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getResolution(){ return resolution; }
+
+    public String getMediaUrl(){ return  mediaUrl; }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                               SETTER                                                           //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void setResolution( String resolution ){ this.resolution = resolution; }
+
+    public void setMediaUrl( String mediaUrl ){ this.mediaUrl = mediaUrl; }
+
+}
