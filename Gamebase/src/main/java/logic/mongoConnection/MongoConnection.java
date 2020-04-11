@@ -484,7 +484,7 @@ public class MongoConnection {
     		//System.out.println("testing");
 
     		//client.statistics.statsTest();
-    		client.riccardoRequest("C:\\Users\\Nicola\\Desktop\\prova.json");
+    		client.riccardoRequest("C:\\Users\\Riccardo\\Desktop\\try4.json");
     		client.closeConnection();
     		
     	}catch(Exception e) {
@@ -625,9 +625,9 @@ public class MongoConnection {
     			counter++;
     			
     			if(game.getPreviewPicURL() != null )
-    				out.println(game.getId() + " , " + game.getTitle() + " , " + game.getPreviewPicURL() );
+    				out.println(game.getId() + "ç" + game.getTitle() + "ç" + game.getPreviewPicURL() );
     			else
-    				out.println(game.getId()+ " , " + game.getTitle() + " , ");
+    				out.println(game.getId()+ "ç" + game.getTitle() + "ç");
     			
     			if( counter % 1000 == 0 )
     				System.out.println(counter + " games exported");
