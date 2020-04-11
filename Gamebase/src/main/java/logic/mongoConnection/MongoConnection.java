@@ -614,25 +614,20 @@ public class MongoConnection {
     }
     
     public void riccardoRequest(String file) {
-    	DataNavigator nav = this.getMostLikedPreviews().element;
-    	List<PreviewGame> games=null;
+		Bson projection = Projections.include( "_id", "title", "background_image" );
+    	MongoCursor<Game> games = this.gamesCollection.find().projection(projection).noCursorTimeout(true).iterator();
     	int counter = 0;
-    	if(nav == null ) return;
+    	PreviewGame game;
     	try {
     		PrintWriter out = new PrintWriter(new FileOutputStream(file),true);
-    		while(true) {
-    			games = nav.getNextData().element;
-    			counter+=50;
-    			if(games.size() == 0 ) {
-    				out.close();
-    				return;
-    			}
+    		while(games.hasNext()) {
+    			game = games.next().getPreview();
+    			counter++;
     			
-    			for( PreviewGame game: games)
-    				if(game.getPreviewPicURL() != null )
-    					out.println(game.getId() + " , " + game.getId() + " , " + game.getPreviewPicURL() );
-    				else
-    					out.println(game.getId()+ " , " + game.getTitle() + " , ");
+    			if(game.getPreviewPicURL() != null )
+    				out.println(game.getId() + " , " + game.getId() + " , " + game.getPreviewPicURL() );
+    			else
+    				out.println(game.getId()+ " , " + game.getTitle() + " , ");
     			
     			if( counter % 1000 == 0 )
     				System.out.println(counter + " games exported");
