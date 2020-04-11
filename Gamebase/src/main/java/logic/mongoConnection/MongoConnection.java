@@ -625,7 +625,7 @@ public class MongoConnection {
     			counter++;
     			
     			if(game.getPreviewPicURL() != null )
-    				out.println(game.getId() + " , " + game.getId() + " , " + game.getPreviewPicURL() );
+    				out.println(game.getId() + " , " + game.getTitle() + " , " + game.getPreviewPicURL() );
     			else
     				out.println(game.getId()+ " , " + game.getTitle() + " , ");
     			
