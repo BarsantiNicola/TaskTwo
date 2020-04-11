@@ -24,7 +24,7 @@ public interface GraphInterface
     |   graph.login("username","usernamePassword");                        //Login (username e password)                               |
     |   ...                                                                   //USARE:                                                 |
     |                                                                        - "admin","adminPassword"   -->  Administrator            |
-    |   ...                                                                  - "adrian","adrianPassword" -->  Analyst                  |
+    |   ...                                                                     - "adrian","adrianPassword" -->  Analyst               |
     |                                                                        - "adri","adriPassword"     -->  Standard User            |
     |   ...                                                                                                                            |
     |   graph.logout();                                                    //Logout come utente corrente                               |
@@ -779,8 +779,8 @@ public interface GraphInterface
      *              - ERR_GRAPH_MISSINGARGUMENTS:    Not enough arguments to add the game to the favourite games list (missing game _id)
      *              - ERR_GRAPH_GAME_ALREADYADDED:   The game is already in the user's favourite games list
      *              - ERR_GRAPH_USER_NOTEXISTS:      The user doesn't exist within the database (it was removed while it was logged in)
-     *               - ERR_GRAPH_GAME_NOTEXISTS:      The game doesn't exist within the database
-     *                - ERR_GRAPH_GAME_INCONSISTENCY:  An inconsistency was detected between the local favourite games list and the database,
+     *              - ERR_GRAPH_GAME_NOTEXISTS:      The game doesn't exist within the database
+     *              - ERR_GRAPH_GAME_INCONSISTENCY:  An inconsistency was detected between the local favourite games list and the database,
      *                                               where the former has been aligned to the latter (the game is in the user's favourite games list)
      *
      * NOTE:        In case of success if the game is included in the user featured games list, it is automatically removed from such list

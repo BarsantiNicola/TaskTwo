@@ -11,7 +11,8 @@ import org.neo4j.driver.TransactionWork;
 import static org.neo4j.driver.Values.parameters;
 
 import logic.data.*;
-import logic.*;
+import logic.StatusCode;
+import logic.UserType;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -1442,8 +1443,8 @@ public class GraphConnector implements GraphInterface,AutoCloseable
         @Override
         public Void execute(Transaction tx)
          {
-          tx.run("CREATE (g:game {_id: $_id, title: $title, favouriteCount: 0})",
-                 parameters("_id",game._id,"title",game.title));
+          tx.run("CREATE (g:game {_id: $_id, title: $title, previewImage: $previewImage, favouriteCount: 0})",
+                 parameters("_id",game._id,"title",game.title,"previewImage",game.previewImage));
           return null;
          }
        } );
@@ -1594,7 +1595,7 @@ public class GraphConnector implements GraphInterface,AutoCloseable
        return StatusCode.ERR_GRAPH_GAME_NOTEXISTS;    
       
       //Insert the game in front of the local favourite games list
-      favGame = new GraphGame(_id,record.get("g.title").asString(),record.get("g.favouriteCount").asLong()+1);
+      favGame = new GraphGame(_id,record.get("g.title").asString(),record.get("g.previewImage").asString(),record.get("g.favouriteCount").asLong()+1);
       _favouritesGamesList.add(0,favGame);
       
       //If the game is in the user featured games list, remove it
@@ -1778,12 +1779,12 @@ public class GraphConnector implements GraphInterface,AutoCloseable
           
           Result result = tx.run("MATCH (n {username: $username})-[a:ADD]->(p) "   +
                                  "OPTIONAL MATCH (n)-[r:RATE]->(p) "               +
-                                 "RETURN p._id, p.title, p.favouriteCount, r.vote ORDER BY p.favouriteCount",
+                                 "RETURN p._id, p.title, p.previewImage, p.favouriteCount, r.vote ORDER BY p.favouriteCount",
                                  parameters("username",username));  
           while (result.hasNext())
            { 
             Record record = result.next();
-            GraphGame temp = new GraphGame(record.get("p._id").asString(),record.get("p.title").asString(),record.get("p.favouriteCount").asLong());
+            GraphGame temp = new GraphGame(record.get("p._id").asString(),record.get("p.title").asString(),record.get("p.previewImage").asString(),record.get("p.favouriteCount").asLong());
             if((record.get("r.vote").asObject() != null))
              temp.setVote(new Long(record.get("r.vote").asLong()));
             favourites.add(temp);
@@ -1808,7 +1809,6 @@ public class GraphConnector implements GraphInterface,AutoCloseable
    * ARGUMENTS:   - String _id:                  The "_id" of the game whose favouriteCount is to be returned
    * 
    * CALLABLE BY: ALL connected users logged into the application 
-   *    
    *    
    * RETURNS:     A StatusObject<Long> object composed of:
    *              1) A StatusCode, representing the result of the operation:
@@ -2011,22 +2011,22 @@ public class GraphConnector implements GraphInterface,AutoCloseable
            {
             List<GraphGame> featured = new ArrayList<>();
             
-            Result result = tx.run("CALL "                                                            +    //----------------------------CALL-----------------------------
-                                   "{ "                                                               +    
-                                   "MATCH (n{username: $username})-[:FOLLOWS]->(p)-[:ADD]->(g:game) " +    //Query 1
-                                   "WHERE NOT (n)-[:ADD]->(g) "                                       +    //(games favourited by users the user follows, order by global
-                                   "RETURN g ORDER BY g.favouriteCount DESC LIMIT $limit "            +    //favouriteCount, excluding the games the user already follows)
-                                   "UNION "                                                           +    //                       ----UNION-----
-                                   "MATCH (g:game) "                                                  +    //Query 2
-                                   "WHERE NOT ({username: $username})-[:ADD]->(g) "                   +    //(Most favourited games ordered by global favouriteCount,
-                                   "RETURN g ORDER BY g.favouriteCount DESC LIMIT $limit "            +    //excluding the games the user already follows)
-                                   "} "                                                               +    //----------------------------CALL-----------------------------
-                                   "RETURN g._id,g.title,g.favouriteCount LIMIT $limit",                   //Post-UNION processing
+            Result result = tx.run("CALL "                                                              +    //----------------------------CALL-----------------------------
+                                   "{ "                                                                 +    
+                                   "MATCH (n{username: $username})-[:FOLLOWS]->(p)-[:ADD]->(g:game) "   +    //Query 1
+                                   "WHERE NOT (n)-[:ADD]->(g) "                                         +    //(games favourited by users the user follows, order by global
+                                   "RETURN g ORDER BY g.favouriteCount DESC LIMIT $limit "              +    //favouriteCount, excluding the games the user already follows)
+                                   "UNION "                                                             +    //                       ----UNION-----
+                                   "MATCH (g:game) "                                                    +    //Query 2
+                                   "WHERE NOT ({username: $username})-[:ADD]->(g) "                     +    //(Most favourited games ordered by global favouriteCount,
+                                   "RETURN g ORDER BY g.favouriteCount DESC LIMIT $limit "              +    //excluding the games the user already follows)
+                                   "} "                                                                 +    //----------------------------CALL-----------------------------
+                                   "RETURN g._id,g.title,g.previewImage,g.favouriteCount LIMIT $limit",      //Post-UNION processing
                                    parameters("username",_user.getUsername(),"limit",max));  
             while (result.hasNext())
              { 
               Record record = result.next();
-              GraphGame temp = new GraphGame(record.get("g._id").asString(),record.get("g.title").asString(),record.get("g.favouriteCount").asLong());
+              GraphGame temp = new GraphGame(record.get("g._id").asString(),record.get("g.title").asString(),record.get("g.previewImage").asString(),record.get("g.favouriteCount").asLong());
               featured.add(temp);
              }
             return featured;
@@ -2231,12 +2231,14 @@ public class GraphConnector implements GraphInterface,AutoCloseable
           List<GraphGame> featured = new ArrayList<>();
           
           Result result = tx.run("MATCH (g:game)" +
-                                 "RETURN g._id,g.title,g.favouriteCount ORDER BY g.favouriteCount DESC LIMIT $max",
+                                 "RETURN g._id,g.title,g.previewImage,g.favouriteCount ORDER BY g.favouriteCount DESC LIMIT $max",
                                  parameters("max",max));
           while (result.hasNext())
            { 
             Record record = result.next();
-            GraphGame temp = new GraphGame(record.get("g._id").asString(),record.get("g.title").asString(),record.get("g.favouriteCount").asLong());
+            
+             
+            GraphGame temp = new GraphGame(record.get("g._id").asString(),record.get("g.title").asString(),record.get("g.previewImage").asString(),record.get("g.favouriteCount").asLong());
             featured.add(temp);
            }
           return featured;
@@ -2248,6 +2250,8 @@ public class GraphConnector implements GraphInterface,AutoCloseable
     catch(Exception e)
      {
       System.out.println("[GraphConnector]: Error in getMostFavouriteGames(): " + e.getMessage());
+      e.printStackTrace();
+      
       System.out.println("[GraphConnector]: max = " + max);
       return new StatusObject<List<GraphGame>>(StatusCode.ERR_GRAPH_UNKNOWN);
      }
@@ -2259,7 +2263,7 @@ public class GraphConnector implements GraphInterface,AutoCloseable
    { return getMostFavouriteGames(25); }     
   
   
-  /* DESCRIPTION: Returns a list of up to "max" tuples relative to different Standard Users (selectected in followedCount descending order)
+  /* DESCRIPTION: Returns a list of up to "max" tuples relative to different Standard Users (selected in followedCount descending order)
    *              containing its joinDate, its age, its country, its gender and its favouriteGenre, information that can be used at an higher
    *              application level to compute and present statistics on the users registered within the database
    *
@@ -2479,12 +2483,12 @@ public class GraphConnector implements GraphInterface,AutoCloseable
         
         Result result = tx.run("MATCH (n {username: $username})-[a:ADD]->(p) "   +
                                "OPTIONAL MATCH (n)-[r:RATE]->(p) "               +
-                               "RETURN p._id, p.title, p.favouriteCount, r.vote ORDER BY p.favouriteCount DESC",
+                               "RETURN p._id, p.title, p.previewImage, p.favouriteCount, r.vote ORDER BY p.favouriteCount DESC",
                                parameters("username",_user.getUsername()));  
         while (result.hasNext())
          { 
           Record record = result.next();
-          GraphGame temp = new GraphGame(record.get("p._id").asString(),record.get("p.title").asString(),record.get("p.favouriteCount").asLong());
+          GraphGame temp = new GraphGame(record.get("p._id").asString(),record.get("p.title").asString(),record.get("p.previewImage").asString(),record.get("p.favouriteCount").asLong());
           if((record.get("r.vote").asObject() != null))
            temp.setVote(new Long(record.get("r.vote").asLong()));
           favourites.add(temp);
@@ -2574,7 +2578,7 @@ public class GraphConnector implements GraphInterface,AutoCloseable
                      "OPTIONAL MATCH (g:game{_id: $_id})"       +
                      "OPTIONAL MATCH (n)-[a:ADD]->(g)"          +
                      "OPTIONAL MATCH (n)-[r:RATE]->(g)"         +
-                     "RETURN n,g,g.title,g.favouriteCount,a,r,r.vote",
+                     "RETURN n,g,g.title,g.favouriteCount,g.previewImage,a,r,r.vote",
                      parameters("username",username,"_id",_id));
     else     //Load just the user and game node <id> (used to check whether the user and game exist within the database
      result = tx.run("OPTIONAL MATCH (n {username: $username})" +

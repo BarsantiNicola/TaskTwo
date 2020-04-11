@@ -6,6 +6,7 @@ public class GraphGame
   //Final Attributes
   public final String _id;           //The game unique identifier
   public final String title;         //The game title
+  public final String previewImage;  //The game preview image
   public final Long favouriteCount;  //The game favouriteCount
   Long vote;
   
@@ -32,6 +33,7 @@ public class GraphGame
    {
     this._id = null;
     this.title = null;
+    this.previewImage = null;
     this.favouriteCount = null;
     this.vote = null;
    }
@@ -41,23 +43,45 @@ public class GraphGame
    {
     this._id = _id;
     this.title = title;
+    this.previewImage = null;
+    this.favouriteCount = null;
+    this.vote = null;
+   }
+  
+  /* _id + title + previewImage Constructor */
+  public GraphGame(String _id,String title,String previewImage)
+   {
+    this._id = _id;
+    this.title = title;
+    this.previewImage = previewImage;
     this.favouriteCount = null;
     this.vote = null;
    }
   
   /* _id + title + favouriteCount Constructor */
-  public GraphGame(String _id,String title, Long favouriteCount)
+  public GraphGame(String _id,String title,Long favouriteCount)
    {
     this._id = _id;
     this.title = title;
+    this.previewImage = null;
+    this.favouriteCount = favouriteCount;
+   }
+  
+  /* _id + title + previewImage + favouriteCount Constructor */
+  public GraphGame(String _id,String title,String previewImage,Long favouriteCount)
+   {
+    this._id = _id;
+    this.title = title;
+    this.previewImage = previewImage;
     this.favouriteCount = favouriteCount;
    }
   
   /* All-parameters Constructor */
-  public GraphGame(String _id,String title, Long favouriteCount, Long vote)
+  public GraphGame(String _id,String title,String previewImage,Long favouriteCount,Long vote)
    {
     this._id = _id;
     this.title = title;
+    this.previewImage = previewImage;
     this.favouriteCount = favouriteCount;
     this.vote = vote;
    }
@@ -79,6 +103,6 @@ public class GraphGame
   //---------------------------------------------------------------------------------
   @Override
   public String toString()
-   { return "GraphGame [_id=" + _id + ", title=" + title + ", favouriteCount=" + favouriteCount + ", vote=" + vote + "]"; }
+   { return "GraphGame [_id=" + _id + ", title=" + title + ", previewImage=" + previewImage + ", favouriteCount=" + favouriteCount + ", vote=" + vote + "]"; }
   
  }
