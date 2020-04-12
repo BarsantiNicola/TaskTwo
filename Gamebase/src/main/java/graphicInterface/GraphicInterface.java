@@ -312,25 +312,23 @@ public class GraphicInterface {
 					
 					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 					
-					//WAIT UNTIL PREVIEW IMAGE ISSUE IS RESOLVED
 					StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
 					
 					if( favGamesStatus.statusCode == StatusCode.OK ) {
 						
-						fillUserGamesList(favGamesStatus.element);
+						List<PreviewGame> favGamesList = new ArrayList<>();
+						
+						for( int i = 0; i < favGamesStatus.element.size(); i++ ) {
+							
+							GraphGame gm = favGamesStatus.element.get(i);
+							
+							favGamesList.add(new PreviewGame(Integer.parseInt(gm._id),gm.title,gm.previewImage));
+						}
+						
+						fillUserGamesList(favGamesList);
 					}
 					
-					//HOW TO GET A USER FROM USERNAME?
-					User selectedFriend = logicHandler.getFriend(selectedUsername);
-					String email;
-					
-					if( selectedFriend != null && selectedFriend.getEmail() != null ) {
-						email = selectedFriend.getEmail();
-					}else {
-						email = "N/A";
-					}
-					
-					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games. E-Mail: " + email);
+					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
 					
 				}
 			},1);
@@ -418,17 +416,26 @@ public class GraphicInterface {
 		long followersLong = currentUser.getFollowedCount();
 		String followersNumber = Long.toString(followersLong);
 		
-		//PREVIEW IMAGE OR NOT PREVIEW IMAGE?
-		StatusObject<List<Gaaaaaames>> gamesListStatus = graphHandler.getFavouritesGamesList();
+		StatusObject<List<GraphGame>> gamesListStatus = graphHandler.getFavouritesGamesList();
 		
 		String gamesNumber = null;
 		
 		if( gamesListStatus.statusCode == StatusCode.OK ) {
 			
+			List<PreviewGame> favouriteGamesList = new ArrayList<>();
+			
+			for( int i = 0; i < gamesListStatus.element.size(); i++ ) {
+				
+				GraphGame gm = gamesListStatus.element.get(i);
+				
+				favouriteGamesList.add(new PreviewGame(Integer.parseInt(gm._id),gm.title,gm.previewImage));
+			}
+			
 			long favGamesNumber = gamesListStatus.element.size();
 			gamesNumber = Long.toString(favGamesNumber);
 			
-			fillGamesList(gamesListStatus.element);
+			fillGamesList(favouriteGamesList);
+			
 		} else {
 			
 			gamesNumber = "N/A";
@@ -753,11 +760,20 @@ public class GraphicInterface {
 			
 			if( friendGamesStatus.statusCode == StatusCode.OK ) {
 				
-				fillUserGamesList(friendGamesStatus.element);
+				List<PreviewGame> friendGamesList = new ArrayList<>();
+				
+				for( int i = 0; i < friendGamesStatus.element.size(); i++ ) {
+					
+					GraphGame gm = friendGamesStatus.element.get(i);
+					
+					friendGamesList.add(new PreviewGame(Integer.parseInt(gm._id),gm.title,gm.previewImage));
+				}
+				
+				fillUserGamesList(friendGamesList);
 			}	
 		}
 		
-		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games. E-Mail: " + logicHandler.getFriend(displayedUser).getEmail() );
+		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games." );
 		
 		searchUserTextField.setText("Search User");
 	}
@@ -869,11 +885,20 @@ public class GraphicInterface {
 			}
 		}
 		
-		StatusObject<List<Gaaames>> featuredGamesStatus = graphHandler.getFeaturedGamesList();
+		StatusObject<List<GraphGame>> featuredGamesStatus = graphHandler.getFeaturedGamesList();
 		
 		if( featuredGamesStatus.statusCode == StatusCode.OK ) {
 			
-			fillSearchedGamesList(featuredGamesStatus.element);
+			List<PreviewGame> featuredGamesList = new ArrayList<>();
+			
+			for( int i = 0; i < featuredGamesStatus.element.size(); i++ ) {
+				
+				GraphGame gm = featuredGamesStatus.element.get(i);
+				
+				featuredGamesList.add(new PreviewGame(Integer.parseInt(gm._id),gm.title,gm.previewImage));
+			}
+			
+			fillSearchedGamesList(featuredGamesList);
 		}
 		
 		
@@ -1221,10 +1246,10 @@ public class GraphicInterface {
 				String username = usernameTextfield.getText();
 				String password = new String(passwordField.getPassword());
 				
-				System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->trying to sign up " + username);
+				System.out.println("->->[GraphicInterface] Trying to sign up " + username);
 				
 				if( username.equals("") || password.equals("") ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed: empty username and(or) password");
+					System.out.println("->[GraphicInterface] Sign up failed: empty username and(or) password");
 					errorMessageLabel.setText("Please Insert Username and Password");
 					errorMessageLabel.setVisible(true);
 					return;
@@ -1238,12 +1263,12 @@ public class GraphicInterface {
 					
 					currentUser = registrationStatus.element.user; //or currentUser = registeredUser;
 					
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->sign up completed: username " + username + " registered");
+					System.out.println("->[GraphicInterface] Sign up completed: username " + username + " registered");
 					cl.show(panel, "homePagePanel");
 					initializeHomePage();
 				} else {
 					
-					System.out.println("GRAPHICINTERFACE.JAVA/SIGNUPACTIONPERFORMED-->sign up failed.");
+					System.out.println("->[GraphicInterface] Sign up failed.");
 					
 					if( registrationStatus.statusCode == StatusCode.ERR_GRAPH_USER_ALREADYEXISTS ) {
 						
@@ -1278,10 +1303,10 @@ public class GraphicInterface {
 				String username = usernameTextfield.getText();
 				String password = new String(passwordField.getPassword());
 				
-				System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->user " + username + " is trying to login");
+				System.out.println("->[GraphicInterface] User " + username + " is trying to login");
 				
 				if( username.equals("") || password.equals("") ) {
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->empty username and(or) password");
+					System.out.println("->[GraphicInterface] Empty username and(or) password");
 					errorMessageLabel.setText("Please Insert Username and Password");
 					errorMessageLabel.setVisible(true);
 					return;
@@ -1293,12 +1318,12 @@ public class GraphicInterface {
 					
 					currentUser = loginStatus.element.user;
 					
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login completed:user " + username + " logged in");
+					System.out.println("->[GraphicInterface] Login completed:user " + username + " logged in");
 					cl.show(panel, "homePagePanel");
 					initializeHomePage();
 				} else {
 					
-					System.out.println("GRAPHICINTERFACE.JAVA/LOGINACTIONPERFORMED-->login failed");
+					System.out.println("->[GraphicInterface] Login failed");
 					errorMessageLabel.setText("Login failed");
 					errorMessageLabel.setVisible(true);
 				}			
@@ -1905,7 +1930,7 @@ public class GraphicInterface {
 		analystHomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				cleanAnalystPage();
+				cleanAnalystPanel();
 				
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
@@ -2783,7 +2808,7 @@ public class GraphicInterface {
 		usersTableHeader.setBackground(new Color(121,166,210));
 		usersScrollPane.setViewportView(usersTable);
 		
-		displayedUserLabel = new JLabel("Currently Displayed: Gianni's Games. E-Mail: gianni@giannimail.com");
+		displayedUserLabel = new JLabel("Currently Displayed: Gianni's Games");
 		displayedUserLabel.setForeground(Color.WHITE);
 		displayedUserLabel.setFont(new Font("Corbel", Font.BOLD, 15));
 		displayedUserLabel.setName("displayedUserLabel");
