@@ -1,15 +1,18 @@
 package scraping;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
 import logic.data.Game;
-import logic.data.PlatformInfo;
 
 public class WebScraping {
 
@@ -50,7 +53,7 @@ public class WebScraping {
 		List<Game> gamesToAdd = new ArrayList<Game>();
 		for(int k = 0; k < newGames.size(); k++) {
 			
-			Game gameToAdd = initializeGameToAdd(newGames.get(k));
+			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));
 
 			//Inserisci il gioco nel database
 			
@@ -62,52 +65,7 @@ public class WebScraping {
 	}
 	
 	
-	public static Game initializeGameToAdd(JSONObject newGame) {
-		
-		Game gameToAdd = new Game();
-		
-		gameToAdd.setId(newGame.getInt("id")); 
-		gameToAdd.setFavouritesCount(0);
-		if(newGame.has("name")) {
-			gameToAdd.setTitle(newGame.getString("name"));
-		}
-		else {
-			gameToAdd.setTitle("Not Available");
-		}
-		if(newGame.has("background_image")) {
-			gameToAdd.setBackground_image(newGame.getString("background_image"));
-		}
-		else {
-			gameToAdd.setBackground_image("https://image.shutterstock.com/image-vector/no-image-available-sign-internet-260nw-261719003.jpg"); //Default?
-		}
-		
-		gameToAdd.setRating(0.0);
-		gameToAdd.setRatingCount(0);
-		if(newGame.has("metacritic")) {
-			gameToAdd.setMetacritic(newGame.getInt("metacritic"));
-		}
-		else {
-			gameToAdd.setMetacritic(0); //Metacritic?
-		}
-		gameToAdd.setViewsCount(0);
-		if(newGame.has("description_raw")) {
-			gameToAdd.setDescription(newGame.getString("description_raw"));;
-		}
-		else {
-			gameToAdd.setDescription("Not available"); //Description?
-		}
-		if(newGame.has("released")) {
-			//gameToAdd.setReleaseDate(); //Da vedere
-		}
-		else {
-			//gameToAdd.setReleaseDate();  //Da vedere
-		}
-		
-		//Mancano genres, subgenres, releases, sales;
-
-		
-		return gameToAdd;
-	}
+	
 	
 	
 	//Search new game
@@ -227,26 +185,14 @@ public class WebScraping {
 	}
 */
 	
-	
+	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 JSONObject newGame = searchNewGame(4200);
-		 
-			System.out.println(newGame.getInt("id"));
-			System.out.println(newGame.getString("name")); //title
-			System.out.println(newGame.getString("background_image"));
-			System.out.println(newGame.getDouble("rating"));
-			System.out.println(newGame.getInt("ratings_count"));
-			System.out.println(newGame.getInt("metacritic"));
-			//Inserire viewsCount nel costruttore
-			System.out.println(newGame.getJSONArray("genres"));
-			//Inserire favoritesCount nel costruttore
-			System.out.println(newGame.getString("description_raw"));
-			System.out.println(newGame.getString("released")); //Andrà trasformato in Date poi
+		 JSONObject newGame = searchNewGame(3498);
 			
-			//Mancano subgenres, releases and sales;
-			
+			JSONObject clip = newGame.getJSONObject("clip");
+		
 			
 	 }
-	 
+	 */
 }
