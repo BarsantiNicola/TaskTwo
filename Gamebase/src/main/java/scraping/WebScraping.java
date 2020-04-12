@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import logic.data.Game;
+import logic.data.GraphGame;
 
 public class WebScraping {
 
@@ -51,15 +52,14 @@ public class WebScraping {
 		
 		//Add Games to database
 		List<Game> gamesToAdd = new ArrayList<Game>();
+		List<GraphGame> graphGamesToAdd = new ArrayList<GraphGame>();
 		for(int k = 0; k < newGames.size(); k++) {
 			
 			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));
-
-			//Inserisci il gioco nel database
-			
-			//Ricordati di aggiungere la background image anche al Graph
-			
+			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gameToAdd);			
 		}
+		
+		//Inserisci nel database le due liste
 		
 		return false; 
 	}

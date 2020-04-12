@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import logic.data.Game;
+import logic.data.GraphGame;
 import logic.data.PlatformInfo;
 
 public class util {
@@ -123,6 +124,17 @@ public class util {
 		
 		// multimedia;
 		return gameToAdd;
+	}
+	
+	
+	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
+		
+		Long zero = new Long(0);
+		/* All-parameters Constructor */
+		/* Id, title, background_image, favorite_count, rating */
+		GraphGame graphGameToAdd = new GraphGame(gameToAdd.getId().toString(), gameToAdd.getTitle(), gameToAdd.getBackground_image(), zero, zero);
+
+		return graphGameToAdd;
 	}
 
 }
