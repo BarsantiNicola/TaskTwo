@@ -23,13 +23,13 @@ public class WebScraping {
 
 	
 	//Update database using dynamic scraping (NEED TEST)
-	public static boolean updateDatabase() { 
+	public boolean updateDatabase() { 
 		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Starting.");
 		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new games");
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
 		
-		int newGameID = LogicBridge.getMaxGameId().element;
+		//int newGameID = LogicBridge.getMaxGameId().element;
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
