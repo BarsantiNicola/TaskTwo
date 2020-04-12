@@ -484,7 +484,7 @@ public class MongoConnection {
     		//System.out.println("testing");
 
     		//client.statistics.statsTest();
-    		client.riccardoRequest("C:\\Users\\Riccardo\\Desktop\\try4.json");
+    		System.out.println(client.getMaxGameId().element);
     		client.closeConnection();
     		
     	}catch(Exception e) {
@@ -613,6 +613,18 @@ public class MongoConnection {
     	System.out.println("ERRORE SU: " + counter);
     }
     
+    StatusObject<Integer> getMaxGameId(){
+    	try {
+    		Bson sort = Sorts.descending( "_id" );
+    		Integer maxId = gamesCollection.find().sort(sort).first().getId();
+    		if( maxId != null ) return new StatusObject<Integer>(StatusCode.OK, maxId);
+    		else return new StatusObject<Integer>(StatusCode.ERR_DOCUMENT_UNKNOWN,null);
+    	}catch(Exception e ){
+    		System.out.println( "---> [MongoConnector][GetMaxId] Error, Connection Lost" );
+    		return new StatusObject<Integer>(StatusCode.ERR_NETWORK_UNREACHABLE);
+    	}
+    }
+    
     public void riccardoRequest(String file) {
 		Bson projection = Projections.include( "_id", "title", "background_image" );
     	MongoCursor<Game> games = this.gamesCollection.find().projection(projection).noCursorTimeout(true).iterator();
@@ -632,6 +644,7 @@ public class MongoConnection {
     			if( counter % 1000 == 0 )
     				System.out.println(counter + " games exported");
     		}
+    		out.close();
     	}catch(IOException e ) {
     		e.printStackTrace();
     		return;
