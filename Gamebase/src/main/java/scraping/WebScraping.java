@@ -185,14 +185,16 @@ public class WebScraping {
 	}
 */
 	
-	/*
+	
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
 		 JSONObject newGame = searchNewGame(3498);
 			
-			JSONObject clip = newGame.getJSONObject("clip");
+			String clip = newGame.getJSONObject("clip").getJSONObject("clips").getString("320");
+			System.out.println(clip);
+			
 		
 			
 	 }
-	 */
+	 
 }

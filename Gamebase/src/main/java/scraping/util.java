@@ -14,10 +14,13 @@ import org.json.JSONObject;
 
 import logic.data.Game;
 import logic.data.GraphGame;
+import logic.data.Multimedia;
 import logic.data.PlatformInfo;
+import logic.data.Video;
 
 public class util {
 	
+	//Create a Game consistent with the new game just scraped
 	public static Game initializeGameToAdd(JSONObject newGame) {
 		
 		Game gameToAdd = new Game();
@@ -120,13 +123,58 @@ public class util {
 				gameToAdd.setSales(sales);
 			}
 		}
-		
-		
-		// multimedia;
+		// multimedia: images;
+		Multimedia multimedia = new Multimedia();
+		ArrayList<String> images = new ArrayList<String>();
+		ArrayList<Video> videos = new ArrayList<Video>();
+		if(newGame.has("short_screenshots")) {;
+			JSONArray short_screenshots = newGame.getJSONArray("short_screenshots");
+			for(int i = 0; i < short_screenshots.length(); i++) {
+				if(short_screenshots.getJSONObject(i).has("image")) {
+					images.add(short_screenshots.getJSONObject(i).getString("image"));
+				}
+			}
+		}
+		//multimedia: video
+		if(newGame.has("clip")) {
+			JSONObject clip = newGame.getJSONObject("clip");
+			if(clip.has("clips")) {
+				JSONObject clips = newGame.getJSONObject("clip").getJSONObject("clips");
+				if(clips.has("320")) {
+					Video videoToAdd = new Video();
+					videoToAdd.setResolution("320");
+					videoToAdd.setMediaUrl(clips.getString("320"));
+					videos.add(videoToAdd);
+				}
+				if(clips.has("640")) {
+					Video videoToAdd = new Video();
+					videoToAdd.setResolution("640");
+					videoToAdd.setMediaUrl(clips.getString("640"));
+					videos.add(videoToAdd);
+				}
+				if(clips.has("full")) {
+					Video videoToAdd = new Video();
+					videoToAdd.setResolution("full");
+					videoToAdd.setMediaUrl(clips.getString("full"));
+					videos.add(videoToAdd);
+				}
+			}
+		}
+		if(images.size() > 0) {
+			multimedia.setImages(images);
+		}
+		if(videos.size() > 0) {
+			multimedia.setVideos(videos);
+		}
+		if(multimedia.getImages().size() > 0 || multimedia.getVideos().size() > 0) {
+			gameToAdd.setMultimedia(multimedia);
+		}
+			
 		return gameToAdd;
 	}
 	
 	
+	//Create GraphGame consistent with the new game just scraped
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
 		
 		Long zero = new Long(0);
