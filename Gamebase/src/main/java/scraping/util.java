@@ -22,7 +22,7 @@ public class util {
 	
 	//Create a Game consistent with the new game just scraped
 	public static Game initializeGameToAdd(JSONObject newGame) {
-		
+		System.out.println("UTIL/INITIALIZEGAMETOADD--> Initializing new game");
 		Game gameToAdd = new Game();
 		
 		//Id
@@ -169,19 +169,21 @@ public class util {
 		if(multimedia.getImages().size() > 0 || multimedia.getVideos().size() > 0) {
 			gameToAdd.setMultimedia(multimedia);
 		}
-			
+		
+		System.out.println("UTIL/INITIALIZEGAMETOADD--> Created new game");
 		return gameToAdd;
 	}
 	
 	
 	//Create GraphGame consistent with the new game just scraped
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
+		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Initializing GraphGame for game: " + gameToAdd.getTitle());
 		
 		Long zero = new Long(0);
 		/* All-parameters Constructor */
 		/* Id, title, background_image, favorite_count, rating */
 		GraphGame graphGameToAdd = new GraphGame(gameToAdd.getId().toString(), gameToAdd.getTitle(), gameToAdd.getBackground_image(), zero, zero);
-
+		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Created GraphGame");
 		return graphGameToAdd;
 	}
 

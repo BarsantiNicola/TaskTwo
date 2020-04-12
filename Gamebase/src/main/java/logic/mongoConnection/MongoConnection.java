@@ -613,7 +613,7 @@ public class MongoConnection {
     	System.out.println("ERRORE SU: " + counter);
     }
     
-    StatusObject<Integer> getMaxGameId(){
+   public StatusObject<Integer> getMaxGameId(){
     	try {
     		Bson sort = Sorts.descending( "_id" );
     		Integer maxId = gamesCollection.find().sort(sort).first().getId();

@@ -32,7 +32,7 @@ public class HttpClient {
     	
         HttpGet request = new HttpGet("https://api.rawg.io/api/games/" + GAME_ID);
 
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
+       try ( CloseableHttpResponse response = httpClient.execute(request)){
 
         	System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Request sent");
             // Get HttpResponse Status
@@ -47,7 +47,7 @@ public class HttpClient {
            
             System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Returning a new game");
             return newGame;
-        }
+       }
     }
 
     
@@ -84,7 +84,6 @@ public class HttpClient {
             JSONObject jsonobject = jsonArray.getJSONObject(0);
             JSONObject channel = jsonobject.getJSONObject("channel");
             String url = channel.getString("url");
-            System.out.println(url); //Debug
             return url;
   
             }

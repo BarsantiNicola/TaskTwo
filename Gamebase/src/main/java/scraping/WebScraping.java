@@ -14,6 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import logic.data.Game;
 import logic.data.GraphGame;
+import logic.mongoConnection.MongoConnection;
+import logic.mongoConnection.*;
 
 public class WebScraping {
 
@@ -25,7 +27,7 @@ public class WebScraping {
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
 		
-		int newGameID=4200;
+		int newGameID=MongoConnection.getMaxGameId().element ++;
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
@@ -38,19 +40,17 @@ public class WebScraping {
 				continue;
 			}
 			i++;
-			System.out.println(i);
 			newGames.add(newGame);
 		}
 		
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> lista:"+ newGames.size());
+		System.out.println("WEBSCRAPING/UPDATEDATABASE--> New games list:"+ newGames.size());
 		for(int j =0; j < newGames.size(); j++) {
 			System.out.println(newGames.get(j));
 			
 		}
 		
-		
-		
 		//Add Games to database
+		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Creating objects Game and GraphGame for new games");
 		List<Game> gamesToAdd = new ArrayList<Game>();
 		List<GraphGame> graphGamesToAdd = new ArrayList<GraphGame>();
 		for(int k = 0; k < newGames.size(); k++) {
@@ -114,6 +114,7 @@ public class WebScraping {
 				 twitchChannel = objRequest.sendGetTwitch(GAME);
 	           } catch (Exception e) {
 					e.printStackTrace();
+					
 				}
 
 	        } finally {
@@ -185,16 +186,10 @@ public class WebScraping {
 	}
 */
 	
-	
+	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 JSONObject newGame = searchNewGame(3498);
-			
-			String clip = newGame.getJSONObject("clip").getJSONObject("clips").getString("320");
-			System.out.println(clip);
-			
-		
-			
+		 searchNewGame(4200);
 	 }
-	 
+	 */
 }
