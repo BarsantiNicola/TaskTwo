@@ -79,7 +79,6 @@ public class LogicBridge {
 	
 	public StatusCode deleteGame( String gameTitle ) { return MONGO.deleteGame( gameTitle );}
 	
-	public StatusObject<Integer> getMaxGameId() { return MONGO.getMaxGameId();}
 	
 	
 	//////  STATISTICS
@@ -113,7 +112,10 @@ public class LogicBridge {
 	
 	///////////////  DATASCRAPER FUNCTIONS
 	
-	public boolean updateDatabase() { return WebScraping.updateDatabase(); }
+	public boolean updateDatabase() { 
+		int MaxGameId= MONGO.getMaxGameId().element;
+		return WebScraping.updateDatabase(MaxGameId); 
+		}
 	
 	public static String getTwitchURLChannel( String GAME ) { return WebScraping.getTwitchURLChannel(GAME); }
 	

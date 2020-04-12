@@ -23,20 +23,23 @@ public class WebScraping {
 
 	
 	//Update database using dynamic scraping (NEED TEST)
-	public boolean updateDatabase() { 
+	public static boolean updateDatabase(int MaxGameID) { 
 		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Starting.");
+		if (MaxGameID == 0) {
+			System.out.println("WEBSCRAPING/UPDATEDATABASE--> MaxGameID value is not accettable");
+			System.out.println("WEBSCRAPING/UPDATEDATABASE--> UpdateDatabase can't be executed. Returning.");
+			return false;
+		}
 		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new games");
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
-		
-		//int newGameID = LogicBridge.getMaxGameId().element;
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new game: ID=" + newGameID);
-			JSONObject newGame = searchNewGame(newGameID);
+			System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new game: ID=" + MaxGameID);
+			JSONObject newGame = searchNewGame(MaxGameID);
 			System.out.println("WEBSCRAPING/UPDATEDATABASE--> New game obtained");
-			newGameID++;
+			MaxGameID++;
 			if(newGame.has("detail")) {
 				System.out.println("WEBSCRAPING/UPDATEDATABASE--> Game not suitable");
 				continue;
@@ -62,6 +65,7 @@ public class WebScraping {
 		}
 		
 		//Inserisci nel database le due liste
+		
 		
 		return false; 
 	}
