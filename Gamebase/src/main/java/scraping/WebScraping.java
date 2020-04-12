@@ -12,6 +12,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import logic.LogicBridge;
 import logic.data.Game;
 import logic.data.GraphGame;
 import logic.mongoConnection.MongoConnection;
@@ -27,7 +29,7 @@ public class WebScraping {
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
 		
-		int newGameID=MongoConnection.getMaxGameId().element ++;
+		int newGameID = LogicBridge.getMaxGameId().element;
 		int i = 0;
 		int failed=0;
 		while (i < 10) {

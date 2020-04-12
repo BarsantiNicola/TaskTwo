@@ -79,6 +79,8 @@ public class LogicBridge {
 	
 	public StatusCode deleteGame( String gameTitle ) { return MONGO.deleteGame( gameTitle );}
 	
+	public StatusObject<Integer> getMaxGameId() { return MONGO.getMaxGameId();}
+	
 	
 	//////  STATISTICS
 	
