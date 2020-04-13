@@ -21,7 +21,7 @@ import scraping.*;
 public class LogicBridge {
 	
 	private MongoConnection MONGO;
-	private GraphConnector graph;
+	//private GraphConnector graph;
 	
 	public LogicBridge()
 	 {
@@ -31,7 +31,7 @@ public class LogicBridge {
 
 			  MONGO = new MongoConnection("172.16.0.80",27018);					 
 
-			  graph.connect("bolt://172.16.0.78:7687","neo4j","password");       
+			  //graph.connect("bolt://172.16.0.78:7687","neo4j","password");       
 
 			 }
 		 catch( Exception e )
@@ -126,6 +126,6 @@ public class LogicBridge {
 	
 	public void closeConnection(){
 		MONGO.closeConnection();
-		graph.close();                 
+		//graph.close();                 
 	}
 }

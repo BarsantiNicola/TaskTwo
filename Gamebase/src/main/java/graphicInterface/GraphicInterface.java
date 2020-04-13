@@ -112,6 +112,9 @@ public class GraphicInterface {
 	
 	private JButton topGamesButton;
 	private JButton topGenresButton;
+	
+	private JButton topRatedGameByYearButton;
+	private JButton topViewedGameByYearButton;
 		
 	///////// SEARCH GAME PANEL
 	private JPanel searchGamePanel;	
@@ -223,11 +226,7 @@ public class GraphicInterface {
 	private List<String> currentVideosURLlist = null;
 	private int currentVideoIndex = 0;
 	private int lastVideoIndex = 0;
-	@SuppressWarnings("null")
-	private boolean isGameFavourite = (Boolean) null;
-	private JButton topRatedGameByYearButton;
-	private JButton topViewedGameByYearButton;
-
+	private Boolean isGameFavourite =  null;
 	
 	//support functions
 	
@@ -1173,6 +1172,15 @@ public class GraphicInterface {
 	 * Create the application.
 	 */
 	public GraphicInterface() {
+		
+		StatusCode graphConnection = graphHandler.connect("bolt://172.16.0.78:7687","neo4j","password");
+		
+		if( graphConnection != StatusCode.OK ) {
+			
+			System.out.println("->[GraphicInterface] Failed to connect to graph database");
+			return;
+		}
+		
 		initialize();
 	}
 
