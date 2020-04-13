@@ -410,6 +410,13 @@ public class GraphicInterface {
 		}
 	}
 	
+	private void cleanLoginPage() {
+		
+		usernameTextfield.setText("");
+		passwordField.setText("");
+		errorMessageLabel.setVisible(false);
+	}
+	
 	private void initializeHomePage() {
 		
 		long followersLong = currentUser.getFollowedCount();
@@ -1274,6 +1281,7 @@ public class GraphicInterface {
 					System.out.println("->[GraphicInterface] Sign up completed: username " + username + " registered");
 					cl.show(panel, "homePagePanel");
 					initializeHomePage();
+					cleanLoginPage();
 				} else {
 					
 					System.out.println("->[GraphicInterface] Sign up failed.");
@@ -1329,6 +1337,7 @@ public class GraphicInterface {
 					System.out.println("->[GraphicInterface] Login completed:user " + username + " logged in");
 					cl.show(panel, "homePagePanel");
 					initializeHomePage();
+					cleanLoginPage();
 				} else {
 					
 					System.out.println("->[GraphicInterface] Login failed");
@@ -2322,7 +2331,7 @@ public class GraphicInterface {
 			      int value = bar.getValue();
 			      int max = bar.getMaximum();
 			      
-			      if( value == 0 ) {
+			      if( value == 0 && searchGamesDataNavigator!=null ) {
 			    	  
 			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getPrevData();
 			    	  
@@ -2333,7 +2342,7 @@ public class GraphicInterface {
 			    	  }  
 			      }
 			      
-			      if( value+extent == max ) {
+			      if( value+extent == max && searchGamesDataNavigator!=null ) {
 			    	  
 			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
 			    	  
