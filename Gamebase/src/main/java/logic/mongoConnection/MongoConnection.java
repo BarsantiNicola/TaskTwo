@@ -484,12 +484,14 @@ public class MongoConnection {
     		//System.out.println("testing");
 
     		//client.statistics.statsTest();
-    		System.out.println(client.getMaxGameId().element);
+    		client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeShard.txt");
     		client.closeConnection();
     		
     	}catch(Exception e) {
+    		
     		System.out.println("Errore");
     		e.printStackTrace();
+    	
     	}
     	
     	
@@ -613,7 +615,7 @@ public class MongoConnection {
     	System.out.println("ERRORE SU: " + counter);
     }
     
-   public StatusObject<Integer> getMaxGameId(){
+    public StatusObject<Integer> getMaxGameId(){
     	try {
     		Bson sort = Sorts.descending( "_id" );
     		Integer maxId = gamesCollection.find().sort(sort).first().getId();
