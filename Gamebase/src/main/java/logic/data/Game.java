@@ -71,8 +71,11 @@ public class Game implements Serializable{
     }
 
     public ArrayList<String> getAllGenres(){
-    	ArrayList<String> genres = subgenres;
-    	genres.add(0, this.genres);
+    	ArrayList<String> genres = new ArrayList<String>();
+    	if( genres != null )
+    		genres.add( 0,this.genres );
+    	if( subgenres != null )
+    		genres.addAll(subgenres);
     	return genres;
     }
     
@@ -105,19 +108,31 @@ public class Game implements Serializable{
     }
     
     public String getNintendoURL() {
-    	return sales.get(0).getSaleUrl();
+    	if( sales.size()>0 )
+    		return sales.get(0).getSaleUrl();
+    	else
+    		return null;
     }
     
     public String getSteamURL() {
-    	return sales.get(1).getSaleUrl();    	
+    	if( sales.size()>1 )
+    		return sales.get(1).getSaleUrl();    	
+    	else
+    		return null;
     }
     
     public String getPlaystationURL() {
-    	return sales.get(2).getSaleUrl();
+    	if( sales.size()>2)
+    		return sales.get(2).getSaleUrl();
+    	else
+    		return null;
     }
     
     public String getXboxURL() {
-    	return sales.get(3).getSaleUrl();    	
+    	if( sales.size()>3 )
+    		return sales.get(3).getSaleUrl();  
+    	else
+    		return null;
     }
      
     public List<String> getVideoURLs(){

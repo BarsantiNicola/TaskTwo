@@ -484,7 +484,7 @@ public class MongoConnection {
     		//System.out.println("testing");
 
     		//client.statistics.statsTest();
-    		client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeShard.txt");
+    		client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeNoShard.txt",100);
     		client.closeConnection();
     		
     	}catch(Exception e) {
@@ -618,9 +618,14 @@ public class MongoConnection {
     public StatusObject<Integer> getMaxGameId(){
     	try {
     		Bson sort = Sorts.descending( "_id" );
-    		Integer maxId = gamesCollection.find().sort(sort).first().getId();
-    		if( maxId != null ) return new StatusObject<Integer>(StatusCode.OK, maxId);
-    		else return new StatusObject<Integer>(StatusCode.ERR_DOCUMENT_UNKNOWN,null);
+    		Game game =  gamesCollection.find().sort(sort).first();
+    		if( game != null ) {
+    			Integer maxId = game.getId();
+        		if( maxId != null ) return new StatusObject<Integer>(StatusCode.OK, maxId);
+        		else return new StatusObject<Integer>(StatusCode.ERR_DOCUMENT_UNKNOWN,null);
+    		}else 
+    			return new StatusObject<Integer>(StatusCode.ERR_DOCUMENT_UNKNOWN,null);
+
     	}catch(Exception e ){
     		System.out.println( "---> [MongoConnector][GetMaxId] Error, Connection Lost" );
     		return new StatusObject<Integer>(StatusCode.ERR_NETWORK_UNREACHABLE);

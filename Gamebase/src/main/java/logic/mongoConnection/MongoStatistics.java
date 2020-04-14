@@ -806,47 +806,47 @@ public class MongoStatistics {
 
     }
     
-    public void doTimeAnalysis( String path ) {
+    public void doTimeAnalysis( String path , int repetition ) {
         NumberFormat nf = new DecimalFormat("0.0000");
     	try {
     		PrintWriter out = new PrintWriter(new FileOutputStream(path),true);
     		
     		long timer;
-    		long[] times = new long[100];  		
+    		long[] times = new long[repetition];  		
 			double mean;
 			double confidence;
 			double variance;
 			
 			mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getGamesCountByGen();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetGamesCountByGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("1/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getGamesCountByYear();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetGamesCountByYear[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("2/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
 
     			this.getGamesCountByYearGen();
@@ -854,149 +854,149 @@ public class MongoStatistics {
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetGamesCountByYearGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("3/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getMaxRatedGameByGen();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetMaxRatedGameByGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("4/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getMaxRatedGameByYear();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetMaxRatedGameByYear[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("5/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getMaxViewedGameByGen();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetMaxViewedGameByGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("6/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getMaxViewedGameByYear();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetMaxViewedGameByYear[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("7/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getRatingsCountByGen();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetRatingsCountByGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("8/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getRatingsCountByYear();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetRatingsCountByYear[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("9/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getRatingsCountByYearGen();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetRatingsCountByYearGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("10/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getViewsCountByGen();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetViewsCountByGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("11/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getViewsCountByYear();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetViewsCountByYear[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("12/13 completed");
     		
     		mean = 0;confidence = 0;variance = 0;
-    		for( int a = 0; a<100;a++) {
+    		for( int a = 0; a<repetition;a++) {
     			timer = System.currentTimeMillis();
     			this.getViewsCountByYearGen();
     			times[a] = System.currentTimeMillis()-timer;
     			mean +=times[a];
     		}
     		mean/=100;
-    		for (int a = 0; a < 100; a++) 
+    		for (int a = 0; a < repetition; a++) 
     			variance += Math.pow(times[a] - mean,2);	
-    		confidence=2.576*Math.sqrt(variance/100)/10;
+    		confidence=2.576*Math.sqrt(variance/repetition)/Math.sqrt(repetition);
     		out.println("GetViewsCountByYearGen[MEAN,CI]: " + nf.format(mean) + " : " + nf.format(confidence) );
     		System.out.println("13/13 completed");
     		
