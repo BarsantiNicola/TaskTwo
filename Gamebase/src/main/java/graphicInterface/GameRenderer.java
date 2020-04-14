@@ -14,12 +14,6 @@ import javax.swing.border.LineBorder;
 
 import logic.data.PreviewGame; 
 
-/** 
- * Custom renderer to display a country's flag alongside its name 
- * 
- * @author wwww.codejava.net 
- */
-
 public class GameRenderer extends JLabel implements ListCellRenderer<PreviewGame> { 
  
     public GameRenderer() { 
@@ -33,11 +27,11 @@ public class GameRenderer extends JLabel implements ListCellRenderer<PreviewGame
         ImageIcon imageIcon = null;
         
         try {
-        	imageIcon = new ImageIcon(ImageIO.read(new URL(game.getPreviewPicURL())).getScaledInstance(60, 60, Image.SCALE_SMOOTH));
+        	imageIcon = new ImageIcon(ImageIO.read(new URL(game.getPreviewPicURL())).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
         } catch ( Exception e) {
         	imageIcon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
         }
- 
+        
         setIcon(imageIcon); 
         setToolTipText(gameTitle); 
         setBorder(new LineBorder(Color.WHITE,2,true));

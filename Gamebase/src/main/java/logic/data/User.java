@@ -110,6 +110,22 @@ public class User
    { return followedCount; }
 
   public String getCompleteName() {
+	  
+	  if( (firstName==null||firstName=="null") && (lastName==null||lastName=="null") ) {
+		  
+		  return null;
+	  }
+	  
+	  if( (firstName==null||firstName=="null") && (lastName!=null||lastName!="null") ) {
+		  
+		  return lastName;
+	  }
+	  
+	  if( (firstName!=null||firstName!="null") && (lastName==null||lastName=="null") ) {
+		  
+		  return firstName;
+	  }
+	  
 	  return firstName + lastName;
   }
   //---------------------------------------------------------------------------------

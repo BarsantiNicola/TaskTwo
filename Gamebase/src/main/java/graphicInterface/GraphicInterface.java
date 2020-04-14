@@ -227,18 +227,24 @@ public class GraphicInterface {
 	private int currentVideoIndex = 0;
 	private int lastVideoIndex = 0;
 	private Boolean isGameFavourite =  null;
+	private DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 	
 	//support functions
 	
-	private boolean fillGamesList(List<PreviewGame> gamesList) {
+	private void fillGamesList(List<PreviewGame> gamesList) {
+		
+		if( gamesList == null ) {
+			
+			return;
+		}
 		
 		gamesListModel.removeAllElements();
 		
 		for( int i = 0; i < gamesList.size(); i++ ) {
+			
 			gamesListModel.addElement(gamesList.get(i));
 		}
-		
-		return true;
+
 	}
 	
 	private void fillFollowedTable(List<User> friendList) {
@@ -247,10 +253,13 @@ public class GraphicInterface {
 		
 		for( User friend: friendList ) {
 			
+			String email = friend.getEmail();
+			String completeName = friend.getCompleteName();
+			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
-			object[1] = friend.getCompleteName()!=null?friend.getCompleteName():"N/A";
-			object[2] = friend.getEmail()!=null?friend.getEmail():"N/A";
+			object[1] = completeName==null?"Not Available":completeName;
+			object[2] = email==null||email=="x"?"Not Available":email;
 			ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
@@ -465,7 +474,7 @@ public class GraphicInterface {
 				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			} else {
 				try {
-					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL)).getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
+					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL)).getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
 					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			    }
@@ -482,7 +491,7 @@ public class GraphicInterface {
 				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			} else {
 				try {
-					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL)).getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
+					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL)).getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
 					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			    }
@@ -503,9 +512,11 @@ public class GraphicInterface {
 		switch(type) {
 			case ADMINISTRATOR:
 				adminHPButton.setVisible(true);
+				adminHPButton.setEnabled(true);
 				becomeAnalystButton.setVisible(false);
 				becomeAnalystButton.setEnabled(false);
 				analystHPButton.setVisible(true);
+				analystHPButton.setEnabled(true);
 				break;
 			case ANALYST:
 				adminHPButton.setVisible(false);
@@ -513,11 +524,13 @@ public class GraphicInterface {
 				becomeAnalystButton.setVisible(false);
 				becomeAnalystButton.setEnabled(false);
 				analystHPButton.setVisible(true);
+				analystHPButton.setEnabled(true);
 				break;
 			case USER:
 				adminHPButton.setVisible(false);
 				adminHPButton.setEnabled(false);
 				becomeAnalystButton.setVisible(true);
+				becomeAnalystButton.setEnabled(true);
 				analystHPButton.setVisible(false);
 				analystHPButton.setEnabled(false);
 				break;
@@ -550,7 +563,7 @@ public class GraphicInterface {
 		
 		StatusObject<Game> gameStatus = logicHandler.getGame(id);
 		
-		if( gameStatus.statusCode != StatusCode.OK ) {
+		if( gameStatus.statusCode != StatusCode.OK || gameStatus.element == null ) {
 			
 			cleanGamePage();
 			
@@ -611,7 +624,7 @@ public class GraphicInterface {
 		}
 		
 		final String playstationURL = game.getPlaystationURL();
-		
+		System.out.println(playstationURL);
 		if( playstationURL != null ) {
 			
 			playstationButtonListener = new ActionListener() {
@@ -1036,7 +1049,7 @@ public class GraphicInterface {
 			}
 			
 			topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false);
-			topUsersPanel.setName("topGamesPanel");
+			topGamesPanel.setName("topGamesPanel");
 			
 			topGamesButton.setEnabled(true);
 			
@@ -1120,7 +1133,7 @@ public class GraphicInterface {
 			}
 		}
 		
-		StatusObject<List<Statistics>> maxViewedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
+		StatusObject<List<Statistics>> maxViewedGameByYearStatus = logicHandler.getMaxViewedGameByYear();
 		
 		if( maxViewedGameByYearStatus.statusCode == StatusCode.OK ) {
 			
@@ -1128,8 +1141,8 @@ public class GraphicInterface {
 			
 			for( int i = 0; i < maxViewedGameByYearStatus.element.size(); i++ ){
 				
-				maxViewedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
-						maxRatedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
+				maxViewedYearHashMap.put(maxViewedGameByYearStatus.element.get(i).getGames() + " - " + maxViewedGameByYearStatus.element.get(i).getYear(),
+						maxViewedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
 			}
 			
 			topViewedGameByYearPanel = new BarChartPanel("Most Viewed Games by Year", "Game - Year", "Views", maxViewedYearHashMap, "V", true, false, false);
@@ -1199,6 +1212,8 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] Failed to connect to graph database");
 			return;
 		}
+		
+		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
 		
 		initialize();
 	}
@@ -1275,7 +1290,7 @@ public class GraphicInterface {
 				String username = usernameTextfield.getText();
 				String password = new String(passwordField.getPassword());
 				
-				System.out.println("->->[GraphicInterface] Trying to sign up " + username);
+				System.out.println("->[GraphicInterface] Trying to sign up " + username);
 				
 				if( username.equals("") || password.equals("") ) {
 					System.out.println("->[GraphicInterface] Sign up failed: empty username and(or) password");
@@ -1390,16 +1405,16 @@ public class GraphicInterface {
 		
 		welcomeHPLabel = new JLabel("Welcome,");
 		welcomeHPLabel.setForeground(Color.WHITE);
-		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
+		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
 		welcomeHPLabel.setName("usertypeHPLabel");
-		welcomeHPLabel.setBounds(145, 13, 81, 16);
+		welcomeHPLabel.setBounds(110, 13, 81, 23);
 		homePagePanel.add(welcomeHPLabel);
 		
 		usernameHPLabel = new JLabel("username");
-		usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 17));
+		usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 18));
 		usernameHPLabel.setForeground(Color.WHITE);
 		usernameHPLabel.setName("usernameHPLabel");
-		usernameHPLabel.setBounds(145, 37, 89, 16);
+		usernameHPLabel.setBounds(180, 15, 89, 16);
 		homePagePanel.add(usernameHPLabel);
 		
 		logoutHPButton = new JButton("Logout");
@@ -1419,7 +1434,7 @@ public class GraphicInterface {
 		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
 		logoutHPButton.setName("logoutHPButton");
-		logoutHPButton.setBounds(145, 61, 81, 21);
+		logoutHPButton.setBounds(110, 61, 74, 21);
 		logoutHPButton.setBorderPainted(false);
 		logoutHPButton.setBackground(new Color(0, 128, 128));
 		logoutHPButton.setOpaque(false);
@@ -1540,14 +1555,17 @@ public class GraphicInterface {
 		followedTableScrollPane = new JScrollPane();
 		followedTableScrollPane.setName("followedTableScrollPane");
 		followedTableScrollPane.setBackground(Color.BLACK);
-		followedTableScrollPane.setBounds(27, 142, 356, 168);
+		followedTableScrollPane.setBounds(27, 142, 356, 174);
 		homePagePanel.add(followedTableScrollPane);
 		
 		followedTable = new JTable();
+		followedTable.setToolTipText("Your Followers");
 		followedTable.setName("followedTable");
 		followedTable.setModel(followedTableModel);
 		followedTable.setFont(new Font("Corbel",Font.PLAIN,16));
 		followedTable.getColumnModel().getColumn(2).setPreferredWidth(77);
+		followedTable.setRowHeight(30);
+		followedTable.setDefaultRenderer(String.class, centerRenderer);
 		followedTableHeader = followedTable.getTableHeader();
 		followedTableHeader.setFont(titleFont);
 		followedTableHeader.setForeground(Color.WHITE);
@@ -1580,9 +1598,10 @@ public class GraphicInterface {
 		myGamesList.setVisibleRowCount(-1);
 		myGamesList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		myGamesList.setCellRenderer(new GameRenderer());
-		myGamesScrollPane.add(myGamesList);
+		myGamesScrollPane.setViewportView(myGamesList);
 		
 		searchGameLabel = new JLabel("");
+		searchGameLabel.setToolTipText("Click Here in order to Search for new Games");
 		searchGameLabel.setHorizontalTextPosition(SwingConstants.LEFT);
 		searchGameLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		searchGameLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Find Game", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, Color.WHITE));
@@ -1603,8 +1622,8 @@ public class GraphicInterface {
 		searchGameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		searchGameLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		searchGameLabel.setForeground(Color.WHITE);
-		searchGameLabel.setBounds(714, 142, 196, 380);
-		searchGameLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(185, 350, Image.SCALE_SMOOTH)));
+		searchGameLabel.setBounds(714, 142, 196, 390);
+		searchGameLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(185, 360, Image.SCALE_SMOOTH)));
 		homePagePanel.add(searchGameLabel);
 		
 		mostViewedGamesLabel = new JLabel("");
@@ -1612,7 +1631,7 @@ public class GraphicInterface {
 		mostViewedGamesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		mostViewedGamesLabel.setAlignmentY(0.0f);
 		mostViewedGamesLabel.setToolTipText("Click Here to See the Most Viewed Game");
-		mostViewedGamesLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Most Viewed Games", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, new Color(255, 255, 255)));
+		mostViewedGamesLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Most Viewed Game", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, new Color(255, 255, 255)));
 		mostViewedGamesLabel.setHorizontalTextPosition(SwingConstants.LEFT);
 		mostViewedGamesLabel.setVerticalTextPosition(SwingConstants.TOP);
 		mostViewedGamesLabel.addMouseListener(new MouseAdapter() {
@@ -1637,8 +1656,8 @@ public class GraphicInterface {
 		mostViewedGamesLabel.setForeground(Color.WHITE);
 		mostViewedGamesLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		mostViewedGamesLabel.setName("mostViewedGamesLabel");
-		mostViewedGamesLabel.setBounds(427, 142, 223, 168);
-		mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
+		mostViewedGamesLabel.setBounds(427, 142, 246, 184);
+		mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 		homePagePanel.add(mostViewedGamesLabel);
 		
 		mostPopularGamesLabel = new JLabel("");
@@ -1646,7 +1665,7 @@ public class GraphicInterface {
 		mostPopularGamesLabel.setVerticalTextPosition(SwingConstants.TOP);
 		mostPopularGamesLabel.setHorizontalTextPosition(SwingConstants.LEFT);
 		mostPopularGamesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		mostPopularGamesLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Most Popular Games", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, Color.WHITE));
+		mostPopularGamesLabel.setBorder(new TitledBorder(new LineBorder(new Color(255, 255, 255), 2), "Most Popular Game", TitledBorder.LEADING, TitledBorder.BOTTOM, titleFont, Color.WHITE));
 		mostPopularGamesLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -1671,8 +1690,8 @@ public class GraphicInterface {
 		mostPopularGamesLabel.setForeground(Color.WHITE);
 		mostPopularGamesLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		mostPopularGamesLabel.setName("mostPopularGamesLabel");
-		mostPopularGamesLabel.setBounds(427, 348, 223, 168);
-		mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
+		mostPopularGamesLabel.setBounds(427, 348, 246, 184);
+		mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 		homePagePanel.add(mostPopularGamesLabel);
 		
 		userButton = new JButton("");
@@ -1820,9 +1839,10 @@ public class GraphicInterface {
 					deleteUserResultLabel.setVisible(true);
 				}
 				
-				new Timer(3000,new ActionListener() {
+				new Timer(5000,new ActionListener() {
 				      public void actionPerformed(ActionEvent evt) {
 				          deleteUserResultLabel.setVisible(false);
+				          deleteUserTextField.setText("");
 				      }
 				  }).start();
 			}
@@ -1858,9 +1878,10 @@ public class GraphicInterface {
 					deleteGameResultLabel.setVisible(true);
 				}
 				
-				new Timer(3000,new ActionListener() {
+				new Timer(5000,new ActionListener() {
 				      public void actionPerformed(ActionEvent evt) {
 				          deleteGameResultLabel.setVisible(false);
+				          deleteGameTextField.setText("");
 				      }
 				  }).start();
 			
@@ -1932,11 +1953,11 @@ public class GraphicInterface {
 		userCountLabel.setBounds(104, 180, 226, 35);
 		adminPanel.add(userCountLabel);
 		
-		gameCountLabel = new JLabel("Game Count: 10000");
+		gameCountLabel = new JLabel("Game Count: 1000000");
 		gameCountLabel.setName("gameCountLabel");
 		gameCountLabel.setForeground(Color.WHITE);
 		gameCountLabel.setFont(new Font("Corbel", Font.BOLD, 26));
-		gameCountLabel.setBounds(104, 269, 226, 35);
+		gameCountLabel.setBounds(104, 269, 277, 35);
 		adminPanel.add(gameCountLabel);
 		
 		updateDatabaseResultLabel = new JLabel("Success!");
@@ -1991,7 +2012,7 @@ public class GraphicInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				CardLayout cl = (CardLayout)(plotContainer.getLayout());
-				
+				System.out.println("Im in");
 				cl.show(plotContainer, "topUsersPanel");
 			}
 		});
@@ -2004,6 +2025,7 @@ public class GraphicInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				System.out.println("Im in");
 				
 				cl.show(plotContainer, "topGamesPanel");
 			}
