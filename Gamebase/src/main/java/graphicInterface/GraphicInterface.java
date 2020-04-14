@@ -465,7 +465,7 @@ public class GraphicInterface {
 				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			} else {
 				try {
-					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL))));
+					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL)).getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
 					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			    }
@@ -482,14 +482,14 @@ public class GraphicInterface {
 				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			} else {
 				try {
-					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL))));
+					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL)).getScaledInstance(211, 145, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
 					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			    }
 			}	
 		}
 			
-		userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultProfilePicture.png")).getImage().getScaledInstance(83, 83, Image.SCALE_SMOOTH)));
+		userTypeIconHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultProfilePicture.png")).getImage().getScaledInstance(74, 69, Image.SCALE_SMOOTH)));
 		
 		StatusObject<List<User>> friendListStatus = graphHandler.getFollowedUsersList();
 		
@@ -504,17 +504,22 @@ public class GraphicInterface {
 			case ADMINISTRATOR:
 				adminHPButton.setVisible(true);
 				becomeAnalystButton.setVisible(false);
+				becomeAnalystButton.setEnabled(false);
 				analystHPButton.setVisible(true);
 				break;
 			case ANALYST:
 				adminHPButton.setVisible(false);
+				adminHPButton.setEnabled(false);
 				becomeAnalystButton.setVisible(false);
+				becomeAnalystButton.setEnabled(false);
 				analystHPButton.setVisible(true);
 				break;
 			case USER:
 				adminHPButton.setVisible(false);
+				adminHPButton.setEnabled(false);
 				becomeAnalystButton.setVisible(true);
 				analystHPButton.setVisible(false);
+				analystHPButton.setEnabled(false);
 				break;
 			default:
 				return;
@@ -525,12 +530,19 @@ public class GraphicInterface {
 		
 		gamesNumberHPLabel.setText("");
 		followerNumberHPLabel.setText("");
-		welcomeHPLabel.setText("");
+		
 		usernameHPLabel.setText("");
 		userTypeIconHPLabel.setIcon(null);
 		
 		gamesListModel.removeAllElements();
 		followedTableModel.setRowCount(0);
+		
+		adminHPButton.setEnabled(true);
+		becomeAnalystButton.setEnabled(true);
+		analystHPButton.setEnabled(true);
+		adminHPButton.setVisible(true);
+		becomeAnalystButton.setVisible(true);
+		analystHPButton.setVisible(true);
 		
 	}
 	
@@ -1233,11 +1245,13 @@ public class GraphicInterface {
 		loginPanel.add(passwordLabel);
 		
 		usernameTextfield = new JTextField();
+		usernameTextfield.setFont(new Font("Corbel", Font.BOLD, 16));
 		usernameTextfield.setBounds(269, 275, 387, 43);
 		loginPanel.add(usernameTextfield);
 		usernameTextfield.setColumns(10);
 		
 		passwordField = new JPasswordField();
+		passwordField.setFont(new Font("Corbel", Font.BOLD, 16));
 		passwordField.setBounds(269, 362, 387, 43);
 		loginPanel.add(passwordField);
 		
@@ -1378,14 +1392,14 @@ public class GraphicInterface {
 		welcomeHPLabel.setForeground(Color.WHITE);
 		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 16));
 		welcomeHPLabel.setName("usertypeHPLabel");
-		welcomeHPLabel.setBounds(103, 13, 89, 16);
+		welcomeHPLabel.setBounds(145, 13, 81, 16);
 		homePagePanel.add(welcomeHPLabel);
 		
 		usernameHPLabel = new JLabel("username");
 		usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 17));
 		usernameHPLabel.setForeground(Color.WHITE);
 		usernameHPLabel.setName("usernameHPLabel");
-		usernameHPLabel.setBounds(103, 37, 89, 16);
+		usernameHPLabel.setBounds(145, 37, 89, 16);
 		homePagePanel.add(usernameHPLabel);
 		
 		logoutHPButton = new JButton("Logout");
@@ -1405,7 +1419,7 @@ public class GraphicInterface {
 		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
 		logoutHPButton.setName("logoutHPButton");
-		logoutHPButton.setBounds(103, 61, 81, 21);
+		logoutHPButton.setBounds(145, 61, 81, 21);
 		logoutHPButton.setBorderPainted(false);
 		logoutHPButton.setBackground(new Color(0, 128, 128));
 		logoutHPButton.setOpaque(false);
@@ -1429,8 +1443,8 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 50, Image.SCALE_SMOOTH)));
 		homePagePanel.add(gamesNumberHPLabel);
 		
-		followerNumberHPLabel = new JLabel("999");
-		followerNumberHPLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+		followerNumberHPLabel = new JLabel("155");
+		followerNumberHPLabel.setBorder(new EmptyBorder(0, 3, 0, 10));
 		followerNumberHPLabel.setOpaque(true);
 		followerNumberHPLabel.setBackground(SystemColor.controlDkShadow);
 		followerNumberHPLabel.setForeground(Color.WHITE);
@@ -1466,7 +1480,7 @@ public class GraphicInterface {
 		});
 		adminHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
-		adminHPButton.setBounds(374, 13, 81, 69);
+		adminHPButton.setBounds(281, 13, 81, 69);
 		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
 		adminHPButton.setBackground(SystemColor.controlDkShadow);
 		adminHPButton.setBorder(null);
@@ -1483,12 +1497,14 @@ public class GraphicInterface {
 					
 					currentUser = upgradeStatus.element.user;
 					becomeAnalystButton.setVisible(false);
+					becomeAnalystButton.setEnabled(false);
 					analystHPButton.setVisible(true);
+					analystHPButton.setEnabled(true);
 				}
 			}
 		});
 		becomeAnalystButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		becomeAnalystButton.setBounds(467, 13, 81, 69);
+		becomeAnalystButton.setBounds(374, 13, 81, 69);
 		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
 		becomeAnalystButton.setBackground(SystemColor.controlDkShadow);
 		becomeAnalystButton.setContentAreaFilled(false);
@@ -1512,7 +1528,7 @@ public class GraphicInterface {
 			}
 		});
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		analystHPButton.setBounds(560, 13, 81, 69);
+		analystHPButton.setBounds(374, 13, 81, 69);
 		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
 		analystHPButton.setBackground(SystemColor.controlDkShadow);
 		analystHPButton.setBorder(null);
@@ -1662,7 +1678,7 @@ public class GraphicInterface {
 		userButton = new JButton("");
 		userButton.setBackground(SystemColor.controlDkShadow);
 		userButton.setName("userButton");
-		userButton.setBounds(281, 13, 81, 69);
+		userButton.setBounds(560, 13, 81, 69);
 		userButton.setContentAreaFilled(false);
 		userButton.setOpaque(true);
 		userButton.setName("userButton");
@@ -1706,7 +1722,7 @@ public class GraphicInterface {
 		userInfoButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		userInfoButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		userInfoButton.setBorder(null);
-		userInfoButton.setBounds(188, 13, 81, 69);
+		userInfoButton.setBounds(467, 13, 81, 69);
 		userInfoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/info.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(userInfoButton);
 		
