@@ -165,19 +165,23 @@ public class WebScraping {
 	}
 	
 	
-	//UNUSED
-	/*public static void getBackgroundImage(String GAME) {
+	public static String getGameLowerResScreenshot(String GAME ) { 
+		System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT--> Getting screenshot with lower resolution for game: " + GAME);
 		
 		//Replace spaces in the game title
-		GAME = GAME.replaceAll(" ", "%20");
+		GAME = GAME.replaceAll(" ", "-");
 		
+		String gameScreenshots = null;
+		//Create http object for request
 		HttpClient objRequest = new HttpClient();
-		 try {
-	            System.out.println("WEBSCRAPING/GETBACKGROUNDIMAGE-->Sending Http GET request for image");
-	            try {
-					objRequest.sendGetGameBackgroundImage(GAME);
-				} catch (Exception e) {
+		 
+		try {
+	           System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT-->Sending Http GET request for screenshot");
+	           try {
+				 gameScreenshots = objRequest.sendGetScreenshot(GAME);
+	           } catch (Exception e) {
 					e.printStackTrace();
+					
 				}
 
 	        } finally {
@@ -188,14 +192,22 @@ public class WebScraping {
 				}
 	        }
 		
-		 System.out.println("WEBSCRAPING/GETBACKGROUNDIMAGE--> Returning image");
+		JSONObject result = new JSONObject(gameScreenshots);
+		if(result.has("detail")) {
+			System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT--> Screenshots are not available for game: " + GAME);
+			return "Screenshots not available";
+		}
+		
+		JSONArray screenshots = result.getJSONArray("results");
+		String lowerResScreenshot = util.getLowerResScreenshot(screenshots);
+		System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT--> Screenshot obtained. Returning URL: " + lowerResScreenshot);
+		return lowerResScreenshot; 
 	}
-*/
 	
 	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 searchNewGame(4200);
+		 getGameLowerResScreenshot("Overwatch");
 	 }
 	 */
 }
