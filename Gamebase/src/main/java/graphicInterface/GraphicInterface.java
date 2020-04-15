@@ -28,7 +28,7 @@ public class GraphicInterface {
 	private JFrame frame;
 	private JPanel panel;
 	
-	//Login Page
+	//LOGIN PANEL 
 	private JPanel loginPanel;
 	private JLabel usernameLabel;
 	private JLabel passwordLabel;
@@ -39,7 +39,7 @@ public class GraphicInterface {
 	private JLabel errorMessageLabel;
 	private JLabel myGamesLabel;
 
-	//Home page
+	//HOME PANEL 
 	private JPanel homePagePanel;
 	private JLabel gamesNumberHPLabel;
 	private JLabel followerNumberHPLabel;
@@ -196,6 +196,8 @@ public class GraphicInterface {
 				return columnTypes[columnIndex];
 			}
 	};
+	private JLabel searchUserLabel;
+	private JLabel searchUserWelcomeLabel;
 	
 	//user information panel
 	private JPanel userInformationPanel;	
@@ -309,7 +311,7 @@ public class GraphicInterface {
 			object[0] = friend.getUsername();
 			object[1] = "SEE GAMES";
 			object[2] = followStatus.element?"UNFOLLOW":"FOLLOW";
-			ButtonColumn buttonColumnGames = new ButtonColumn(followedTable, new AbstractAction() {
+			ButtonColumn buttonColumnGames = new ButtonColumn(usersTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
 					
@@ -317,7 +319,7 @@ public class GraphicInterface {
 					int modelRow = Integer.valueOf(e.getActionCommand());
 					
 					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
-					
+				
 					StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
 					
 					if( favGamesStatus.statusCode == StatusCode.OK ) {
@@ -338,7 +340,7 @@ public class GraphicInterface {
 					
 				}
 			},1);
-			ButtonColumn buttonColumnAction = new ButtonColumn(followedTable, new AbstractAction() {
+			ButtonColumn buttonColumnAction = new ButtonColumn(usersTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
 
@@ -385,7 +387,7 @@ public class GraphicInterface {
 		}
 		
 		for( int i = 0; i < gamesList.size(); i++ ) {
-			gamesListModel.addElement(gamesList.get(i));
+			userGamesListModel.addElement(gamesList.get(i));
 		}
 	}
 	
@@ -453,14 +455,6 @@ public class GraphicInterface {
 			gamesNumber = "N/A";
 		}
 		
-		
-		/*QUESTA è UNA PROVA
-		ArrayList<PreviewGame> prv = new ArrayList<>();	
-		for( int i = 0; i < 10; i++ ) {
-				prv.add(new PreviewGame(2,"a","/resources/defaultGamePicture"));
-			}
-		fillGamesList(prv);
-		FINE PROVA*/
 		gamesNumberHPLabel.setText(gamesNumber);
 		followerNumberHPLabel.setText(followersNumber);
 		
@@ -479,6 +473,8 @@ public class GraphicInterface {
 				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			} else {
 				try {
+					String replacement = "media/crop/600/400/games";
+					mostViewedGameImageURL = mostViewedGameImageURL.replaceFirst("media/games", replacement);
 					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL)).getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
 					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
@@ -496,6 +492,8 @@ public class GraphicInterface {
 				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			} else {
 				try {
+					String replacement = "media/crop/600/400/games";
+					mostPopularGameImageURL = mostPopularGameImageURL.replaceFirst("media/games", replacement);
 					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL)).getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
 					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
@@ -628,6 +626,7 @@ public class GraphicInterface {
 					    try {
 							Desktop.getDesktop().browse(new URI(steamURL));
 						} catch (Exception e) {
+							steamButton.setEnabled(false);
 							e.printStackTrace();
 					    }
 				    }	
@@ -635,7 +634,7 @@ public class GraphicInterface {
 			};
 			steamButton.addActionListener(steamButtonListener);
 		} else {
-			steamButton.setVisible(false);
+			steamButton.setEnabled(false);
 		}
 		
 		final String nintendoURL = game.getNintendoURL();
@@ -649,6 +648,7 @@ public class GraphicInterface {
 					    try {
 							Desktop.getDesktop().browse(new URI(nintendoURL));
 						} catch (Exception e) {
+							nintendoButton.setEnabled(false);
 							e.printStackTrace();
 					    }
 				    }	
@@ -670,6 +670,7 @@ public class GraphicInterface {
 					    try {
 							Desktop.getDesktop().browse(new URI(playstationURL));
 						} catch (Exception e) {
+							playStationButton.setEnabled(false);
 							e.printStackTrace();
 					    }
 				    }	
@@ -691,6 +692,7 @@ public class GraphicInterface {
 					    try {
 							Desktop.getDesktop().browse(new URI(xboxURL));
 						} catch (Exception e) {
+							XBoxButton.setEnabled(false);
 							e.printStackTrace();
 					    }
 				    }	
@@ -698,7 +700,7 @@ public class GraphicInterface {
 			};
 			XBoxButton.addActionListener(xboxButtonListener);
 		} else {
-			playStationButton.setEnabled(false);
+			XBoxButton.setEnabled(false);
 		}
 		
 		StatusObject<List<GraphGame>> myGamesStatus = graphHandler.getFavouritesGamesList();
@@ -748,29 +750,31 @@ public class GraphicInterface {
 		List<String> videoURLs = game.getVideoURLs();
 		
 		if( videoURLs != null && videoURLs.size()!=0 ) {
+			System.out.println(videoURLs);
+			System.out.println(videoURLs.size());
 			
 			currentVideosURLlist = videoURLs;
 			currentVideoIndex = 0;
 			lastVideoIndex = videoURLs.size()-1;
 			
 			String firstVideo = videoURLs.get(0);
-			videoPlayer.getVideo(firstVideo);
+			videoPlayer.playVideo(firstVideo);
 			
 			if( videoURLs.size() > 1 ) {
 				
 				nextVideoButton.setEnabled(true);
 			}
+			previousVideoButton.setEnabled(false);
 		} else {
 			
 			nextVideoButton.setEnabled(false);
 			previousVideoButton.setEnabled(false);
-			videoPlayer.getVideo(null);
+			videoPlayer.playVideo(null);
 		}
 		
 		//logicHandler.incrementGameViews(game.getId());
 	}
 	
-	@SuppressWarnings("null")
 	private void cleanGamePage() {
 		
 		gameDescriptionTextArea.setText("");
@@ -798,6 +802,8 @@ public class GraphicInterface {
 		imagesListModel.removeAllElements();
 		
 		previewImageLabel.setIcon(null);
+		
+		videoPlayer.stopVideo();
 		
 		currentVideosURLlist = null;
 		currentVideoIndex = 0;
@@ -847,6 +853,8 @@ public class GraphicInterface {
 		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games." );
 		
 		searchUserTextField.setText("Search User");
+		
+		searchUserWelcomeLabel.setText("Hi " + currentUser.getUsername() + "!");
 	}
 	
 	private void cleanUserPage() {
@@ -857,6 +865,7 @@ public class GraphicInterface {
 		searchUserTextField.setText("Search User");
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
+		searchUserWelcomeLabel.setText("");
 	}
 	
 	private void initializeAdminPage() {
@@ -1046,8 +1055,6 @@ public class GraphicInterface {
 	
 	private void initializeAnalystPanel() {
 		
-		boolean somethingToShow = false;
-		
 		StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
 		
 		if( topUsersStatus.statusCode == StatusCode.OK ) {
@@ -1064,142 +1071,15 @@ public class GraphicInterface {
 			
 			topUsersButton.setEnabled(true);
 			
-			plotContainer.add(topUsersPanel);
+			plotContainer.add(topUsersPanel,"topUsersPanel");
 			
 			CardLayout cl = (CardLayout)(plotContainer.getLayout());
 			
 			cl.show(plotContainer, "topUsersPanel");
 			
-			somethingToShow = true;
-			
 		} else {
 			
 			topGamesButton.setEnabled(false);
-		}
-		
-		StatusObject<List<GraphGame>> topGamesStatus = graphHandler.getMostFavouriteGames(6);
-		
-		if( topGamesStatus.statusCode == StatusCode.OK ) {
-			
-			HashMap<String,Double> topGamesHashMap = new HashMap<String,Double>();
-			
-			for( int i = 0; i < topGamesStatus.element.size(); i++ ){
-				
-				topGamesHashMap.put(topGamesStatus.element.get(i).title, topGamesStatus.element.get(i).favouriteCount.doubleValue());
-			}
-			
-			topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false);
-			topGamesPanel.setName("topGamesPanel");
-			
-			topGamesButton.setEnabled(true);
-			
-			plotContainer.add(topGamesPanel);
-			
-			if( !somethingToShow ) {
-				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
-				
-				cl.show(plotContainer, "topGamesPanel");
-				
-				somethingToShow = true;
-			}
-		}
-		
-		StatusObject<List<UserStats>> userStatsStatus = graphHandler.getUsersSummaryStats();
-		
-		if( userStatsStatus.statusCode == StatusCode.OK ) {
-			
-			HashMap<String,Double> topGenresHashMap = new HashMap<String,Double>();
-			
-			for( int i = 0; i < userStatsStatus.element.size(); i++ ) {
-				
-				String genre = userStatsStatus.element.get(i).favouriteGenre;
-				
-				Double value = topGenresHashMap.get(genre);
-				
-				if( value == null ) {
-					
-					topGenresHashMap.put(genre, new Integer(1).doubleValue());
-				} else {
-					
-					value++;
-					topGenresHashMap.put(genre, value);
-				}
-			}
-			
-			topGenresPanel = new PieChartPanel("Most Liked Genres", "Genre", "Favourite Count", topGenresHashMap, "V", true, false, false);
-			topGenresPanel.setName("topGenresPanel");
-			
-			topGenresButton.setEnabled(true);
-			
-			plotContainer.add(topGenresPanel);
-			
-			if( !somethingToShow ) {
-				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
-				
-				cl.show(plotContainer, "topGenresPanel");
-				
-				somethingToShow = true;
-			}
-		}
-		
-		StatusObject<List<Statistics>> maxRatedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
-		
-		if( maxRatedGameByYearStatus.statusCode == StatusCode.OK ) {
-			
-			HashMap<String,Double> maxRatedYearHashMap = new HashMap<String,Double>();
-			
-			for( int i = 0; i < maxRatedGameByYearStatus.element.size(); i++ ){
-				
-				maxRatedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
-						maxRatedGameByYearStatus.element.get(i).getRating());
-			}
-			
-			topRatedGameByYearPanel = new BarChartPanel("Most Rated Games by Year", "Game - Year", "Rate", maxRatedYearHashMap, "V", true, false, false);
-			topRatedGameByYearPanel.setName("topRatedGamesByYearPanel");
-			
-			topRatedGameByYearButton.setEnabled(true);
-			
-			plotContainer.add(topRatedGameByYearPanel);
-			
-			if( !somethingToShow ) {
-				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
-				
-				cl.show(plotContainer, "topRatedGamesByYearPanel");
-				
-				somethingToShow = true;
-			}
-		}
-		
-		StatusObject<List<Statistics>> maxViewedGameByYearStatus = logicHandler.getMaxViewedGameByYear();
-		
-		if( maxViewedGameByYearStatus.statusCode == StatusCode.OK ) {
-			
-			HashMap<String,Double> maxViewedYearHashMap = new HashMap<String,Double>();
-			
-			for( int i = 0; i < maxViewedGameByYearStatus.element.size(); i++ ){
-				
-				maxViewedYearHashMap.put(maxViewedGameByYearStatus.element.get(i).getGames() + " - " + maxViewedGameByYearStatus.element.get(i).getYear(),
-						maxViewedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
-			}
-			
-			topViewedGameByYearPanel = new BarChartPanel("Most Viewed Games by Year", "Game - Year", "Views", maxViewedYearHashMap, "V", true, false, false);
-			topViewedGameByYearPanel.setName("topViewedGamesByYearPanel");
-			
-			topViewedGameByYearButton.setEnabled(true);
-			
-			plotContainer.add(topViewedGameByYearPanel);
-			
-			if( !somethingToShow ) {
-				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
-				
-				cl.show(plotContainer, "topViewedGamesByYearPanel");
-				
-				somethingToShow = true;
-			}
 		}
 		
 	}
@@ -1220,7 +1100,6 @@ public class GraphicInterface {
 		
 		topViewedGameByYearPanel = null;
 		topViewedGameByYearButton.setEnabled(true);
-		
 		
 	}
 	
@@ -2046,9 +1925,41 @@ public class GraphicInterface {
 		topUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
-				System.out.println("Im in");
-				cl.show(plotContainer, "topUsersPanel");
+				if( topUsersPanel != null ) {
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "topUsersPanel");
+					
+					return;
+				}
+				
+				StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
+				
+				if( topUsersStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> topUsersHashmap = new HashMap<String,Double>();
+					
+					for( int i = 0; i < topUsersStatus.element.size(); i++ ){
+						
+						topUsersHashmap.put(topUsersStatus.element.get(i).getUsername(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
+					}
+					
+					topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false);
+					topUsersPanel.setName("topUsersPanel");
+					
+					topUsersButton.setEnabled(true);
+					
+					plotContainer.add(topUsersPanel,"topUsersPanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "topUsersPanel");
+					
+				} else {
+					
+					topGamesButton.setEnabled(false);
+				}
 			}
 		});
 		topUsersButton.setName("topUserButton");
@@ -2059,10 +1970,42 @@ public class GraphicInterface {
 		topGamesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
-				System.out.println("Im in");
+				if( topGamesPanel != null ) {
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "topGamesPanel");
+					
+					return;
+				}
 				
-				cl.show(plotContainer, "topGamesPanel");
+				StatusObject<List<GraphGame>> topGamesStatus = graphHandler.getMostFavouriteGames(6);
+				
+				if( topGamesStatus.statusCode == StatusCode.OK ) {
+					System.out.println("OK");
+					HashMap<String,Double> topGamesHashMap = new HashMap<String,Double>();
+					
+					for( int i = 0; i < topGamesStatus.element.size(); i++ ){
+						
+						topGamesHashMap.put(topGamesStatus.element.get(i).title, topGamesStatus.element.get(i).favouriteCount.doubleValue());
+					}
+					
+					topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false);
+					topGamesPanel.setName("topGamesPanel");
+					
+					topGamesButton.setEnabled(true);
+					
+					plotContainer.add(topGamesPanel,"topGamesPanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "topGamesPanel");
+						
+					
+				} else {
+					
+					topGamesButton.setEnabled(true);
+				}
 			}
 		});
 		topGamesButton.setToolTipText("Click Here to See the most liked games");
@@ -2074,9 +2017,52 @@ public class GraphicInterface {
 		topGenresButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				if( topGenresPanel != null ) {
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "topGenresPanel");
+					
+					return;
+				}
 				
-				cl.show(plotContainer, "topGenresPanel");
+				StatusObject<List<UserStats>> userStatsStatus = graphHandler.getUsersSummaryStats();
+				
+				if( userStatsStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> topGenresHashMap = new HashMap<String,Double>();
+					
+					for( int i = 0; i < userStatsStatus.element.size(); i++ ) {
+						
+						String genre = userStatsStatus.element.get(i).favouriteGenre;
+						
+						Double value = topGenresHashMap.get(genre);
+						
+						if( value == null ) {
+							
+							topGenresHashMap.put(genre, new Integer(1).doubleValue());
+						} else {
+							
+							value++;
+							topGenresHashMap.put(genre, value);
+						}
+					}
+					
+					topGenresPanel = new PieChartPanel("Most Liked Genres", "Genre", "Favourite Count", topGenresHashMap, "V", true, false, false);
+					topGenresPanel.setName("topGenresPanel");
+					
+					topGenresButton.setEnabled(true);
+					
+					plotContainer.add(topGenresPanel,"topGenresPanel");
+						
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "topGenresPanel");
+				
+				} else {
+					
+					topGenresButton.setEnabled(false);
+				}
 			}
 		});
 		topGenresButton.setToolTipText("Click Here to see the most liked genres");
@@ -2087,10 +2073,42 @@ public class GraphicInterface {
 		topRatedGameByYearButton = new JButton("Top Rated Game (Year)");
 		topRatedGameByYearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
 				
-				cl.show(plotContainer, "topRatedGamesByYearPanel");
+				if( topRatedGameByYearPanel != null ) {
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "topRatedGamesByYearPanel");
+					
+					return;
+				}
+				
+				StatusObject<List<Statistics>> maxRatedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
+				
+				if( maxRatedGameByYearStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> maxRatedYearHashMap = new HashMap<String,Double>();
+					
+					for( int i = 0; i < maxRatedGameByYearStatus.element.size(); i++ ){
+						
+						maxRatedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
+								maxRatedGameByYearStatus.element.get(i).getRating());
+					}
+					
+					topRatedGameByYearPanel = new BarChartPanel("Most Rated Games by Year", "Game - Year", "Rate", maxRatedYearHashMap, "V", true, false, false);
+					topRatedGameByYearPanel.setName("topRatedGamesByYearPanel");
+					
+					topRatedGameByYearButton.setEnabled(true);
+					
+					plotContainer.add(topRatedGameByYearPanel,"topRatedGamesByYearPanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "topRatedGamesByYearPanel");
+				} else {
+					
+					topRatedGameByYearButton.setEnabled(false);
+				}
 			}
 		});
 		topRatedGameByYearButton.setToolTipText("Click Here to See the mos rated games for each year");
@@ -2102,9 +2120,33 @@ public class GraphicInterface {
 		topViewedGameByYearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				CardLayout cl = (CardLayout)(plotContainer.getLayout());
+				StatusObject<List<Statistics>> maxViewedGameByYearStatus = logicHandler.getMaxViewedGameByYear();
 				
-				cl.show(plotContainer, "topViewedGamesByYearPanel");
+				if( maxViewedGameByYearStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> maxViewedYearHashMap = new HashMap<String,Double>();
+					
+					for( int i = 0; i < maxViewedGameByYearStatus.element.size(); i++ ){
+						
+						maxViewedYearHashMap.put(maxViewedGameByYearStatus.element.get(i).getGames() + " - " + maxViewedGameByYearStatus.element.get(i).getYear(),
+								maxViewedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
+					}
+					
+					topViewedGameByYearPanel = new BarChartPanel("Most Viewed Games by Year", "Game - Year", "Views", maxViewedYearHashMap, "V", false, false, false);
+					topViewedGameByYearPanel.setName("topViewedGamesByYearPanel");
+					
+					topViewedGameByYearButton.setEnabled(true);
+					
+					plotContainer.add(topViewedGameByYearPanel,"topViewedGamesByYearPanel");
+					
+				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "topViewedGamesByYearPanel");
+						
+				} else {
+					
+					topViewedGameByYearButton.setEnabled(false);
+				}
 			}
 		});
 		topViewedGameByYearButton.setToolTipText("Click Here to see the most viewed games (by year)");
@@ -2708,7 +2750,9 @@ public class GraphicInterface {
 				
 				currentVideoIndex++;
 				
-				videoPlayer.getVideo(currentVideosURLlist.get(currentVideoIndex));
+				videoPlayer.stopVideo();
+				System.out.println(currentVideosURLlist.get(currentVideoIndex));
+				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
 				if( currentVideoIndex == 1 ) {
 					
@@ -2741,8 +2785,8 @@ public class GraphicInterface {
 				}
 				
 				currentVideoIndex--;
-				
-				videoPlayer.getVideo(currentVideosURLlist.get(currentVideoIndex));
+				System.out.println(currentVideosURLlist.get(currentVideoIndex));
+				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
 				if( currentVideoIndex == lastVideoIndex-1 ) {
 					
@@ -2766,6 +2810,10 @@ public class GraphicInterface {
 		
 		
 		
+		//////// USER PANEL
+		
+		
+		
 		userPanel = new JPanel();
 		userPanel.setBackground(new Color(87, 86, 82));
 		userPanel.setName("userPanel");
@@ -2775,7 +2823,7 @@ public class GraphicInterface {
 		featuredUserButton = new JButton("Featured");
 		featuredUserButton.setName("featuredUserButton");
 		featuredUserButton.setRequestFocusEnabled(false);
-		featuredUserButton.setBounds(537, 73, 97, 32);
+		featuredUserButton.setBounds(502, 73, 97, 32);
 		featuredUserButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -2811,7 +2859,7 @@ public class GraphicInterface {
 		searchUserTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
 		searchUserTextField.setText("Search User");
 		searchUserTextField.setName("searchUserTextField");
-		searchUserTextField.setBounds(646, 74, 154, 31);
+		searchUserTextField.setBounds(611, 74, 189, 31);
 		userPanel.add(searchUserTextField);
 		searchUserTextField.setColumns(10);
 		
@@ -2872,15 +2920,33 @@ public class GraphicInterface {
 		userPanel.add(homeUserButton);
 		
 		userGamesScrollPane = new JScrollPane();
-		userGamesScrollPane.setBounds(57, 146, 402, 336);
+		userGamesScrollPane.setBounds(57, 146, 363, 336);
 		userPanel.add(userGamesScrollPane);
 		
-		userGamesList = new JList<PreviewGame>();
-		userGamesList.setModel(userGamesListModel);
+		userGamesList = new JList<PreviewGame>(userGamesListModel);
+		userGamesList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				PreviewGame selectedGame = userGamesList.getSelectedValue();
+				
+				cleanHomePage();
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "gamePanel");
+				
+				initializeGamePage(selectedGame.getId());
+			}
+		});
+		userGamesList.setName("userGamesList");
+		userGamesList.setVisibleRowCount(-1);
+		userGamesList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		userGamesList.setCellRenderer(new GameRenderer());
 		userGamesScrollPane.setViewportView(userGamesList);
 		
 		usersScrollPane = new JScrollPane();
-		usersScrollPane.setBounds(537, 146, 313, 336);
+		usersScrollPane.setBounds(502, 146, 348, 336);
 		userPanel.add(usersScrollPane);
 		
 		usersTable = new JTable();
@@ -2900,8 +2966,24 @@ public class GraphicInterface {
 		displayedUserLabel.setFont(new Font("Corbel", Font.BOLD, 15));
 		displayedUserLabel.setName("displayedUserLabel");
 		displayedUserLabel.setAutoscrolls(true);
-		displayedUserLabel.setBounds(57, 117, 402, 16);
+		displayedUserLabel.setBounds(57, 128, 363, 16);
 		userPanel.add(displayedUserLabel);
+		
+		searchUserWelcomeLabel = new JLabel("Hi User!");
+		searchUserWelcomeLabel.setName("searchUserWelcomeLabel");
+		searchUserWelcomeLabel.setForeground(Color.WHITE);
+		searchUserWelcomeLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		searchUserWelcomeLabel.setAutoscrolls(true);
+		searchUserWelcomeLabel.setBounds(166, 38, 250, 26);
+		userPanel.add(searchUserWelcomeLabel);
+		
+		searchUserLabel = new JLabel("Here you can search for other users.");
+		searchUserLabel.setName("searchUserLabel");
+		searchUserLabel.setForeground(Color.WHITE);
+		searchUserLabel.setFont(new Font("Corbel", Font.BOLD, 16));
+		searchUserLabel.setAutoscrolls(true);
+		searchUserLabel.setBounds(166, 89, 250, 16);
+		userPanel.add(searchUserLabel);
 		
 		userInformationPanel = new JPanel();
 		userInformationPanel.setBackground(new Color(87, 86, 82));

@@ -29,7 +29,7 @@ public class JavaFXVideoBuilder {
 		VFXPanel = new JFXPanel();
 	}
 	
-	public void getVideo(String location) {
+	public void playVideo(String location) {
 
 		//File video_source = new File(location);
 	    //Media m = new Media(video_source.toURI().toString());
@@ -73,5 +73,8 @@ public class JavaFXVideoBuilder {
 	
 	public void stopVideo() {
 		player.stop();
+		player = null;
+		media = null;
+		viewer = null;
 	}
 }

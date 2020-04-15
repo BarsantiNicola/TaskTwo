@@ -27,8 +27,12 @@ public class GameRenderer extends JLabel implements ListCellRenderer<PreviewGame
         String gameTitle = game.getTitle(); 
         ImageIcon imageIcon = null;
         
+        String url = game.getPreviewPicURL();
+        String replacement = "media/crop/600/400/games";
+        url = url.replaceFirst("media/games", replacement);
+        
         try {
-        	imageIcon = new ImageIcon(ImageIO.read(new URL(game.getPreviewPicURL())).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+        	imageIcon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
         } catch ( Exception e) {
         	imageIcon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
         }
