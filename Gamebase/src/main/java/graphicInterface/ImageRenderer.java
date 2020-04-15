@@ -20,7 +20,7 @@ public class ImageRenderer extends JLabel implements ListCellRenderer<Image> {
             boolean isSelected, boolean cellHasFocus) { 
  
     
-        ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(155, 115, Image.SCALE_SMOOTH));
+        ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(310, 200, Image.SCALE_SMOOTH));
  
         setIcon(imageIcon); 
         

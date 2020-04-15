@@ -2,6 +2,8 @@ package graphicInterface;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -31,10 +33,11 @@ public class JavaFXVideoBuilder {
 
 		//File video_source = new File(location);
 	    //Media m = new Media(video_source.toURI().toString());
+		
 		try {
 			media = new Media(location);
 		} catch (Exception e) {
-			File video_source = new File("/resources/notAvailable.mp4");
+			File video_source = new File("src/main/java/resources/notAvailable.mp4");
 	    	media = new Media(video_source.toURI().toString());
 		}
 	    
@@ -61,6 +64,7 @@ public class JavaFXVideoBuilder {
 	    root.getChildren().add(viewer);
 	
 	    VFXPanel.setScene(scene);
+	    player.setCycleCount(MediaPlayer.INDEFINITE);
 	    player.play();
 	    panel.setLayout(new BorderLayout());
 	    panel.add(VFXPanel, BorderLayout.CENTER);
