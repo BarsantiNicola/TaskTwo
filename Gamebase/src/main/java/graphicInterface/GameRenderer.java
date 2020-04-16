@@ -2,6 +2,7 @@ package graphicInterface;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Image;
 import java.net.URL;
 
@@ -26,14 +27,19 @@ public class GameRenderer extends JLabel implements ListCellRenderer<PreviewGame
         String gameTitle = game.getTitle(); 
         ImageIcon imageIcon = null;
         
+        String url = game.getPreviewPicURL();
+        String replacement = "media/crop/600/400/games";
+        url = url.replaceFirst("media/games", replacement);
+        
         try {
-        	imageIcon = new ImageIcon(ImageIO.read(new URL(game.getPreviewPicURL())).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+        	imageIcon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
         } catch ( Exception e) {
-        	imageIcon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGameBackground.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
+        	imageIcon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
         }
         
         setIcon(imageIcon); 
         setToolTipText(gameTitle); 
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         setBorder(new LineBorder(Color.WHITE,2,true));
         
         if (isSelected) { 

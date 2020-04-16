@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -185,6 +186,25 @@ public class util {
 		GraphGame graphGameToAdd = new GraphGame(gameToAdd.getId().toString(), gameToAdd.getTitle(), gameToAdd.getBackground_image(), zero, zero);
 		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Created GraphGame");
 		return graphGameToAdd;
+	}
+	
+	
+	
+	//Get lower res screenshot in a JSONArray 
+	public static String getLowerResScreenshot(JSONArray screenshots) {
+		System.out.println("UTIL/GETLOWERRESSCREENSHOT--> Searching lower res screenshot in: " + screenshots);
+		String lowerResImg = screenshots.getJSONObject(0).getString("image");
+		int minRes= screenshots.getJSONObject(0).getInt("width")*screenshots.getJSONObject(0).getInt("height");
+		for(int i = 1; i < screenshots.length(); i++ ) {
+			if(screenshots.getJSONObject(i).getInt("width")*screenshots.getJSONObject(i).getInt("height") < minRes) {
+				minRes = screenshots.getJSONObject(i).getInt("width")*screenshots.getJSONObject(i).getInt("height");
+				lowerResImg = screenshots.getJSONObject(i).getString("image");
+			}
+		}
+		System.out.println("UTIL/GETLOWERRESSCREENSHOT--> Lower resolution screenshot obtained: " + lowerResImg);
+		System.out.println("UTIL/GETLOWERRESSCREENSHOT--> Lower resolution: " + minRes);
+		
+		return lowerResImg;
 	}
 
 }

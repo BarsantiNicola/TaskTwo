@@ -11,8 +11,8 @@ public class VideoPlayerPanel extends JPanel{
 		video = new JavaFXVideoBuilder(this);
 	}
 	
-	public void getVideo(String location) {
-		video.getVideo(location);
+	public void playVideo(String location) {
+		video.playVideo(location);
 	}
 	
 	public void stopVideo() {

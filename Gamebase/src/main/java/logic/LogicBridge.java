@@ -121,6 +121,7 @@ public class LogicBridge {
 	
 	public String getGameDescription( int GAME_ID) { return WebScraping.getGameDescription(GAME_ID); }
 	
+	public String getGameLowerResScreenshot( String GAME) { return WebScraping.getGameLowerResScreenshot(GAME); }
 	
 	///////////////  OTHER
 	
