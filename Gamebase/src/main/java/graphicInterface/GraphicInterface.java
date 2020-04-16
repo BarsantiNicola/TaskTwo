@@ -18,6 +18,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.net.*;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
@@ -108,12 +109,19 @@ public class GraphicInterface {
 	private PieChartPanel topGenresPanel;
 	private BarChartPanel topRatedGameByYearPanel;
 	private BarChartPanel topViewedGameByYearPanel;
+	private PieChartPanel maxViewedGameByGenrePanel;
+	private PieChartPanel maxRatedGameByGenrePanel;
+	private PieChartPanel viewCountByGenrePanel;
+	private PieChartPanel gamesCountByGenrePanel;
 	
 	private JButton topGamesButton;
 	private JButton topGenresButton;
-	
 	private JButton topRatedGameByYearButton;
 	private JButton topViewedGameByYearButton;
+	private JButton maxViewedgameByGenreButton;
+	private JButton maxRatedGameByGenreButton;
+	private JButton viewCountByGenreButton;
+	private JButton gamesCountByGenreButton;
 		
 	///////// SEARCH GAME PANEL
 	private JPanel searchGamePanel;	
@@ -133,7 +141,7 @@ public class GraphicInterface {
 	private JScrollBar searchGamesVerticalScrollBar;
 	private DataNavigator searchGamesDataNavigator;
 	
-	//game panel
+	/////// GAME PANEL
 	private JPanel gamePanel;	
 	private JTextArea gameDescriptionTextArea;
 	private JScrollPane gameDescriptionScrollPane;
@@ -1066,7 +1074,7 @@ public class GraphicInterface {
 				topUsersHashmap.put(topUsersStatus.element.get(i).getUsername(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
 			}
 			
-			topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false);
+			topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false, "valueDesc");
 			topUsersPanel.setName("topUsersPanel");
 			
 			topUsersButton.setEnabled(true);
@@ -1100,6 +1108,9 @@ public class GraphicInterface {
 		
 		topViewedGameByYearPanel = null;
 		topViewedGameByYearButton.setEnabled(true);
+		
+		maxViewedGameByGenrePanel = null;
+		maxViewedgameByGenreButton.setEnabled(false);
 		
 	}
 	
@@ -1921,6 +1932,8 @@ public class GraphicInterface {
 		plotContainer.setLayout(new CardLayout(0, 0));
 		
 		topUsersButton = new JButton("Top Users");
+		topUsersButton.setMargin(new Insets(2, 2, 2, 2));
+		topUsersButton.setFont(new Font("Corbel", Font.PLAIN, 15));
 		topUsersButton.setToolTipText("Click Here to see the most followed users");
 		topUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1945,7 +1958,7 @@ public class GraphicInterface {
 						topUsersHashmap.put(topUsersStatus.element.get(i).getUsername(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
 					}
 					
-					topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false);
+					topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false, "valueDesc");
 					topUsersPanel.setName("topUsersPanel");
 					
 					topUsersButton.setEnabled(true);
@@ -1963,26 +1976,19 @@ public class GraphicInterface {
 			}
 		});
 		topUsersButton.setName("topUserButton");
-		topUsersButton.setBounds(192, 23, 97, 37);
+		topUsersButton.setBounds(192, 23, 80, 37);
 		analystPanel.add(topUsersButton);
 		
 		topGamesButton = new JButton("Top Games");
+		topGamesButton.setMargin(new Insets(2, 2, 2, 2));
+		topGamesButton.setFont(new Font("Corbel", Font.PLAIN, 15));
 		topGamesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if( topGamesPanel != null ) {
-					
-					CardLayout cl = (CardLayout)(plotContainer.getLayout());
-					
-					cl.show(plotContainer, "topGamesPanel");
-					
-					return;
-				}
 				
 				StatusObject<List<GraphGame>> topGamesStatus = graphHandler.getMostFavouriteGames(6);
 				
 				if( topGamesStatus.statusCode == StatusCode.OK ) {
-					System.out.println("OK");
+					
 					HashMap<String,Double> topGamesHashMap = new HashMap<String,Double>();
 					
 					for( int i = 0; i < topGamesStatus.element.size(); i++ ){
@@ -1990,7 +1996,7 @@ public class GraphicInterface {
 						topGamesHashMap.put(topGamesStatus.element.get(i).title, topGamesStatus.element.get(i).favouriteCount.doubleValue());
 					}
 					
-					topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false);
+					topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false, "valueDesc");
 					topGamesPanel.setName("topGamesPanel");
 					
 					topGamesButton.setEnabled(true);
@@ -2010,21 +2016,14 @@ public class GraphicInterface {
 		});
 		topGamesButton.setToolTipText("Click Here to See the most liked games");
 		topGamesButton.setName("topGamesButton");
-		topGamesButton.setBounds(192, 70, 97, 37);
+		topGamesButton.setBounds(192, 70, 80, 37);
 		analystPanel.add(topGamesButton);
 		
 		topGenresButton = new JButton("Top Genres");
+		topGenresButton.setFont(new Font("Corbel", Font.PLAIN, 15));
+		topGenresButton.setMargin(new Insets(2, 2, 2, 2));
 		topGenresButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if( topGenresPanel != null ) {
-					
-					CardLayout cl = (CardLayout)(plotContainer.getLayout());
-					
-					cl.show(plotContainer, "topGenresPanel");
-					
-					return;
-				}
 				
 				StatusObject<List<UserStats>> userStatsStatus = graphHandler.getUsersSummaryStats();
 				
@@ -2067,21 +2066,14 @@ public class GraphicInterface {
 		});
 		topGenresButton.setToolTipText("Click Here to see the most liked genres");
 		topGenresButton.setName("topGenresButton");
-		topGenresButton.setBounds(301, 23, 97, 37);
+		topGenresButton.setBounds(284, 22, 80, 37);
 		analystPanel.add(topGenresButton);
 		
 		topRatedGameByYearButton = new JButton("Top Rated Game (Year)");
+		topRatedGameByYearButton.setMargin(new Insets(2, 2, 2, 2));
+		topRatedGameByYearButton.setFont(new Font("Corbel", Font.PLAIN, 10));
 		topRatedGameByYearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if( topRatedGameByYearPanel != null ) {
-					
-					CardLayout cl = (CardLayout)(plotContainer.getLayout());
-					
-					cl.show(plotContainer, "topRatedGamesByYearPanel");
-					
-					return;
-				}
 				
 				StatusObject<List<Statistics>> maxRatedGameByYearStatus = logicHandler.getMaxRatedGameByYear();
 				
@@ -2091,11 +2083,14 @@ public class GraphicInterface {
 					
 					for( int i = 0; i < maxRatedGameByYearStatus.element.size(); i++ ){
 						
-						maxRatedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getGames() + " - " + maxRatedGameByYearStatus.element.get(i).getYear(),
+						if( maxRatedGameByYearStatus.element.get(i).getYear() >= Year.now().getValue()-20 && 
+								maxRatedGameByYearStatus.element.get(i).getYear() <= Year.now().getValue()) {
+							maxRatedYearHashMap.put(maxRatedGameByYearStatus.element.get(i).getYear() + " - " + maxRatedGameByYearStatus.element.get(i).getGames(),
 								maxRatedGameByYearStatus.element.get(i).getRating());
+						}	
 					}
 					
-					topRatedGameByYearPanel = new BarChartPanel("Most Rated Games by Year", "Game - Year", "Rate", maxRatedYearHashMap, "V", true, false, false);
+					topRatedGameByYearPanel = new BarChartPanel("Most Rated Games by Year", "Year - Game", "Rate", maxRatedYearHashMap, "V", true, false, false, "keyAsc");
 					topRatedGameByYearPanel.setName("topRatedGamesByYearPanel");
 					
 					topRatedGameByYearButton.setEnabled(true);
@@ -2113,10 +2108,12 @@ public class GraphicInterface {
 		});
 		topRatedGameByYearButton.setToolTipText("Click Here to See the mos rated games for each year");
 		topRatedGameByYearButton.setName("topRatedGameByYearButton");
-		topRatedGameByYearButton.setBounds(301, 70, 97, 37);
+		topRatedGameByYearButton.setBounds(284, 71, 105, 37);
 		analystPanel.add(topRatedGameByYearButton);
 		
 		topViewedGameByYearButton = new JButton("Top Viewed Game By Year");
+		topViewedGameByYearButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		topViewedGameByYearButton.setMargin(new Insets(2, 2, 2, 2));
 		topViewedGameByYearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -2128,11 +2125,14 @@ public class GraphicInterface {
 					
 					for( int i = 0; i < maxViewedGameByYearStatus.element.size(); i++ ){
 						
-						maxViewedYearHashMap.put(maxViewedGameByYearStatus.element.get(i).getGames() + " - " + maxViewedGameByYearStatus.element.get(i).getYear(),
-								maxViewedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
+						if( maxViewedGameByYearStatus.element.get(i).getYear() >= Year.now().getValue()-20 && 
+								maxViewedGameByYearStatus.element.get(i).getYear() <= Year.now().getValue()) {
+									maxViewedYearHashMap.put(maxViewedGameByYearStatus.element.get(i).getYear() + " - " + maxViewedGameByYearStatus.element.get(i).getGames(),
+											maxViewedGameByYearStatus.element.get(i).getViewsCount().doubleValue());
+						}
 					}
 					
-					topViewedGameByYearPanel = new BarChartPanel("Most Viewed Games by Year", "Game - Year", "Views", maxViewedYearHashMap, "V", false, false, false);
+					topViewedGameByYearPanel = new BarChartPanel("Most Viewed Games by Year", "Game - Year", "Views", maxViewedYearHashMap, "V", true, false, false, "keyAsc");
 					topViewedGameByYearPanel.setName("topViewedGamesByYearPanel");
 					
 					topViewedGameByYearButton.setEnabled(true);
@@ -2153,6 +2153,176 @@ public class GraphicInterface {
 		topViewedGameByYearButton.setName("topViewedGameByYearButton");
 		topViewedGameByYearButton.setBounds(410, 23, 97, 37);
 		analystPanel.add(topViewedGameByYearButton);
+		
+		maxViewedgameByGenreButton = new JButton("Max View By Genre");
+		maxViewedgameByGenreButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				StatusObject<HashMap<String,Statistics>> maxViewedGameByGenreStatus = logicHandler.getMaxViewedGameByGen();
+				
+				if( maxViewedGameByGenreStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> maxViewedGenreHashMap = new HashMap<String,Double>();
+					
+					for( String key: maxViewedGameByGenreStatus.element.keySet() ){
+						
+						maxViewedGenreHashMap.put(key + " - " + maxViewedGameByGenreStatus.element.get(key).getGames() + 
+								" - " + maxViewedGameByGenreStatus.element.get(key).getViewsCount().doubleValue(),
+								maxViewedGameByGenreStatus.element.get(key).getViewsCount().doubleValue());
+					}
+					
+					maxViewedGameByGenrePanel = new PieChartPanel("Most Viewed Games by Genre", "Genre - Game", "Views", maxViewedGenreHashMap, "V", false, false, false);
+					maxViewedGameByGenrePanel.setName("maxViewedGameByGenrePanel");
+					
+					maxViewedgameByGenreButton.setEnabled(true);
+					
+					plotContainer.add(maxViewedGameByGenrePanel,"maxViewedGameByGenrePanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "maxViewedGameByGenrePanel");
+				} else {
+					
+					maxViewedgameByGenreButton.setEnabled(false);
+				}
+				
+			}
+		});
+		maxViewedgameByGenreButton.setToolTipText("Click Here to see the most viewed games (by genre)");
+		maxViewedgameByGenreButton.setName("maxViewedGameByGenreButton");
+		maxViewedgameByGenreButton.setMargin(new Insets(2, 2, 2, 2));
+		maxViewedgameByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		maxViewedgameByGenreButton.setBounds(401, 70, 97, 37);
+		analystPanel.add(maxViewedgameByGenreButton);
+		
+		maxRatedGameByGenreButton = new JButton("Max Rate By Genre");
+		maxRatedGameByGenreButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				StatusObject<HashMap<String,Statistics>> maxRatedGameByGenreStatus = logicHandler.getMaxRatedGamesByGen();
+				
+				if( maxRatedGameByGenreStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> maxRatedGenreHashMap = new HashMap<String,Double>();
+					
+					for( String key: maxRatedGameByGenreStatus.element.keySet() ){
+						
+						if( maxRatedGameByGenreStatus.element.get(key).getRating() == null 
+								|| maxRatedGameByGenreStatus.element.get(key).getGames() == null ) {
+							continue;
+						}
+						
+						maxRatedGenreHashMap.put(key + " - " + maxRatedGameByGenreStatus.element.get(key).getGames() + 
+								" - " + maxRatedGameByGenreStatus.element.get(key).getRating(),
+								maxRatedGameByGenreStatus.element.get(key).getRating());
+					}
+					
+					maxRatedGameByGenrePanel = new PieChartPanel("Most Viewed Games by Genre", "Genre - Game", "Rate", maxRatedGenreHashMap, "V", false, false, false);
+					maxRatedGameByGenrePanel.setName("maxRatedGameByGenrePanel");
+					
+					maxRatedGameByGenreButton.setEnabled(true);
+					
+					plotContainer.add(maxRatedGameByGenrePanel,"maxRatedGameByGenrePanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "maxRatedGameByGenrePanel");
+				} else {
+					
+					maxRatedGameByGenreButton.setEnabled(false);
+				}
+			}
+		});
+		maxRatedGameByGenreButton.setToolTipText("Click Here to see the most Rated games (by genre)");
+		maxRatedGameByGenreButton.setName("maxRatedGameByGenreButton");
+		maxRatedGameByGenreButton.setMargin(new Insets(2, 2, 2, 2));
+		maxRatedGameByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		maxRatedGameByGenreButton.setBounds(519, 23, 97, 37);
+		analystPanel.add(maxRatedGameByGenreButton);
+		
+		viewCountByGenreButton = new JButton("View Count By Genre");
+		viewCountByGenreButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				StatusObject<HashMap<String,Integer>> viewCountGenreStatus = logicHandler.getViewsCountByGen();
+				
+				if( viewCountGenreStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> viewCountGenreHashMap = new HashMap<String,Double>();
+					
+					for( String key: viewCountGenreStatus.element.keySet() ){
+						
+						if( key == null || viewCountGenreStatus.element.get(key) == null ) {
+							continue;
+						}
+						
+						viewCountGenreHashMap.put(key + " - " +viewCountGenreStatus.element.get(key),viewCountGenreStatus.element.get(key).doubleValue());
+					}
+					
+					viewCountByGenrePanel = new PieChartPanel("View Count by Genre", "Genre", "Number of Views", viewCountGenreHashMap, "V", false, false, false);
+					viewCountByGenrePanel.setName("viewCountByGenrePanel");
+					
+					viewCountByGenreButton.setEnabled(true);
+					
+					plotContainer.add(viewCountByGenrePanel,"viewCountByGenrePanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "viewCountByGenrePanel");
+				} else {
+					
+					viewCountByGenreButton.setEnabled(false);
+				}
+			}
+		});
+		viewCountByGenreButton.setToolTipText("Click Here to See the view count for each genre");
+		viewCountByGenreButton.setName("viewCountByGenreButton");
+		viewCountByGenreButton.setMargin(new Insets(2, 2, 2, 2));
+		viewCountByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		viewCountByGenreButton.setBounds(510, 70, 97, 37);
+		analystPanel.add(viewCountByGenreButton);
+		
+		gamesCountByGenreButton = new JButton("Game Count by Genre");
+		gamesCountByGenreButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				StatusObject<HashMap<String,Integer>> gamesCountGenreStatus = logicHandler.getGamesCountByGen();
+				
+				if( gamesCountGenreStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> gamesCountGenreHashMap = new HashMap<String,Double>();
+					
+					for( String key: gamesCountGenreStatus.element.keySet() ){
+						
+						if( key == null || gamesCountGenreStatus.element.get(key) == null ) {
+							continue;
+						}
+						
+						gamesCountGenreHashMap.put(key + " - " +gamesCountGenreStatus.element.get(key),gamesCountGenreStatus.element.get(key).doubleValue());
+					}
+					
+					gamesCountByGenrePanel = new PieChartPanel("Game Count by Genre", "Genre", "Number of Games", gamesCountGenreHashMap, "V", false, false, false);
+					gamesCountByGenrePanel.setName("gamesCountByGenrePanel");
+					
+					gamesCountByGenreButton.setEnabled(true);
+					
+					plotContainer.add(gamesCountByGenrePanel,"gamesCountByGenrePanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "gamesCountByGenrePanel");
+				} else {
+					
+					gamesCountByGenreButton.setEnabled(false);
+				}
+			}
+		});
+		gamesCountByGenreButton.setToolTipText("Click Here to See the game count for each genre");
+		gamesCountByGenreButton.setName("gameCountByGenreButton");
+		gamesCountByGenreButton.setMargin(new Insets(2, 2, 2, 2));
+		gamesCountByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		gamesCountByGenreButton.setBounds(628, 23, 97, 37);
+		analystPanel.add(gamesCountByGenreButton);
 		
 		
 		
