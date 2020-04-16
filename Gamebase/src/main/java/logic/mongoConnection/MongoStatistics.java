@@ -43,12 +43,9 @@ public class MongoStatistics {
 			return new StatusObject<List<Statistics>>(StatusCode.OK,(List<Statistics>)cache[0]);
 		
 		BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year",  new BasicDBObject("$year", "$releaseDate")));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
-	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.rating", 1));
-	    
+	    BasicDBObject groupFields = group_id.append("max" , new BasicDBObject("$max", new BasicDBObject("rating" , "$rating").append("title", "$title")));	    
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",-1));
 		         
 		List<Statistics> result = new ArrayList<>();
 		MongoCursor<Document> res = null;
@@ -57,7 +54,7 @@ public class MongoStatistics {
 		
 		try {
 			
-			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 			
 		}catch(Exception e ) {
 			
@@ -92,13 +89,12 @@ public class MongoStatistics {
 			return new StatusObject<List<Statistics>>(StatusCode.OK,(List<Statistics>)cache[1]);
 		
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year",  new BasicDBObject("$year", "$releaseDate")));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
-	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.viewsCount", 1));
+	    BasicDBObject groupFields = group_id.append("max" , new BasicDBObject("$max", new BasicDBObject("viewsCount" , "$viewsCount").append("title", "$title")));
+
 	    
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",-1));
-		         
+		
 		List<Statistics> result = new ArrayList<>();
 		MongoCursor<Document> res = null;
 		Document data;
@@ -106,7 +102,7 @@ public class MongoStatistics {
 
 		try {
 			
-			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 
 		}catch(Exception e ) {
 			
@@ -140,20 +136,17 @@ public class MongoStatistics {
 			return new StatusObject<HashMap<String,Statistics>>(StatusCode.OK,(HashMap<String,Statistics>)cache[2]);
 		
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
-	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.rating", 1));
-	    
+	    BasicDBObject groupFields = group_id.append("max" , new BasicDBObject("$max", new BasicDBObject("rating" , "$rating").append("title", "$title")));
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("rating",-1));
-
+		
 		MongoCursor<Document> res = null;
 		Document data;
 		HashMap<String,Statistics> result = new HashMap<>();
 		
 		try {
 			
-			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 
 		}catch(Exception e ) {
 			
@@ -186,12 +179,10 @@ public class MongoStatistics {
 			return new StatusObject<HashMap<String,Statistics>>(StatusCode.OK,(HashMap<String,Statistics>)cache[3]);
 		
 	    BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("generes", "$genres"));
-	    BasicDBObject groupFields = group_id.append("max", new BasicDBObject("$first" , "$$ROOT"));
-	    BasicDBObject project = new BasicDBObject("$project" , new BasicDBObject("max.title",1).append("max.viewsCount", 1));
+	    BasicDBObject groupFields = group_id.append("max" , new BasicDBObject("$max", new BasicDBObject("viewsCount" , "$viewsCount").append("title", "$title")));
 	    
 	    BasicDBObject group = new BasicDBObject("$group", groupFields);
 		BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
-		BasicDBObject iniSort = new BasicDBObject("$sort" , new BasicDBObject("viewsCount",-1));
 
 		MongoCursor<Document> res = null;
 		Document data;
@@ -199,7 +190,7 @@ public class MongoStatistics {
 		
 		try {
 			
-			res = statisticsCollection.aggregate(Arrays.asList(iniSort,group,project,sort)).iterator();
+			res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
 
 		}catch(Exception e ) {
 			

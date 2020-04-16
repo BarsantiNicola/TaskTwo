@@ -9,9 +9,13 @@ import logic.StatusCode;
 import logic.data.StatusObject;
 import logic.data.Game;
 import logic.data.PreviewGame;
+import logic.data.Statistics;
+
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.MongoClient;
@@ -482,9 +486,11 @@ public class MongoConnection {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
     		//System.out.println("testing");
-
+    	//	HashMap<String,Statistics> res = client.statistics.getMaxRatedGameByGen().element;
+    	//	for( String a:res.keySet())
+    	//		System.out.println(a +" : "+res.get(a).getGames());
     		//client.statistics.statsTest();
-    		client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeNoShard.txt",100);
+    		client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeShard3.txt",100);
     		client.closeConnection();
     		
     	}catch(Exception e) {
