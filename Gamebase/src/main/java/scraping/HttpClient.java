@@ -74,18 +74,27 @@ public class HttpClient {
             //Get result to string->JSONObject->JSONArray
             String result = EntityUtils.toString(entity);
             JSONObject jsonObject = new JSONObject(result);
-            String streams = jsonObject.get("streams").toString();
-            JSONArray jsonArray = new JSONArray(streams);
-            if (jsonArray.length() == 0) {
+            JSONArray jsonArray = new JSONArray();
+            if (jsonObject.has("streams")) {
+            	String streams = jsonObject.get("streams").toString();
+            	jsonArray = new JSONArray(streams);
+            	if (jsonArray.length() == 0) {
+            		return "No streaming available!";
+            	}
+            }
+            else {
             	return "No streaming available!";
             }
-            
             //Return the first element in the Twitch channels array
             JSONObject jsonobject = jsonArray.getJSONObject(0);
-            JSONObject channel = jsonobject.getJSONObject("channel");
-            String url = channel.getString("url");
-            return url;
-  
+            if (jsonobject.has("channel")) {
+            	JSONObject channel = jsonobject.getJSONObject("channel");
+            	String url = channel.getString("url");
+            	return url;
+            }
+            else {
+            	return "No streaming available!";
+            }
             }
         }
     
@@ -108,9 +117,11 @@ public class HttpClient {
 
             String result = EntityUtils.toString(entity);
             JSONObject jsonObject = new JSONObject(result);
-            	
-            return jsonObject.getString("description_raw");
             
+            if(jsonObject.has("decription_raw")){
+            	return jsonObject.getString("description_raw");
+            }
+            return "No description available";
   
             }
         }
