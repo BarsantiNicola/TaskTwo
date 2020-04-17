@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,11 @@ import logic.data.Game;
 import logic.data.GraphGame;
 import logic.mongoConnection.MongoConnection;
 import logic.mongoConnection.*;
+
+//----------------------------------------------------------------------------------------------------
+//The class is used to contain all the methods used to perform dynamic web scraping by the application
+//A CloseableHttpClient instance is used for all methods in order to perform a GET request
+//----------------------------------------------------------------------------------------------------
 
 public class WebScraping {
 
@@ -110,7 +116,7 @@ public class WebScraping {
 		//Replace spaces in the game title
 		GAME = GAME.replaceAll(" ", "%20");
 		
-		String twitchChannel = null;
+		String twitchChannel = "No twitch channels available";
 		//Create http object for request
 		HttpClient objRequest = new HttpClient();
 		 
@@ -140,7 +146,7 @@ public class WebScraping {
 	public static String getGameDescription(int GAME_ID ) { 
 		System.out.println("WEBSCRAPING/GETGAMEDESCRIPTION--> Getting Description for game_id = " + GAME_ID);
 		
-		String gameDescription = null;
+		String gameDescription = "No description available";
 		//Create http object for request
 		HttpClient objRequest = new HttpClient();
 		
@@ -207,7 +213,7 @@ public class WebScraping {
 	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 getGameLowerResScreenshot("Overwatch");
+		 getGameDescription(999999);
 	 }
 	 */
 }

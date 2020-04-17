@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -14,12 +15,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 
+//-----------------------------------------------------------------------------------
+//The class is used for all the different GET request implemented by WebScraping
+//-----------------------------------------------------------------------------------
 
 public class HttpClient {
 
 	// one instance, reuse
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
+    //Close the response
     public void close() throws IOException {
     	System.out.println("HTTPCLIENT/HTTPCLIENT.CLOSE--> Closing httpClient");
         httpClient.close();
@@ -32,8 +37,8 @@ public class HttpClient {
     	
         HttpGet request = new HttpGet("https://api.rawg.io/api/games/" + GAME_ID);
 
-       try ( CloseableHttpResponse response = httpClient.execute(request)){
-
+        CloseableHttpResponse response = httpClient.execute(request);
+        try {
         	System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Request sent");
             // Get HttpResponse Status
             System.out.println(response.getStatusLine().toString());
@@ -47,7 +52,9 @@ public class HttpClient {
            
             System.out.println("HTTPCLIENT/SENDGETNEWGAME-->Returning a new game");
             return newGame;
-       }
+        } finally {
+        	response.close();
+        }
     }
 
     
@@ -60,10 +67,13 @@ public class HttpClient {
         // Add request headers
         request.addHeader("Accept", "application/vnd.twitchtv.v5+json");
         request.addHeader("Client-ID", "ndtm4x05vr0kvymsiv0s3hgwtgbrjy");
+        
+       // request.getParams().setIntParameter("http.connection.timeout", 1);
 
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
+        CloseableHttpResponse response = httpClient.execute(request);
         	
-        	System.out.println("HTTPCLIENT/SENDGETTWITCH-->Request sent");
+        try {
+    	    System.out.println("HTTPCLIENT/SENDGETTWITCH-->Request sent");
             // Get HttpResponse Status
             System.out.println(response.getStatusLine().toString());
 
@@ -95,8 +105,10 @@ public class HttpClient {
             else {
             	return "No streaming available!";
             }
-            }
-        }
+       } finally {
+    	   response.close();
+       }
+    }
     
     
     //Get game description
@@ -105,8 +117,8 @@ public class HttpClient {
 
         HttpGet request = new HttpGet("https://api.rawg.io/api/games/" + GAME_ID);
 
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
-
+       CloseableHttpResponse response = httpClient.execute(request);
+       try {
         	System.out.println("HTTPCLIENT/SENDGETGAMEDESCRIPTION-->Request sent");
             // Get HttpResponse Status
             System.out.println(response.getStatusLine().toString());
@@ -118,13 +130,15 @@ public class HttpClient {
             String result = EntityUtils.toString(entity);
             JSONObject jsonObject = new JSONObject(result);
             
-            if(jsonObject.has("decription_raw")){
+            if(jsonObject.has("description_raw")){
             	return jsonObject.getString("description_raw");
             }
             return "No description available";
-  
-            }
-        }
+       } finally {
+    	   response.close();
+       }
+       
+    }
     
     //Get Game Screenshots
     public String sendGetScreenshot(String GAME) throws Exception {
@@ -132,8 +146,8 @@ public class HttpClient {
 
         HttpGet request = new HttpGet("https://api.rawg.io/api/games/"+GAME+"/screenshots");
 
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
-
+        CloseableHttpResponse response = httpClient.execute(request);
+        try {
         	System.out.println("HTTPCLIENT/SENDGETGAMESCREENSHOTS-->Request sent");
             // Get HttpResponse Status
             System.out.println(response.getStatusLine().toString());
@@ -145,13 +159,12 @@ public class HttpClient {
             String result = EntityUtils.toString(entity);
             System.out.println("HTTPCLIENT/SENDGETGAMESCREENSHOTS-->Obtained result from request: " + result);	
             return result;
-            
-  
-            }
         }
-    
-   
-   
+        finally {
+     	   response.close();
+        }
 
+    }
+    
 
     }
