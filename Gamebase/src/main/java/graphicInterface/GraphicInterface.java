@@ -113,6 +113,13 @@ public class GraphicInterface {
 	private PieChartPanel maxRatedGameByGenrePanel;
 	private PieChartPanel viewCountByGenrePanel;
 	private PieChartPanel gamesCountByGenrePanel;
+	private PieChartPanel ratingsCountByGenrePanel;
+	private AreaChartPanel gamesCountByYearPanel;
+	private AreaChartPanel viewsCountByYearPanel;
+	private AreaChartPanel ratingsCountByYearPanel;
+	private PieChartPanel ratingsCountYearGenPanel;
+	private PieChartPanel viewsCountYearGenPanel;
+	private PieChartPanel gameCountYearGenPanel;
 	
 	private JButton topGamesButton;
 	private JButton topGenresButton;
@@ -122,6 +129,17 @@ public class GraphicInterface {
 	private JButton maxRatedGameByGenreButton;
 	private JButton viewCountByGenreButton;
 	private JButton gamesCountByGenreButton;
+	private JButton ratingsCountByGenButton;
+	private JButton gamesCountByYearButton;
+	private JButton viewsCountByYearButton;
+	private JButton ratingsCountByYearButton;
+	private JButton ratingsCountYearGenButton;
+    private JButton viewsCountByYearGenButton;
+    private JButton gameCountYearGenButton;
+	
+	private JTextField gameCountTextField;
+	private JTextField viewCountTextField;
+	private JTextField ratingsCountTextField;
 		
 	///////// SEARCH GAME PANEL
 	private JPanel searchGamePanel;	
@@ -1071,13 +1089,11 @@ public class GraphicInterface {
 			
 			for( int i = 0; i < topUsersStatus.element.size(); i++ ){
 				
-				topUsersHashmap.put(topUsersStatus.element.get(i).getUsername(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
+				topUsersHashmap.put(topUsersStatus.element.get(i).getUsername() + " - " + topUsersStatus.element.get(i).getFollowedCount(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
 			}
 			
 			topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false, "valueDesc");
 			topUsersPanel.setName("topUsersPanel");
-			
-			topUsersButton.setEnabled(true);
 			
 			plotContainer.add(topUsersPanel,"topUsersPanel");
 			
@@ -1085,32 +1101,36 @@ public class GraphicInterface {
 			
 			cl.show(plotContainer, "topUsersPanel");
 			
-		} else {
-			
-			topGamesButton.setEnabled(false);
-		}
+		} 
+		
+		ratingsCountTextField.setText("Insert Year");
+		viewCountTextField.setText("Insert Year");
+		gameCountTextField.setText("Insert Year");
 		
 	}
 	
 	private void cleanAnalystPanel() {
 		
 		topUsersPanel = null;
-		topUsersButton.setEnabled(true);
-		
 		topGamesPanel = null;
-		topGamesButton.setEnabled(true);
-		
 		topGenresPanel = null;
-		topGenresButton.setEnabled(true);
-		
 		topRatedGameByYearPanel = null;
-		topRatedGameByYearButton.setEnabled(true);
-		
 		topViewedGameByYearPanel = null;
-		topViewedGameByYearButton.setEnabled(true);
-		
 		maxViewedGameByGenrePanel = null;
-		maxViewedgameByGenreButton.setEnabled(false);
+		maxRatedGameByGenrePanel = null;
+	    viewCountByGenrePanel = null;
+	    gamesCountByGenrePanel = null;
+		ratingsCountByGenrePanel = null;
+		gamesCountByYearPanel = null;
+		viewsCountByYearPanel = null;
+		ratingsCountByYearPanel= null;
+		ratingsCountYearGenPanel= null;
+		viewsCountYearGenPanel= null;
+		gameCountYearGenPanel= null;
+		
+		ratingsCountTextField.setText("Insert Year");
+		viewCountTextField.setText("Insert Year");
+		gameCountTextField.setText("Insert Year");
 		
 	}
 	
@@ -1904,7 +1924,7 @@ public class GraphicInterface {
 		
 		analystHomeButton = new JButton("");
 		analystHomeButton.setName("analystHomeButton");
-		analystHomeButton.setBounds(83, 23, 97, 84);
+		analystHomeButton.setBounds(83, 23, 97, 87);
 		analystHomeButton.setToolTipText("Return to Homepage");
 		analystHomeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1932,20 +1952,12 @@ public class GraphicInterface {
 		plotContainer.setLayout(new CardLayout(0, 0));
 		
 		topUsersButton = new JButton("Top Users");
+		topUsersButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		topUsersButton.setMargin(new Insets(2, 2, 2, 2));
 		topUsersButton.setFont(new Font("Corbel", Font.PLAIN, 15));
 		topUsersButton.setToolTipText("Click Here to see the most followed users");
 		topUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if( topUsersPanel != null ) {
-					
-					CardLayout cl = (CardLayout)(plotContainer.getLayout());
-					
-					cl.show(plotContainer, "topUsersPanel");
-					
-					return;
-				}
 				
 				StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
 				
@@ -1955,13 +1967,11 @@ public class GraphicInterface {
 					
 					for( int i = 0; i < topUsersStatus.element.size(); i++ ){
 						
-						topUsersHashmap.put(topUsersStatus.element.get(i).getUsername(), topUsersStatus.element.get(i).getFollowedCount().doubleValue());
+						topUsersHashmap.put(topUsersStatus.element.get(i).getUsername() + " - " + topUsersStatus.element.get(i).getFollowedCount() , topUsersStatus.element.get(i).getFollowedCount().doubleValue());
 					}
 					
 					topUsersPanel = new BarChartPanel("Most Followed Users", "User", "Followers", topUsersHashmap, "V", true, false, false, "valueDesc");
 					topUsersPanel.setName("topUsersPanel");
-					
-					topUsersButton.setEnabled(true);
 					
 					plotContainer.add(topUsersPanel,"topUsersPanel");
 					
@@ -1969,19 +1979,21 @@ public class GraphicInterface {
 					
 					cl.show(plotContainer, "topUsersPanel");
 					
-				} else {
-					
-					topGamesButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		topUsersButton.setName("topUserButton");
-		topUsersButton.setBounds(192, 23, 80, 37);
+		topUsersButton.setBounds(192, 23, 75, 27);
 		analystPanel.add(topUsersButton);
 		
 		topGamesButton = new JButton("Top Games");
+		topGamesButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		topGamesButton.setMargin(new Insets(2, 2, 2, 2));
-		topGamesButton.setFont(new Font("Corbel", Font.PLAIN, 15));
+		topGamesButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		topGamesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -1993,34 +2005,33 @@ public class GraphicInterface {
 					
 					for( int i = 0; i < topGamesStatus.element.size(); i++ ){
 						
-						topGamesHashMap.put(topGamesStatus.element.get(i).title, topGamesStatus.element.get(i).favouriteCount.doubleValue());
+						topGamesHashMap.put(topGamesStatus.element.get(i).title + " - " + topGamesStatus.element.get(i).favouriteCount, topGamesStatus.element.get(i).favouriteCount.doubleValue());
 					}
 					
 					topGamesPanel = new BarChartPanel("Most Liked Games", "Game", "Favourite Count", topGamesHashMap, "V", true, false, false, "valueDesc");
 					topGamesPanel.setName("topGamesPanel");
-					
-					topGamesButton.setEnabled(true);
 					
 					plotContainer.add(topGamesPanel,"topGamesPanel");
 					
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "topGamesPanel");
-						
-					
-				} else {
-					
-					topGamesButton.setEnabled(true);
-				}
+							
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		topGamesButton.setToolTipText("Click Here to See the most liked games");
 		topGamesButton.setName("topGamesButton");
-		topGamesButton.setBounds(192, 70, 80, 37);
+		topGamesButton.setBounds(192, 53, 75, 27);
 		analystPanel.add(topGamesButton);
 		
 		topGenresButton = new JButton("Top Genres");
-		topGenresButton.setFont(new Font("Corbel", Font.PLAIN, 15));
+		topGenresButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		topGenresButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		topGenresButton.setMargin(new Insets(2, 2, 2, 2));
 		topGenresButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -2034,6 +2045,10 @@ public class GraphicInterface {
 					for( int i = 0; i < userStatsStatus.element.size(); i++ ) {
 						
 						String genre = userStatsStatus.element.get(i).favouriteGenre;
+						
+						if( genre == "null" ) {
+							continue;
+						}
 						
 						Double value = topGenresHashMap.get(genre);
 						
@@ -2050,28 +2065,28 @@ public class GraphicInterface {
 					topGenresPanel = new PieChartPanel("Most Liked Genres", "Genre", "Favourite Count", topGenresHashMap, "V", true, false, false);
 					topGenresPanel.setName("topGenresPanel");
 					
-					topGenresButton.setEnabled(true);
-					
 					plotContainer.add(topGenresPanel,"topGenresPanel");
 						
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "topGenresPanel");
 				
-				} else {
-					
-					topGenresButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		topGenresButton.setToolTipText("Click Here to see the most liked genres");
 		topGenresButton.setName("topGenresButton");
-		topGenresButton.setBounds(284, 22, 80, 37);
+		topGenresButton.setBounds(792, 23, 75, 27);
 		analystPanel.add(topGenresButton);
 		
-		topRatedGameByYearButton = new JButton("Top Rated Game (Year)");
+		topRatedGameByYearButton = new JButton("Max Rate (Year)");
+		topRatedGameByYearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		topRatedGameByYearButton.setMargin(new Insets(2, 2, 2, 2));
-		topRatedGameByYearButton.setFont(new Font("Corbel", Font.PLAIN, 10));
+		topRatedGameByYearButton.setFont(new Font("Corbel", Font.PLAIN, 12));
 		topRatedGameByYearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -2100,20 +2115,22 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "topRatedGamesByYearPanel");
-				} else {
-					
-					topRatedGameByYearButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		topRatedGameByYearButton.setToolTipText("Click Here to See the mos rated games for each year");
 		topRatedGameByYearButton.setName("topRatedGameByYearButton");
-		topRatedGameByYearButton.setBounds(284, 71, 105, 37);
+		topRatedGameByYearButton.setBounds(270, 23, 97, 27);
 		analystPanel.add(topRatedGameByYearButton);
 		
-		topViewedGameByYearButton = new JButton("Top Viewed Game By Year");
-		topViewedGameByYearButton.setFont(new Font("Corbel", Font.PLAIN, 11));
-		topViewedGameByYearButton.setMargin(new Insets(2, 2, 2, 2));
+		topViewedGameByYearButton = new JButton("Max View (Year)");
+		topViewedGameByYearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		topViewedGameByYearButton.setFont(new Font("Corbel", Font.PLAIN, 12));
+		topViewedGameByYearButton.setMargin(new Insets(2, 1, 2, 1));
 		topViewedGameByYearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -2143,18 +2160,20 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "topViewedGamesByYearPanel");
 						
-				} else {
-					
-					topViewedGameByYearButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		topViewedGameByYearButton.setToolTipText("Click Here to see the most viewed games (by year)");
 		topViewedGameByYearButton.setName("topViewedGameByYearButton");
-		topViewedGameByYearButton.setBounds(410, 23, 97, 37);
+		topViewedGameByYearButton.setBounds(270, 53, 97, 27);
 		analystPanel.add(topViewedGameByYearButton);
 		
-		maxViewedgameByGenreButton = new JButton("Max View By Genre");
+		maxViewedgameByGenreButton = new JButton("Max View (Genre)");
+		maxViewedgameByGenreButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		maxViewedgameByGenreButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -2181,21 +2200,22 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "maxViewedGameByGenrePanel");
-				} else {
-					
-					maxViewedgameByGenreButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 				
 			}
 		});
 		maxViewedgameByGenreButton.setToolTipText("Click Here to see the most viewed games (by genre)");
 		maxViewedgameByGenreButton.setName("maxViewedGameByGenreButton");
 		maxViewedgameByGenreButton.setMargin(new Insets(2, 2, 2, 2));
-		maxViewedgameByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
-		maxViewedgameByGenreButton.setBounds(401, 70, 97, 37);
+		maxViewedgameByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 12));
+		maxViewedgameByGenreButton.setBounds(586, 53, 97, 27);
 		analystPanel.add(maxViewedgameByGenreButton);
 		
-		maxRatedGameByGenreButton = new JButton("Max Rate By Genre");
+		maxRatedGameByGenreButton = new JButton("Max Rate (Genre)");
 		maxRatedGameByGenreButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
@@ -2227,20 +2247,22 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "maxRatedGameByGenrePanel");
-				} else {
-					
-					maxRatedGameByGenreButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		maxRatedGameByGenreButton.setToolTipText("Click Here to see the most Rated games (by genre)");
 		maxRatedGameByGenreButton.setName("maxRatedGameByGenreButton");
 		maxRatedGameByGenreButton.setMargin(new Insets(2, 2, 2, 2));
-		maxRatedGameByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
-		maxRatedGameByGenreButton.setBounds(519, 23, 97, 37);
+		maxRatedGameByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 12));
+		maxRatedGameByGenreButton.setBounds(586, 23, 97, 27);
 		analystPanel.add(maxRatedGameByGenreButton);
 		
-		viewCountByGenreButton = new JButton("View Count By Genre");
+		viewCountByGenreButton = new JButton("View Count (Genre)");
+		viewCountByGenreButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		viewCountByGenreButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -2269,20 +2291,22 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "viewCountByGenrePanel");
-				} else {
-					
-					viewCountByGenreButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		viewCountByGenreButton.setToolTipText("Click Here to See the view count for each genre");
 		viewCountByGenreButton.setName("viewCountByGenreButton");
 		viewCountByGenreButton.setMargin(new Insets(2, 2, 2, 2));
 		viewCountByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
-		viewCountByGenreButton.setBounds(510, 70, 97, 37);
+		viewCountByGenreButton.setBounds(685, 23, 105, 27);
 		analystPanel.add(viewCountByGenreButton);
 		
-		gamesCountByGenreButton = new JButton("Game Count by Genre");
+		gamesCountByGenreButton = new JButton("Game Count (Genre)");
+		gamesCountByGenreButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		gamesCountByGenreButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -2311,18 +2335,467 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "gamesCountByGenrePanel");
-				} else {
-					
-					gamesCountByGenreButton.setEnabled(false);
-				}
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
 			}
 		});
 		gamesCountByGenreButton.setToolTipText("Click Here to See the game count for each genre");
 		gamesCountByGenreButton.setName("gameCountByGenreButton");
 		gamesCountByGenreButton.setMargin(new Insets(2, 2, 2, 2));
 		gamesCountByGenreButton.setFont(new Font("Corbel", Font.PLAIN, 11));
-		gamesCountByGenreButton.setBounds(628, 23, 97, 37);
+		gamesCountByGenreButton.setBounds(685, 53, 105, 27);
 		analystPanel.add(gamesCountByGenreButton);
+		
+		ratingsCountByGenButton = new JButton("Ratings Count (Genre)");
+		ratingsCountByGenButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				StatusObject<HashMap<String,Integer>> ratingsCountGenreStatus = logicHandler.getRatingsCountByGen();
+				
+				if( ratingsCountGenreStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> ratingsCountGenreHashMap = new HashMap<String,Double>();
+					
+					for( String key: ratingsCountGenreStatus.element.keySet() ){
+						
+						if( key == null || ratingsCountGenreStatus.element.get(key) == null ) {
+							continue;
+						}
+						
+						ratingsCountGenreHashMap.put(key + " - " +ratingsCountGenreStatus.element.get(key),ratingsCountGenreStatus.element.get(key).doubleValue());
+					}
+					
+					ratingsCountByGenrePanel = new PieChartPanel("Ratings Count by Genre", "Genre", "Number of Ratings", ratingsCountGenreHashMap, "V", false, false, false);
+					ratingsCountByGenrePanel.setName("ratingsCountByGenrePanel");
+					
+					ratingsCountByGenButton.setEnabled(true);
+					
+					plotContainer.add(ratingsCountByGenrePanel,"ratingsCountByGenrePanel");
+					
+					CardLayout cl = (CardLayout)(plotContainer.getLayout());
+					
+					cl.show(plotContainer, "ratingsCountByGenrePanel");
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
+			}
+		});
+		ratingsCountByGenButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		ratingsCountByGenButton.setToolTipText("Click Here to See ratings count for each genre");
+		ratingsCountByGenButton.setName("ratingsCountByGenreButton");
+		ratingsCountByGenButton.setMargin(new Insets(2, 1, 2, 1));
+		ratingsCountByGenButton.setFont(new Font("Corbel", Font.PLAIN, 10));
+		ratingsCountByGenButton.setBounds(479, 53, 105, 27);
+		analystPanel.add(ratingsCountByGenButton);
+		
+		gamesCountByYearButton = new JButton("Games Count (Year)");
+		gamesCountByYearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				StatusObject<HashMap<Integer,Integer>> gamesCountByYearStatus = logicHandler.getGamesCountByYear();
+				
+				if( gamesCountByYearStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> gamesCountYearHashMap = new HashMap<String,Double>();
+					
+					for( Integer key: gamesCountByYearStatus.element.keySet() ){
+						
+						if( key == null || gamesCountByYearStatus.element.get(key) == null || key <= Year.now().getValue()-20  
+								|| key >  Year.now().getValue() ) {
+							
+							continue;
+						}
+						
+						gamesCountYearHashMap.put(key.toString(), gamesCountByYearStatus.element.get(key).doubleValue());
+						
+					}
+					
+					gamesCountByYearPanel = new AreaChartPanel("Games Count by Year", "Year", "Games Count", gamesCountYearHashMap, "V", true, false, false, "keyAsc");
+					gamesCountByYearPanel.setName("gamesCountByYearPanel");
+					
+					gamesCountByYearButton.setEnabled(true);
+					
+					plotContainer.add(gamesCountByYearPanel,"gamesCountByYearPanel");
+					
+				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "gamesCountByYearPanel");
+						
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
+			}
+		});
+		gamesCountByYearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		gamesCountByYearButton.setToolTipText("Click Here to See games count for each year");
+		gamesCountByYearButton.setName("gamesCountByYearButton");
+		gamesCountByYearButton.setMargin(new Insets(2, 1, 2, 1));
+		gamesCountByYearButton.setFont(new Font("Corbel", Font.PLAIN, 12));
+		gamesCountByYearButton.setBounds(371, 53, 105, 27);
+		analystPanel.add(gamesCountByYearButton);
+		
+		viewsCountByYearButton = new JButton("Views Count (Year)");
+		viewsCountByYearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				StatusObject<HashMap<Integer,Integer>> viewsCountByYearStatus = logicHandler.getViewsCountByYear();
+				
+				if( viewsCountByYearStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> viewsCountYearHashMap = new HashMap<String,Double>();
+					
+					for( Integer key: viewsCountByYearStatus.element.keySet() ){
+						
+						if( key == null || viewsCountByYearStatus.element.get(key) == null || key <= Year.now().getValue()-20  
+								|| key >  Year.now().getValue() ) {
+							
+							continue;
+						}
+						
+						viewsCountYearHashMap.put(key.toString(), viewsCountByYearStatus.element.get(key).doubleValue());
+						
+					}
+					
+					viewsCountByYearPanel = new AreaChartPanel("Views Count by Year", "Year", "View Count", viewsCountYearHashMap, "V", true, false, false, "keyAsc");
+					viewsCountByYearPanel.setName("viewsCountByYearPanel");
+					
+					viewsCountByYearButton.setEnabled(true);
+					
+					plotContainer.add(viewsCountByYearPanel,"viewsCountByYearPanel");
+					
+				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "viewsCountByYearPanel");
+						
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
+			}
+		});
+		viewsCountByYearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		viewsCountByYearButton.setToolTipText("Click Here to See views count for each year");
+		viewsCountByYearButton.setName("viewsCountByYearButton");
+		viewsCountByYearButton.setMargin(new Insets(2, 1, 2, 1));
+		viewsCountByYearButton.setFont(new Font("Corbel", Font.PLAIN, 12));
+		viewsCountByYearButton.setBounds(371, 23, 105, 27);
+		analystPanel.add(viewsCountByYearButton);
+		
+		ratingsCountByYearButton = new JButton("Ratings Count (Year)");
+		ratingsCountByYearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				StatusObject<HashMap<Integer,Integer>> ratingsCountByYearStatus = logicHandler.getRatingsCountByYear();
+				
+				if( ratingsCountByYearStatus.statusCode == StatusCode.OK ) {
+					
+					HashMap<String,Double> ratingsCountYearHashMap = new HashMap<String,Double>();
+					
+					for( Integer key: ratingsCountByYearStatus.element.keySet() ){
+						
+						if( key == null || ratingsCountByYearStatus.element.get(key) == null || key <= Year.now().getValue()-20  
+								|| key >  Year.now().getValue() ) {
+							
+							continue;
+						}
+						
+						ratingsCountYearHashMap.put(key.toString(), ratingsCountByYearStatus.element.get(key).doubleValue());
+						
+					}
+					
+					ratingsCountByYearPanel = new AreaChartPanel("Ratings Count by Year", "Year", "Ratings Count", ratingsCountYearHashMap, "V", true, false, false, "keyAsc");
+					ratingsCountByYearPanel.setName("gamesCountByYearPanel");
+					
+					ratingsCountByYearButton.setEnabled(true);
+					
+					plotContainer.add(ratingsCountByYearPanel,"ratingsCountByYearPanel");
+					
+				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "ratingsCountByYearPanel");
+						
+				} 
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
+			}
+		});
+		ratingsCountByYearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		ratingsCountByYearButton.setToolTipText("Click Here to See rate count for each year");
+		ratingsCountByYearButton.setName("ratingsCountByYearButton");
+		ratingsCountByYearButton.setMargin(new Insets(2, 2, 2, 2));
+		ratingsCountByYearButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		ratingsCountByYearButton.setBounds(479, 23, 105, 27);
+		analystPanel.add(ratingsCountByYearButton);
+		
+		gameCountYearGenButton = new JButton("Games Count By Genre");
+		gameCountYearGenButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				String text = gameCountTextField.getText();
+				
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
+				
+				int year = 0;
+				
+				try {	
+					year = Integer.parseInt(text);
+				} catch(Exception ee) {
+					System.out.println("->[GraphicInterface] error in parsing gameCountTextField string");
+				}
+				
+				if( year < 1900 || year > Year.now().getValue() ) {
+					
+					return;
+				}
+				
+				StatusObject<HashMap<Integer,HashMap<String,Integer>>> gameCountYearGenStatus = logicHandler.getGamesCountByYearGen();
+				
+				if( gameCountYearGenStatus.statusCode == StatusCode.OK ) {
+					
+					boolean found = false;
+					HashMap<String,Double> data = new HashMap<String,Double>();
+					
+					for( int key : gameCountYearGenStatus.element.keySet() ) {
+						
+						if( key != year ) {
+							
+							continue;
+						}
+						
+						found = true;
+						
+						for( String genre: gameCountYearGenStatus.element.get(key).keySet() ) {
+							
+							if( genre != null && gameCountYearGenStatus.element.get(key).get(genre) != null ) {
+								
+								data.put(genre+" - "+gameCountYearGenStatus.element.get(key).get(genre), gameCountYearGenStatus.element.get(key).get(genre).doubleValue());
+							}
+						}	
+					}
+					
+					if( !found ) {
+						return;
+					}
+					
+					gameCountYearGenPanel = new PieChartPanel("Game Genre Distribution in " + year, "Genre", "Game Count", data, "V", true, false, false);
+					gameCountYearGenPanel.setName("gameCountYearGenPanel");
+					
+					gameCountYearGenButton.setEnabled(true);
+					
+					plotContainer.add(gameCountYearGenPanel,"gameCountYearGenPanel");
+					
+				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "gameCountYearGenPanel");
+				}
+			}
+		});
+		gameCountYearGenButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		gameCountYearGenButton.setToolTipText("Select Year In Order To See Genre Distribution");
+		gameCountYearGenButton.setName("gameCountYearGenButton");
+		gameCountYearGenButton.setMargin(new Insets(2, 1, 2, 1));
+		gameCountYearGenButton.setFont(new Font("Corbel", Font.PLAIN, 10));
+		gameCountYearGenButton.setBounds(267, 93, 105, 27);
+		analystPanel.add(gameCountYearGenButton);
+		
+		ratingsCountYearGenButton = new JButton("Ratings Count Year Gen");
+		ratingsCountYearGenButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String text = ratingsCountTextField.getText();
+
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
+				
+				int year = 0;
+				
+				try {	
+					year = Integer.parseInt(text);
+				} catch(Exception ee) {
+					System.out.println("->[GraphicInterface] error in parsing ratingsCountTextField string");
+				}
+				
+				if( year < 1900 || year > Year.now().getValue() ) {
+					
+					return;
+				}
+				
+				StatusObject<HashMap<Integer,HashMap<String,Integer>>> ratingsYearGenStatus = logicHandler.getRatingsCountByYearGen();
+				
+				if( ratingsYearGenStatus.statusCode == StatusCode.OK ) {
+					
+					boolean found = false;
+					HashMap<String,Double> data = new HashMap<String,Double>();
+					
+					for( int key : ratingsYearGenStatus.element.keySet() ) {
+						
+						if( key != year ) {
+							
+							continue;
+						}
+						
+						found = true;
+						
+						for( String genre: ratingsYearGenStatus.element.get(key).keySet() ) {
+							
+							if( genre != null && ratingsYearGenStatus.element.get(key).get(genre) != null ) {
+								
+								data.put(genre+" - "+ratingsYearGenStatus.element.get(key).get(genre), ratingsYearGenStatus.element.get(key).get(genre).doubleValue());
+							}
+						}	
+					}
+					
+					if( !found ) {
+						return;
+					}
+					
+					ratingsCountYearGenPanel = new PieChartPanel("Ratings Genre Distribution in " + year, "Genre", "Ratings Count", data, "V", true, false, false);
+					ratingsCountYearGenPanel.setName("ratingsCountYearGenPanel");
+					
+					ratingsCountYearGenButton.setEnabled(true);
+					
+					plotContainer.add(ratingsCountYearGenPanel,"ratingsCountYearGenPanel");
+					
+				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "ratingsCountYearGenPanel");
+				}
+			}
+		});
+		ratingsCountYearGenButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		ratingsCountYearGenButton.setToolTipText("Click Here to See rate count for each year");
+		ratingsCountYearGenButton.setName("ratingsCountYearGenButton");
+		ratingsCountYearGenButton.setMargin(new Insets(2, 2, 2, 2));
+		ratingsCountYearGenButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		ratingsCountYearGenButton.setBounds(685, 93, 105, 27);
+		analystPanel.add(ratingsCountYearGenButton);
+		
+		viewsCountByYearGenButton = new JButton("ViewCount Year Gen");
+		viewsCountByYearGenButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				String text = viewCountTextField.getText();
+
+				ratingsCountTextField.setText("Insert Year");
+				viewCountTextField.setText("Insert Year");
+				gameCountTextField.setText("Insert Year");
+				
+				int year = 0;
+				
+				try {	
+					year = Integer.parseInt(text);
+				} catch(Exception ee) {
+					System.out.println("->[GraphicInterface] error in parsing ratingsCountTextField string");
+				}
+				
+				if( year < 1900 || year > Year.now().getValue() ) {
+					
+					return;
+				}
+				
+				StatusObject<HashMap<Integer,HashMap<String,Integer>>> viewsCountYearGenStatus = logicHandler.getViewsCountByYearGen();
+				
+				if( viewsCountYearGenStatus.statusCode == StatusCode.OK ) {
+					
+					boolean found = false;
+					HashMap<String,Double> data = new HashMap<String,Double>();
+					
+					for( int key : viewsCountYearGenStatus.element.keySet() ) {
+						
+						if( key != year ) {
+							
+							continue;
+						}
+						
+						found = true;
+						
+						for( String genre: viewsCountYearGenStatus.element.get(key).keySet() ) {
+							
+							if( genre != null && viewsCountYearGenStatus.element.get(key).get(genre) != null ) {
+								
+								data.put(genre+" - "+viewsCountYearGenStatus.element.get(key).get(genre), viewsCountYearGenStatus.element.get(key).get(genre).doubleValue());
+							}
+						}	
+					}
+					
+					if( !found ) {
+						return;
+					}
+					
+					viewsCountYearGenPanel = new PieChartPanel("Views Count Genre Distribution in " + year, "Genre", "Views Count", data, "V", true, false, false);
+					viewsCountYearGenPanel.setName("viewsCountYearGenPanel");
+					
+					viewsCountByYearGenButton.setEnabled(true);
+					
+					plotContainer.add(viewsCountYearGenPanel,"viewsCountYearGenPanel");
+					
+				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
+						
+					cl.show(plotContainer, "viewsCountYearGenPanel");
+				}
+			}
+		});
+		viewsCountByYearGenButton.setToolTipText("Click Here to See rate count for each year");
+		viewsCountByYearGenButton.setName("viewCountByYearGenButton");
+		viewsCountByYearGenButton.setMargin(new Insets(2, 2, 2, 2));
+		viewsCountByYearGenButton.setFont(new Font("Corbel", Font.PLAIN, 11));
+		viewsCountByYearGenButton.setBounds(479, 93, 105, 27);
+		analystPanel.add(viewsCountByYearGenButton);
+		
+		gameCountTextField = new JTextField();
+		gameCountTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				gameCountTextField.setText("");
+			}
+		});
+		gameCountTextField.setFont(new Font("Corbel", Font.PLAIN, 15));
+		gameCountTextField.setText("Insert Year");
+		gameCountTextField.setBounds(192, 93, 75, 27);
+		analystPanel.add(gameCountTextField);
+		gameCountTextField.setColumns(10);
+		
+		viewCountTextField = new JTextField();
+		viewCountTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				viewCountTextField.setText("");
+			}
+		});
+		viewCountTextField.setFont(new Font("Corbel", Font.PLAIN, 15));
+		viewCountTextField.setText("Insert Year");
+		viewCountTextField.setColumns(10);
+		viewCountTextField.setBounds(406, 93, 75, 27);
+		analystPanel.add(viewCountTextField);
+		
+		ratingsCountTextField = new JTextField();
+		ratingsCountTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				ratingsCountTextField.setText("");
+			}
+		});
+		ratingsCountTextField.setFont(new Font("Corbel", Font.PLAIN, 15));
+		ratingsCountTextField.setText("Insert Year");
+		ratingsCountTextField.setColumns(10);
+		ratingsCountTextField.setBounds(610, 93, 75, 27);
+		analystPanel.add(ratingsCountTextField);
 		
 		
 		
@@ -3053,6 +3526,7 @@ public class GraphicInterface {
 				if( searchedUserStatus.statusCode == StatusCode.OK ) {
 					
 					fillUsersTable(searchedUserStatus.element);
+					userGamesListModel.removeAllElements();
 				}
 			}
 		});
