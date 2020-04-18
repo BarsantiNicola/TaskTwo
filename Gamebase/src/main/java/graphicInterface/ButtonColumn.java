@@ -222,6 +222,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
 	public void mouseEntered(MouseEvent e) {
 		
 		editButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		
 	}
     public void mouseExited(MouseEvent e) {}
 }

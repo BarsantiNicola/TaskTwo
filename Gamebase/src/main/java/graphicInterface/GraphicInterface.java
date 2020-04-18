@@ -56,11 +56,13 @@ public class GraphicInterface {
 	private JLabel mostPopularGamesLabel;
 	private JLabel mostViewedGamesLabel;
 	private JLabel searchGameLabel;
+	private JLabel favouriteGamesLabel;
+	private JLabel followedUsersLabel;
 	private JScrollPane followedTableScrollPane;
 	private JTable followedTable;
 	private JTableHeader followedTableHeader;
-	private JList<PreviewGame> myGamesList;
-	private DefaultListModel<PreviewGame> gamesListModel = new DefaultListModel<PreviewGame>();
+	private JList<BufferedGame> myGamesList;
+	private DefaultListModel<BufferedGame> myGamesListModel = new DefaultListModel<BufferedGame>();	
 	private DefaultTableModel followedTableModel = new DefaultTableModel(
 			new Object[][] {
 			},
@@ -191,13 +193,13 @@ public class GraphicInterface {
 	private JButton nextVideoButton;
 	private JButton XBoxButton;
 	
-	//user panel
+	////////USER PANEL
 	private JPanel userPanel;
 	private JButton searchUserButton;
 	private JButton homeUserButton;
 	private JScrollPane userGamesScrollPane;
-	private JList<PreviewGame> userGamesList;
-	private DefaultListModel<PreviewGame> userGamesListModel = new DefaultListModel<PreviewGame>();
+	private JList<BufferedGame> userGamesList;
+	private DefaultListModel<BufferedGame> userGamesListModel = new DefaultListModel<BufferedGame>();
 	private JScrollPane usersScrollPane;
 	private JLabel displayedUserLabel;
 	private JButton featuredUserButton;
@@ -225,7 +227,7 @@ public class GraphicInterface {
 	private JLabel searchUserLabel;
 	private JLabel searchUserWelcomeLabel;
 	
-	//user information panel
+	///////// USER INFORMATION PANEL
 	private JPanel userInformationPanel;	
 	private JButton homeUserInformationButton;
 	private JTextField ageTextField;
@@ -241,8 +243,15 @@ public class GraphicInterface {
 	private JMenuBar genderMenuBar;
 	private JTextField emailTextField;
 	private JTextField countryTextField;
+	private JLabel ageLabel;
+	private JLabel nameLabel;
+	private JLabel surnameLabel;
+	private JLabel emailLabel;
+	private JLabel countryLabel;
+	private JLabel genderLabel;
+	private JLabel genreLabel;
 	
-	//Logic and support info
+	///////// LOGIC AND SUPPORT INFO
 	private LogicBridge logicHandler = new LogicBridge();
 	private GraphConnector graphHandler = new GraphConnector();
 	private User currentUser = null;
@@ -255,20 +264,21 @@ public class GraphicInterface {
 	private Boolean isGameFavourite =  null;
 	private DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 	
-	//support functions
+	/////// SUPPORT FUNCTIONS
 	
-	private void fillGamesList(List<PreviewGame> gamesList) {
+	//the argument was list<PreviewGame>
+	private void fillMyGamesList(List<BufferedGame> gamesList) {
 		
 		if( gamesList == null ) {
 			
 			return;
 		}
 		
-		gamesListModel.removeAllElements();
+		myGamesListModel.removeAllElements();
 		
 		for( int i = 0; i < gamesList.size(); i++ ) {
 			
-			gamesListModel.addElement(gamesList.get(i));
+			myGamesListModel.addElement(gamesList.get(i));
 		}
 
 	}
@@ -315,7 +325,7 @@ public class GraphicInterface {
 		searchListModel.removeAllElements();
 		
 		for( int i = 0; i < games.size(); i++ ) {
-			gamesListModel.addElement(games.get(i));
+			searchListModel.addElement(games.get(i));
 		}
 		
 		return true;
@@ -350,22 +360,34 @@ public class GraphicInterface {
 					
 					if( favGamesStatus.statusCode == StatusCode.OK ) {
 						
-						List<PreviewGame> favGamesList = new ArrayList<>();
+						List<BufferedGame> favGamesList = new ArrayList<>();
 						
 						for( int i = 0; i < favGamesStatus.element.size(); i++ ) {
 							
 							GraphGame gm = favGamesStatus.element.get(i);
-							
-							favGamesList.add(new PreviewGame(Integer.parseInt(gm._id),gm.title,gm.previewImage));
+							String url = gm.previewImage;
+					        String replacement = "media/crop/600/400/games";
+					        ImageIcon icon = null;
+
+							try {
+								url = url.replaceFirst("media/games", replacement);
+								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+							} catch(Exception ee) {
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+							}
+					        
+							favGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 						}
 						
 						fillUserGamesList(favGamesList);
-					}
-					
-					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
-					
+						
+						if( favGamesList.size()!=0 ) {
+							displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
+						}
+					}	
 				}
 			},1);
+			
 			ButtonColumn buttonColumnAction = new ButtonColumn(usersTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
@@ -404,7 +426,7 @@ public class GraphicInterface {
 		}
 	}
 	
-	private void fillUserGamesList(List<PreviewGame> gamesList) {
+	private void fillUserGamesList(List<BufferedGame> gamesList) {
 		
 		userGamesListModel.removeAllElements();
 		
@@ -462,20 +484,29 @@ public class GraphicInterface {
 		
 		if( gamesListStatus.statusCode == StatusCode.OK ) {
 			
-			List<PreviewGame> favouriteGamesList = new ArrayList<>();
+			List<BufferedGame> favouriteGamesList = new ArrayList<>();
 			
-			for( int i = 0; i < gamesListStatus.element.size(); i++ ) {
+			for( int i=0; i<gamesListStatus.element.size(); i++) {
 				
 				GraphGame gm = gamesListStatus.element.get(i);
-				
-				favouriteGamesList.add(new PreviewGame(Integer.parseInt(gm._id),gm.title,gm.previewImage));
-			}
+				String url = gm.previewImage;
+		        String replacement = "media/crop/600/400/games"; 
+				ImageIcon icon = null;
 			
+				try {
+					url = url.replaceFirst("media/games", replacement); 
+					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+				} catch(Exception e) {
+					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+				}
+		
+				favouriteGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
+			}
+				
 			long favGamesNumber = gamesListStatus.element.size();
 			gamesNumber = Long.toString(favGamesNumber);
 			
-			fillGamesList(favouriteGamesList);
-			
+			fillMyGamesList(favouriteGamesList);
 		} else {
 			
 			gamesNumber = "N/A";
@@ -526,7 +557,7 @@ public class GraphicInterface {
 			    }
 			}	
 		}
-		
+	
 		StatusObject<List<User>> friendListStatus = graphHandler.getFollowedUsersList();
 		
 		if( friendListStatus.statusCode == StatusCode.OK ) {
@@ -573,7 +604,7 @@ public class GraphicInterface {
 		
 		usernameHPLabel.setText("");
 		
-		gamesListModel.removeAllElements();
+		myGamesListModel.removeAllElements();
 		followedTableModel.setRowCount(0);
 		
 		adminHPButton.setEnabled(true);
@@ -585,6 +616,7 @@ public class GraphicInterface {
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void initializeGamePage( int id ) {
 		
 		StatusObject<Game> gameStatus = logicHandler.getGame(id);
@@ -607,7 +639,7 @@ public class GraphicInterface {
 		
 		if( gameDescription == null ) {
 			
-			gameDescriptionTextArea.setText("Game Description not Available");
+			gameDescriptionTextArea.setText("          -- Game Description not Available --");
 		} else {
 			
 			gameDescriptionTextArea.setText(gameDescription);
@@ -776,8 +808,6 @@ public class GraphicInterface {
 		List<String> videoURLs = game.getVideoURLs();
 		
 		if( videoURLs != null && videoURLs.size()!=0 ) {
-			System.out.println(videoURLs);
-			System.out.println(videoURLs.size());
 			
 			currentVideosURLlist = videoURLs;
 			currentVideoIndex = 0;
@@ -798,7 +828,11 @@ public class GraphicInterface {
 			videoPlayer.playVideo(null);
 		}
 		
-		//logicHandler.incrementGameViews(game.getId());
+		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
+			System.out.println("->[GraphicInterface] -> error while incrementing view count");
+		} else {
+			System.out.println("->[GraphicInterface] -> increment view count performed");
+		}
 	}
 	
 	private void cleanGamePage() {
@@ -863,13 +897,23 @@ public class GraphicInterface {
 			
 			if( friendGamesStatus.statusCode == StatusCode.OK ) {
 				
-				List<PreviewGame> friendGamesList = new ArrayList<>();
+				List<BufferedGame> friendGamesList = new ArrayList<>();
 				
 				for( int i = 0; i < friendGamesStatus.element.size(); i++ ) {
 					
 					GraphGame gm = friendGamesStatus.element.get(i);
+					String url = gm.previewImage;
+			        String replacement = "media/crop/600/400/games";
+					ImageIcon icon = null;
 					
-					friendGamesList.add(new PreviewGame(Integer.parseInt(gm._id),gm.title,gm.previewImage));
+					try {
+						url = url.replaceFirst("media/games", replacement);
+						icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+					} catch(Exception e) {
+						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+					}
+					
+					friendGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 				}
 				
 				fillUserGamesList(friendGamesList);
@@ -1023,7 +1067,11 @@ public class GraphicInterface {
 		
 		updateInfoLabel.setText("Hi " + currentUser.getUsername() + ", update your information");
 		
-		String currentAge = Long.toString(currentUser.getAge());
+		String currentAge = null;
+		if( currentUser.getAge() != null ) {
+			currentAge = Long.toString(currentUser.getAge());
+		} 
+		
 		String currentName = currentUser.getFirstName();
 		String currentSurname = currentUser.getLastName();
 		String currentFavoriteGenre = currentUser.getFavouriteGenre();
@@ -1031,13 +1079,13 @@ public class GraphicInterface {
 		Character gender = currentUser.getGender();
 		String currentCountry = currentUser.getCountry();
 		
-		ageTextField.setText("Age - Current Value " + currentAge!=null?currentAge:"null");
-		nameTextField.setText("Name - Current Value " + currentName!=null?currentName:"null");
-		surnameTextfield.setText("Surname - Current Value " + currentSurname!=null?currentSurname:"null");
-		emailTextField.setText("Email - Current Value " + currentEmail!=null?currentEmail:"null");
-		countryTextField.setText("Country - Current Value " + currentCountry!=null?currentCountry:"null");
+		ageTextField.setText("Current: " + (currentAge!=null?currentAge:"null"));
+		nameTextField.setText("Current: " + (currentName!=null?currentName:"null"));
+		surnameTextfield.setText("Current: " + (currentSurname!=null?currentSurname:"null"));
+		emailTextField.setText("Current: " + (currentEmail!=null?currentEmail:"null"));
+		countryTextField.setText("Current: " + (currentCountry!=null?currentCountry:"null"));
 		
-		if( gender == 'M' ) {
+		if( gender == null || gender == 'M' ) {
 			genderMenu.setText("M");
 		} else if( gender == 'F' ) {
 			genderMenu.setText("F");
@@ -1378,6 +1426,7 @@ public class GraphicInterface {
 				if( graphHandler.logout() == StatusCode.OK ) {
 					
 					currentUser = null;
+					cleanHomePage();
 					cl.show(panel, "loginPanel");
 				}
 
@@ -1504,7 +1553,26 @@ public class GraphicInterface {
 		homePagePanel.add(followedTableScrollPane);
 		
 		followedTable = new JTable();
-		followedTable.setToolTipText("Your Followers");
+		followedTable.addMouseMotionListener(new MouseMotionListener() {
+			
+			public void mouseDragged(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void mouseMoved(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void updateCursor(MouseEvent e) {
+				if( followedTable.columnAtPoint(e.getPoint()) == 0) {
+					followedTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				} else {
+					followedTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}	
+			}
+		});
 		followedTable.setName("followedTable");
 		followedTable.setModel(followedTableModel);
 		followedTable.setFont(new Font("Corbel",Font.PLAIN,16));
@@ -1518,17 +1586,38 @@ public class GraphicInterface {
 		followedTableScrollPane.setViewportView(followedTable);
 		
 		myGamesScrollPane = new JScrollPane();
+		myGamesScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		myGamesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		myGamesScrollPane.setName("myGamesScrollPane");
 		myGamesScrollPane.setBounds(27, 348, 356, 174);
 		homePagePanel.add(myGamesScrollPane);
 		
-		myGamesList = new JList<PreviewGame>(gamesListModel);
+		myGamesList = new JList<BufferedGame>(myGamesListModel);
+		myGamesList.addMouseMotionListener(new MouseMotionListener() {
+			
+			public void mouseDragged(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void mouseMoved(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void updateCursor(MouseEvent e) {
+				if( myGamesList.getToolTipText(e) != null ) {
+					myGamesList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				} else {
+					myGamesList.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}	
+			}
+		});
 		myGamesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				
-				PreviewGame selectedGame = myGamesList.getSelectedValue();
+				BufferedGame selectedGame = myGamesList.getSelectedValue();
 				
 				cleanHomePage();
 				
@@ -1542,7 +1631,7 @@ public class GraphicInterface {
 		myGamesList.setName("myGamesList");
 		myGamesList.setVisibleRowCount(-1);
 		myGamesList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		myGamesList.setCellRenderer(new GameRenderer());
+		myGamesList.setCellRenderer(new BufferedGameRenderer());
 		myGamesScrollPane.setViewportView(myGamesList);
 		
 		searchGameLabel = new JLabel("");
@@ -1689,6 +1778,20 @@ public class GraphicInterface {
 		userInfoButton.setBounds(467, 13, 81, 69);
 		userInfoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/info.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 		homePagePanel.add(userInfoButton);
+		
+		favouriteGamesLabel = new JLabel("Favourite Games");
+		favouriteGamesLabel.setName("favouriteGamesLabel");
+		favouriteGamesLabel.setForeground(Color.WHITE);
+		favouriteGamesLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		favouriteGamesLabel.setBounds(26, 320, 191, 26);
+		homePagePanel.add(favouriteGamesLabel);
+		
+		followedUsersLabel = new JLabel("Followed Users");
+		followedUsersLabel.setName("followedUsersLabel");
+		followedUsersLabel.setForeground(Color.WHITE);
+		followedUsersLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		followedUsersLabel.setBounds(26, 117, 191, 26);
+		homePagePanel.add(followedUsersLabel);
 		
 		
 		
@@ -3075,8 +3178,8 @@ public class GraphicInterface {
 		searchGameScrollPane.setName("searchGameScrollPane");
 		searchGameScrollPane.setBounds(31, 160, 871, 352);
 		searchGamePanel.add(searchGameScrollPane);
-		
-		searchGamesJList = new JList<PreviewGame>(gamesListModel);
+	
+		searchGamesJList = new JList<PreviewGame>(searchListModel);
 		searchGamesJList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		searchGamesJList.setVisibleRowCount(-1);
 		searchGamesJList.setName("searchGameJList");
@@ -3250,8 +3353,12 @@ public class GraphicInterface {
 		actionButton.setOpaque(true);
 		actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 		actionButton.addActionListener(new ActionListener() {
-			@SuppressWarnings("null")
+			
 			public void actionPerformed(ActionEvent e) {
+				
+				if( isGameFavourite == null ) {
+					return;
+				}
 				
 				if( isGameFavourite ) {
 					
@@ -3464,6 +3571,7 @@ public class GraphicInterface {
 		userPanel.setLayout(null);
 		
 		featuredUserButton = new JButton("Featured");
+		featuredUserButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		featuredUserButton.setName("featuredUserButton");
 		featuredUserButton.setRequestFocusEnabled(false);
 		featuredUserButton.setBounds(502, 73, 97, 32);
@@ -3527,6 +3635,7 @@ public class GraphicInterface {
 					
 					fillUsersTable(searchedUserStatus.element);
 					userGamesListModel.removeAllElements();
+					displayedUserLabel.setText("Currently Displayed: ");
 				}
 			}
 		});
@@ -3564,15 +3673,36 @@ public class GraphicInterface {
 		userPanel.add(homeUserButton);
 		
 		userGamesScrollPane = new JScrollPane();
-		userGamesScrollPane.setBounds(57, 146, 363, 336);
+		userGamesScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		userGamesScrollPane.setBounds(57, 146, 355, 336);
 		userPanel.add(userGamesScrollPane);
 		
-		userGamesList = new JList<PreviewGame>(userGamesListModel);
+		userGamesList = new JList<BufferedGame>(userGamesListModel);
+		userGamesList.addMouseMotionListener(new MouseMotionListener() {
+			
+			public void mouseDragged(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void mouseMoved(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void updateCursor(MouseEvent e) {
+				if( userGamesList.getToolTipText(e) != null ) {
+					userGamesList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				} else {
+					userGamesList.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}	
+			}
+		});
 		userGamesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				
-				PreviewGame selectedGame = userGamesList.getSelectedValue();
+				BufferedGame selectedGame = userGamesList.getSelectedValue();
 				
 				cleanHomePage();
 				
@@ -3586,7 +3716,7 @@ public class GraphicInterface {
 		userGamesList.setName("userGamesList");
 		userGamesList.setVisibleRowCount(-1);
 		userGamesList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		userGamesList.setCellRenderer(new GameRenderer());
+		userGamesList.setCellRenderer(new BufferedGameRenderer());
 		userGamesScrollPane.setViewportView(userGamesList);
 		
 		usersScrollPane = new JScrollPane();
@@ -3594,6 +3724,26 @@ public class GraphicInterface {
 		userPanel.add(usersScrollPane);
 		
 		usersTable = new JTable();
+		usersTable.addMouseMotionListener(new MouseMotionListener() {
+			
+			public void mouseDragged(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void mouseMoved(MouseEvent e) {
+				
+				updateCursor(e);
+			}
+			
+			public void updateCursor(MouseEvent e) {
+				if( usersTable.columnAtPoint(e.getPoint()) == 1 || usersTable.columnAtPoint(e.getPoint()) == 2) {
+					usersTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				} else {
+					usersTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}	
+			}
+		});
 		usersTable.setName("usersTable");
 		usersTable.setModel(usersTableModel);
 		usersTable.setFont(new Font("Corbel",Font.PLAIN,16));
@@ -3841,9 +3991,58 @@ public class GraphicInterface {
 		countryTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
 		countryTextField.setName("countryTextField");
 		countryTextField.setText("Country");
-		countryTextField.setBounds(231, 408, 235, 37);
+		countryTextField.setBounds(233, 413, 235, 37);
 		userInformationPanel.add(countryTextField);
 		countryTextField.setColumns(10);
+		
+		ageLabel = new JLabel("Age");
+		ageLabel.setName("ageLabel");
+		ageLabel.setForeground(Color.WHITE);
+		ageLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		ageLabel.setBounds(233, 131, 233, 25);
+		userInformationPanel.add(ageLabel);
+		
+		nameLabel = new JLabel("Name");
+		nameLabel.setName("nameLabel");
+		nameLabel.setForeground(Color.WHITE);
+		nameLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		nameLabel.setBounds(233, 196, 233, 25);
+		userInformationPanel.add(nameLabel);
+		
+		surnameLabel = new JLabel("Surname");
+		surnameLabel.setName("surnameLabel");
+		surnameLabel.setForeground(Color.WHITE);
+		surnameLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		surnameLabel.setBounds(233, 258, 233, 25);
+		userInformationPanel.add(surnameLabel);
+		
+		emailLabel = new JLabel("E-Mail");
+		emailLabel.setName("emailLabel");
+		emailLabel.setForeground(Color.WHITE);
+		emailLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		emailLabel.setBounds(233, 322, 233, 25);
+		userInformationPanel.add(emailLabel);
+		
+		countryLabel = new JLabel("Country");
+		countryLabel.setName("countryLabel");
+		countryLabel.setForeground(Color.WHITE);
+		countryLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		countryLabel.setBounds(233, 387, 233, 25);
+		userInformationPanel.add(countryLabel);
+		
+		genderLabel = new JLabel("Gender");
+		genderLabel.setName("genderLabel");
+		genderLabel.setForeground(Color.WHITE);
+		genderLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		genderLabel.setBounds(520, 131, 77, 25);
+		userInformationPanel.add(genderLabel);
+		
+		genreLabel = new JLabel("Genre");
+		genreLabel.setName("genreLabel");
+		genreLabel.setForeground(Color.WHITE);
+		genreLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		genreLabel.setBounds(520, 196, 233, 25);
+		userInformationPanel.add(genreLabel);
 		
 	}
 }
