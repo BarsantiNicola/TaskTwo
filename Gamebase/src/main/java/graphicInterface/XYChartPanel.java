@@ -27,10 +27,10 @@ public class XYChartPanel extends ChartPanel{
 		
 		PlotOrientation chartOrientation = null;
 		
-		if( orientation == "H" ) {
+		if( orientation.equals("H") ) {
 			
 			chartOrientation = PlotOrientation.HORIZONTAL;
-		} else if( orientation == "V") {
+		} else if( orientation.equals("V")) {
 			
 			chartOrientation = PlotOrientation.VERTICAL;
 		}

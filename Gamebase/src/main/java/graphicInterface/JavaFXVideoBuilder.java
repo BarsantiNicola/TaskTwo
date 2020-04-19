@@ -33,7 +33,7 @@ public class JavaFXVideoBuilder {
 
 		//File video_source = new File(location);
 	    //Media m = new Media(video_source.toURI().toString());
-		
+		System.out.println(location);
 		try {
 			media = new Media(location);
 		} catch (Exception e) {

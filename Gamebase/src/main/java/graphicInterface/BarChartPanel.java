@@ -32,22 +32,22 @@ public class BarChartPanel extends ChartPanel {
 		
 		LinkedHashMap<String,Double> sortedMap = new LinkedHashMap<>();
 		
-		if( orderBy == "valueDesc" ) {
+		if( orderBy.equals("valueDesc") ) {
 			
 			data.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
 		}
 		
-		if( orderBy == "valueAsc" ) {
+		if( orderBy.equals("valueAsc") ) {
 			
 			data.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
 		}
 		
-		if( orderBy == "keyDesc" ) {
+		if( orderBy.equals("keyDesc") ) {
 			
 			data.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.reverseOrder())).forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
 		}
 		
-		if( orderBy == "keyAsc" ) {
+		if( orderBy.equals("keyAsc") ) {
 			
 			data.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
 		}
@@ -61,10 +61,10 @@ public class BarChartPanel extends ChartPanel {
 		
 		PlotOrientation chartOrientation = null;
 		
-		if( orientation == "H" ) {
+		if( orientation.equals("H") ) {
 			
 			chartOrientation = PlotOrientation.HORIZONTAL;
-		} else if( orientation == "V") {
+		} else if( orientation.equals("V")) {
 			
 			chartOrientation = PlotOrientation.VERTICAL;
 		}
