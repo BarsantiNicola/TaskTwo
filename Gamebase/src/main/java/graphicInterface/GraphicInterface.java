@@ -67,7 +67,7 @@ public class GraphicInterface {
 			new Object[][] {
 			},
 			new String[] {
-				"Username", "Name", "Email"
+				"Username", "Games", 
 			}
 		) {
 			/**
@@ -76,7 +76,7 @@ public class GraphicInterface {
 			private static final long serialVersionUID = 1L;
 			@SuppressWarnings("rawtypes")
 			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class
+				String.class, String.class
 			};
 			@SuppressWarnings("unchecked")
 			public Class getColumnClass(int columnIndex) {
@@ -292,13 +292,11 @@ public class GraphicInterface {
 		
 		for( User friend: friendList ) {
 			
-			String email = friend.getEmail();
-			String completeName = friend.getCompleteName();
+			String username = friend.getUsername();
 			
-			Object[] object = new Object[3];
-			object[0] = friend.getUsername();
-			object[1] = completeName==null?"Not Available":completeName;
-			object[2] = email==null||email.equals("x")?"Not Available":email;
+			Object[] object = new Object[2];
+			object[0] = username;
+			object[1] = "SEE GAMES";
 			ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
@@ -314,7 +312,7 @@ public class GraphicInterface {
 					
 					initializeUserPage(followerUsername);
 				}
-			},0);
+			},1);
 			followedTableModel.addRow(object);
 		}
 	}
@@ -343,14 +341,19 @@ public class GraphicInterface {
 		for( User friend: usersList ) {
 			
 			StatusObject<Boolean> followStatus = graphHandler.doIFollow(friend.getUsername());
+			
 			if( followStatus.statusCode != StatusCode.OK ) {
+				System.out.println("->[GraphicInterface] impossible to determine if user " + friend.getUsername() + 
+						" is followed. User not inserted into the list");
 				continue;
 			}
+			
+			boolean followed = followStatus.element;
 			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
 			object[1] = "SEE GAMES";
-			object[2] = followStatus.element?"UNFOLLOW":"FOLLOW";
+			object[2] = followed?"UNFOLLOW":"FOLLOW";
 			ButtonColumn buttonColumnGames = new ButtonColumn(usersTable, new AbstractAction() {
 				
 				public void actionPerformed(ActionEvent e) {
@@ -405,28 +408,37 @@ public class GraphicInterface {
 					
 					if( followStatus.statusCode == StatusCode.OK ) {
 						
-						if( followStatus.element ) {
+						if( followStatus.element ) { //I already follow the user, so I may unfollow him/her
 							
-							if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
-								return;
-							}
-							
-						usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
-						} else {
-						
 							if( graphHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
+								System.out.println("->[GraphicInterface] error in unfollow user procedure");
 								return;
 							}
-							usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+							
+							System.out.println("->[GraphicInterface] unfollow procedure terminated correctly");
+							buttonColumnGames.setEnabled(false);
+					    	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+						} else { //I don't follow the user so I may follow him/her
+						
+							if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
+								System.out.println("->[GraphicInterface] error in follow user procedure");
+								return;
+							}
+							
+							System.out.println("->[GraphicInterface] follow procedure terminated correctly");
+							buttonColumnGames.setEnabled(true);
+							usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
 						}
 					} else {
+						
+						System.out.println("->[GraphicInterface] error: impossible to determine if user is followed or not");
 						usersTableModel.setValueAt("N/A", modelRow, 2);
 					}
-					
-					
 				}
 			},2);
+			
 			usersTableModel.addRow(object);
+			buttonColumnGames.setEnabled(followed);
 		}
 	}
 	
@@ -1230,6 +1242,7 @@ public class GraphicInterface {
 			
 			System.out.println("->[GraphicInterface] Failed to connect to graph database");
 			return;
+			//no, terminate program
 		}
 		
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
@@ -1574,6 +1587,8 @@ public class GraphicInterface {
 		homePagePanel.add(followedTableScrollPane);
 		
 		followedTable = new JTable();
+		followedTable.setFocusable(false);
+		followedTable.setRowSelectionAllowed(false);
 		followedTable.addMouseMotionListener(new MouseMotionListener() {
 			
 			public void mouseDragged(MouseEvent e) {
@@ -1587,7 +1602,7 @@ public class GraphicInterface {
 			}
 			
 			public void updateCursor(MouseEvent e) {
-				if( followedTable.columnAtPoint(e.getPoint()) == 0) {
+				if( followedTable.columnAtPoint(e.getPoint()) == 1) {
 					followedTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				} else {
 					followedTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -1597,7 +1612,6 @@ public class GraphicInterface {
 		followedTable.setName("followedTable");
 		followedTable.setModel(followedTableModel);
 		followedTable.setFont(new Font("Corbel",Font.PLAIN,16));
-		followedTable.getColumnModel().getColumn(2).setPreferredWidth(77);
 		followedTable.setRowHeight(30);
 		followedTable.setDefaultRenderer(String.class, centerRenderer);
 		followedTableHeader = followedTable.getTableHeader();
@@ -1637,6 +1651,11 @@ public class GraphicInterface {
 		myGamesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				
+				if( myGamesList.getToolTipText(arg0) == null ) {
+					
+					return;
+				}
 				
 				BufferedGame selectedGame = myGamesList.getSelectedValue();
 				
@@ -3426,6 +3445,11 @@ public class GraphicInterface {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				
+				if( searchedGamesJList.getToolTipText(arg0) == null ) {
+					
+					return;
+				}
+				
 				BufferedGame selectedGame = searchedGamesJList.getSelectedValue();
 				
 				cleanSearchGamePage();
@@ -3813,7 +3837,7 @@ public class GraphicInterface {
 				currentVideoIndex++;
 				
 				videoPlayer.stopVideo();
-				System.out.println(currentVideosURLlist.get(currentVideoIndex));
+				
 				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
 				if( currentVideoIndex == 1 ) {
@@ -3847,7 +3871,7 @@ public class GraphicInterface {
 				}
 				
 				currentVideoIndex--;
-				System.out.println(currentVideosURLlist.get(currentVideoIndex));
+				
 				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
 				if( currentVideoIndex == lastVideoIndex-1 ) {
@@ -4036,6 +4060,8 @@ public class GraphicInterface {
 		userPanel.add(usersScrollPane);
 		
 		usersTable = new JTable();
+		usersTable.setRowSelectionAllowed(false);
+		usersTable.setFocusable(false);
 		usersTable.addMouseMotionListener(new MouseMotionListener() {
 			
 			public void mouseDragged(MouseEvent e) {

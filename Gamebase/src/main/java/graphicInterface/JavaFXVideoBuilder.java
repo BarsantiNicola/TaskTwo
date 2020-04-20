@@ -33,7 +33,6 @@ public class JavaFXVideoBuilder {
 
 		//File video_source = new File(location);
 	    //Media m = new Media(video_source.toURI().toString());
-		System.out.println(location);
 		try {
 			media = new Media(location);
 		} catch (Exception e) {
@@ -52,7 +51,8 @@ public class JavaFXVideoBuilder {
 	    javafx.geometry.Rectangle2D screen = Screen.getPrimary().getVisualBounds();
 	    viewer.setX((screen.getWidth() - panel.getWidth()) / 2);
 	    viewer.setY((screen.getHeight() - panel.getHeight()) / 2);
-	
+	    
+	    root.getChildren().add(viewer);
 	    // resize video based on screen size
 	    DoubleProperty width = viewer.fitWidthProperty();
 	    DoubleProperty height = viewer.fitHeightProperty();
@@ -61,7 +61,7 @@ public class JavaFXVideoBuilder {
 	    viewer.setPreserveRatio(true);
 		
 	    // add video to stackpane
-	    root.getChildren().add(viewer);
+	    //root.getChildren().add(viewer);
 	
 	    VFXPanel.setScene(scene);
 	    player.setCycleCount(MediaPlayer.INDEFINITE);
