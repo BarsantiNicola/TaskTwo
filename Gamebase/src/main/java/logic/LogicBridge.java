@@ -115,6 +115,7 @@ public class LogicBridge {
 	public boolean updateDatabase() { 
 		int MaxGameId= MONGO.getMaxGameId().element;
 		return WebScraping.updateDatabase(MaxGameId); 
+		
 		}
 	
 	public static String getTwitchURLChannel( String GAME ) { return WebScraping.getTwitchURLChannel(GAME); }

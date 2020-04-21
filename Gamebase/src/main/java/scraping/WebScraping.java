@@ -49,9 +49,13 @@ public class WebScraping {
 			MaxGameID++;
 			if(newGame.has("detail")) {
 				System.out.println("WEBSCRAPING/UPDATEDATABASE--> Game not suitable");
+				failed ++;
 				continue;
 			}
 			i++;
+			if (failed == 100){
+				break;
+			}
 			newGames.add(newGame);
 		}
 		
