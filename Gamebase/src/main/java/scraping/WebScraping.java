@@ -19,6 +19,7 @@ import logic.data.Game;
 import logic.data.GraphGame;
 import logic.mongoConnection.MongoConnection;
 import logic.mongoConnection.*;
+import logic.graphConnector.*;
 
 //----------------------------------------------------------------------------------------------------
 //The class is used to contain all the methods used to perform dynamic web scraping by the application
@@ -71,8 +72,6 @@ public class WebScraping {
 		}
 		
 		//Inserisci nel database le due liste
-		
-		
 		return false; 
 	}
 	
