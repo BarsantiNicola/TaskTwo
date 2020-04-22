@@ -399,9 +399,9 @@ public class GraphicInterface {
 
 						try {
 							url = url.replaceFirst("media/games", replacement);
-							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 						} catch(Exception ee) {
-							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 						}
 				        
 						favGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
@@ -531,9 +531,9 @@ public class GraphicInterface {
 			
 				try {
 					url = url.replaceFirst("media/games", replacement); 
-					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 				} catch(Exception e) {
-					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 				}
 		
 				favouriteGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
@@ -564,14 +564,14 @@ public class GraphicInterface {
 			String mostViewedGameImageURL = mostViewedStatus.element.getPreviewPicURL();
 			
 			if( mostViewedGameImageURL == null ) {
-				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+				mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_FAST)));	
 			} else {
 				try {
 					String replacement = "media/crop/600/400/games";
 					mostViewedGameImageURL = mostViewedGameImageURL.replaceFirst("media/games", replacement);
 					mostViewedGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostViewedGameImageURL)).getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
-					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_FAST)));	
 			    }
 			}
 		} else {
@@ -586,14 +586,14 @@ public class GraphicInterface {
 			String mostPopularGameImageURL = mostPopularStatus.element.getPreviewPicURL();
 			
 			if( mostPopularGameImageURL == null ) {
-				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+				mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_FAST)));	
 			} else {
 				try {
 					String replacement = "media/crop/600/400/games";
 					mostPopularGameImageURL = mostPopularGameImageURL.replaceFirst("media/games", replacement);
 					mostPopularGamesLabel.setIcon(new ImageIcon(ImageIO.read(new URL(mostPopularGameImageURL)).getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 				} catch (Exception e){
-					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
+					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_FAST)));	
 			    }
 			}	
 		} else {
@@ -830,11 +830,11 @@ public class GraphicInterface {
 			
 			if( favourite ) {
 				
-				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 				isGameFavourite = true;
 			} else {
 				
-				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 				isGameFavourite = false;
 			}
 		} else {
@@ -936,28 +936,25 @@ public class GraphicInterface {
 	
 	private void initializeUserPage( String searchedUser ) {
 		
-		System.out.println("->[GraphicInterface] initialing user page.");
+		System.out.println("->[GraphicInterface] initializing user page.");
 		
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
 		
 		StatusObject<List<User>> featuredUsersStatus = graphHandler.getSuggestedUsersList();
 		
-		String displayedUser = searchedUser==null?null:searchedUser;
-		
 		if( featuredUsersStatus.statusCode == StatusCode.OK ) {
 			
 			fillUsersTable(featuredUsersStatus.element);
 			
-			displayedUser = searchedUser==null?featuredUsersStatus.element.get(0).getUsername():searchedUser;
 		} else {
 			
-			System.out.println("->[GraphicInterface] immpossible to retrieve featured users.");
+			System.out.println("->[GraphicInterface] impossible to retrieve featured users.");
 		}
 		
-		if( displayedUser != null ) {
+		if( searchedUser != null ) {
 			
-			StatusObject<List<GraphGame>> friendGamesStatus = graphHandler.getFavouritesGamesList(displayedUser);
+			StatusObject<List<GraphGame>> friendGamesStatus = graphHandler.getFavouritesGamesList(searchedUser);
 			
 			if( friendGamesStatus.statusCode == StatusCode.OK ) {
 				
@@ -972,16 +969,16 @@ public class GraphicInterface {
 					
 					try {
 						url = url.replaceFirst("media/games", replacement);
-						icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+						icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 					} catch(Exception e) {
-						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 					}
 					
 					friendGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 				}
 				
 				fillUserGamesList(friendGamesList);
-				displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games." );
+				displayedUserLabel.setText("Currently Displayed: " + searchedUser + "'s Games." );
 			} else {
 				
 				System.out.println("->[GraphicInterface] impossible to retrieve friend's games.");
@@ -1136,9 +1133,9 @@ public class GraphicInterface {
 				
 				try {
 					url = url.replaceFirst("media/games", replacement);
-					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 				} catch(Exception e) {
-					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 				}
 				
 				featuredGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
@@ -1149,12 +1146,12 @@ public class GraphicInterface {
 		} else {
 			
 			System.out.println("->[GraphicInterface] impossible to retrieve featured games list.");
-		}
-		
-		
+		}	
 	}
 	
 	private void cleanSearchGamePage() {
+		
+		System.out.println("->[GraphicInterface] cleaning search game page");
 		
 		searchedGamesListModel.removeAllElements();
 		gameGenreMenu.removeAll();
@@ -1164,6 +1161,8 @@ public class GraphicInterface {
 	}
 	
 	private void initializeUserInformationPage() {
+		
+		System.out.println("->[GraphicInterface] initializing user information page");
 		
 		updateInfoLabel.setText("Hi " + currentUser.getUsername() + ", update your information");
 		
@@ -1215,10 +1214,15 @@ public class GraphicInterface {
 					genreMenu.setText(genre);
 				}
 			}
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to retrieve genre list.");
 		}
 	}
 	
 	private void cleanUserInformationPage() {
+		
+		System.out.println("->[GraphicInterface] cleaning user information page.");
 		
 		updateInfoLabel.setText("");
 		nameTextField.setText("");
@@ -1228,6 +1232,8 @@ public class GraphicInterface {
 	}
 	
 	private void initializeAnalystPanel() {
+		
+		System.out.println("->[GraphicInterface] initializing analyst page.");
 		
 		StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
 		
@@ -1249,7 +1255,10 @@ public class GraphicInterface {
 			
 			cl.show(plotContainer, "topUsersPanel");
 			
-		} 
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to retrieve statistics about most followed users.");
+		}
 		
 		ratingsCountTextField.setText("Insert Year");
 		viewCountTextField.setText("Insert Year");
@@ -1258,6 +1267,8 @@ public class GraphicInterface {
 	}
 	
 	private void cleanAnalystPanel() {
+		
+		System.out.println("->[GraphicInterface] cleaning analyst page.");
 		
 		topUsersPanel = null;
 		topGamesPanel = null;
@@ -1308,8 +1319,7 @@ public class GraphicInterface {
 		if( graphConnection != StatusCode.OK ) {
 			
 			System.out.println("->[GraphicInterface] Failed to connect to graph database");
-			return;
-			//no, terminate program
+			System.exit(0);
 		}
 		
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
@@ -1389,10 +1399,10 @@ public class GraphicInterface {
 				String username = usernameTextfield.getText();
 				String password = new String(passwordField.getPassword());
 				
-				System.out.println("->[GraphicInterface] Trying to sign up " + username);
+				System.out.println("->[GraphicInterface] Trying to sign up " + username + ".");
 				
 				if( username.equals("") || password.equals("") ) {
-					System.out.println("->[GraphicInterface] Sign up failed: empty username and(or) password");
+					System.out.println("->[GraphicInterface] Sign up failed: empty username and(or) password.");
 					errorMessageLabel.setText("Please Insert Username and Password");
 					errorMessageLabel.setVisible(true);
 					return;
@@ -1406,10 +1416,11 @@ public class GraphicInterface {
 					
 					currentUser = registrationStatus.element.user; //or currentUser = registeredUser;
 					
-					System.out.println("->[GraphicInterface] Sign up completed: username " + username + " registered");
+					System.out.println("->[GraphicInterface] Sign up completed: username " + username + " registered.");
+					cleanLoginPage();
 					cl.show(panel, "homePagePanel");
 					initializeHomePage();
-					cleanLoginPage();
+					
 				} else {
 					
 					System.out.println("->[GraphicInterface] Sign up failed.");
@@ -1556,7 +1567,7 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setToolTipText("Number of Games You Like");
 		gamesNumberHPLabel.setName("gamesNumberHPLabel");
 		gamesNumberHPLabel.setBounds(653, 13, 128, 69);
-		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 50, Image.SCALE_SMOOTH)));
+		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 50, Image.SCALE_FAST)));
 		homePagePanel.add(gamesNumberHPLabel);
 		
 		followerNumberHPLabel = new JLabel("155");
@@ -1569,7 +1580,7 @@ public class GraphicInterface {
 		followerNumberHPLabel.setToolTipText("Number of  People Who Follow You");
 		followerNumberHPLabel.setName("followerNumberHPLabel");
 		followerNumberHPLabel.setBounds(793, 13, 117, 69);
-		followerNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/followers.png")).getImage().getScaledInstance(69, 50, Image.SCALE_SMOOTH)));
+		followerNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/followers.png")).getImage().getScaledInstance(69, 50, Image.SCALE_FAST)));
 		homePagePanel.add(followerNumberHPLabel);
 		
 		adminHPButton = new JButton("");
@@ -1594,7 +1605,7 @@ public class GraphicInterface {
 		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
 		adminHPButton.setBackground(SystemColor.controlDkShadow);
 		adminHPButton.setBorder(null);
-		adminHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/gear.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		adminHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/gear.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		homePagePanel.add(adminHPButton);
 		
 		becomeAnalystButton = new JButton("");
@@ -1620,7 +1631,7 @@ public class GraphicInterface {
 		becomeAnalystButton.setContentAreaFilled(false);
 		becomeAnalystButton.setBorder(null);
 		becomeAnalystButton.setOpaque(true);
-		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(100, 60, Image.SCALE_SMOOTH)));
+		becomeAnalystButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/becomeAnalyst.png")).getImage().getScaledInstance(100, 60, Image.SCALE_FAST)));
 		homePagePanel.add(becomeAnalystButton);
 		
 		analystHPButton = new JButton("");
@@ -1644,7 +1655,7 @@ public class GraphicInterface {
 		analystHPButton.setBorder(null);
 		analystHPButton.setContentAreaFilled(false);
 		analystHPButton.setOpaque(true);
-		analystHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/statistics.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		analystHPButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/statistics.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		homePagePanel.add(analystHPButton);
 		
 		followedTableScrollPane = new JScrollPane();
@@ -1764,7 +1775,7 @@ public class GraphicInterface {
 		searchGameLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		searchGameLabel.setForeground(Color.WHITE);
 		searchGameLabel.setBounds(714, 142, 196, 390);
-		searchGameLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(185, 360, Image.SCALE_SMOOTH)));
+		searchGameLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/exampleGamePicture.png")).getImage().getScaledInstance(185, 360, Image.SCALE_SMOOTH)));
 		homePagePanel.add(searchGameLabel);
 		
 		mostViewedGamesLabel = new JLabel("");
@@ -1798,7 +1809,6 @@ public class GraphicInterface {
 		mostViewedGamesLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		mostViewedGamesLabel.setName("mostViewedGamesLabel");
 		mostViewedGamesLabel.setBounds(427, 142, 246, 184);
-		mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 		homePagePanel.add(mostViewedGamesLabel);
 		
 		mostPopularGamesLabel = new JLabel("");
@@ -1832,7 +1842,6 @@ public class GraphicInterface {
 		mostPopularGamesLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		mostPopularGamesLabel.setName("mostPopularGamesLabel");
 		mostPopularGamesLabel.setBounds(427, 348, 246, 184);
-		mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/testPicture.png")).getImage().getScaledInstance(238, 155, Image.SCALE_SMOOTH)));
 		homePagePanel.add(mostPopularGamesLabel);
 		
 		userButton = new JButton("");
@@ -1858,7 +1867,7 @@ public class GraphicInterface {
 		userButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		userButton.setToolTipText("Click Here To Search for Other Users");
 		userButton.setBorder(null);
-		userButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/addFriend.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		userButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/addFriend.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		homePagePanel.add(userButton);
 		
 		userInfoButton = new JButton("");
@@ -1883,7 +1892,7 @@ public class GraphicInterface {
 		userInfoButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		userInfoButton.setBorder(null);
 		userInfoButton.setBounds(467, 13, 81, 69);
-		userInfoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/info.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		userInfoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/info.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		homePagePanel.add(userInfoButton);
 		
 		favouriteGamesLabel = new JLabel("Favourite Games");
@@ -1933,7 +1942,7 @@ public class GraphicInterface {
 		homeADButton.setBorder(null);
 		homeADButton.setContentAreaFilled(false);
 		homeADButton.setOpaque(true);
-		homeADButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		homeADButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		adminPanel.add(homeADButton);
 		
 		adminActionContainer = new JPanel();
@@ -2101,21 +2110,21 @@ public class GraphicInterface {
 		updateDatabaseButton.setOpaque(true);
 		adminPanel.add(updateDatabaseButton);
 		
-		userCountLabel = new JLabel("User Count: 10000");
+		userCountLabel = new JLabel("User Count:");
 		userCountLabel.setName("userCountLabel");
 		userCountLabel.setForeground(Color.WHITE);
 		userCountLabel.setFont(new Font("Corbel", Font.BOLD, 26));
 		userCountLabel.setBounds(104, 180, 226, 35);
 		adminPanel.add(userCountLabel);
 		
-		gameCountLabel = new JLabel("Game Count: 1000000");
+		gameCountLabel = new JLabel("Game Count:");
 		gameCountLabel.setName("gameCountLabel");
 		gameCountLabel.setForeground(Color.WHITE);
 		gameCountLabel.setFont(new Font("Corbel", Font.BOLD, 26));
 		gameCountLabel.setBounds(104, 269, 277, 35);
 		adminPanel.add(gameCountLabel);
 		
-		updateDatabaseResultLabel = new JLabel("Success!");
+		updateDatabaseResultLabel = new JLabel("");
 		updateDatabaseResultLabel.setName("updateDatabaseResultLabel");
 		updateDatabaseResultLabel.setFont(new Font("Corbel", Font.PLAIN, 14));
 		updateDatabaseResultLabel.setBounds(418, 461, 57, 21);
@@ -2153,7 +2162,7 @@ public class GraphicInterface {
 		analystHomeButton.setBorder(null);
 		analystHomeButton.setContentAreaFilled(false);
 		analystHomeButton.setOpaque(true);
-		analystHomeButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		analystHomeButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		analystPanel.add(analystHomeButton);
 		
 		plotContainer = new JPanel();
@@ -2172,7 +2181,7 @@ public class GraphicInterface {
 		topUsersButton.setToolTipText("Click Here to see the most followed users");
 		topUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+					
 				StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
 				
 				if( topUsersStatus.statusCode == StatusCode.OK ) {
@@ -2193,7 +2202,10 @@ public class GraphicInterface {
 					
 					cl.show(plotContainer, "topUsersPanel");
 					
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most followed users.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -3110,7 +3122,7 @@ public class GraphicInterface {
 		homeSEButton.setBorder(null);
 		homeSEButton.setContentAreaFilled(false);
 		homeSEButton.setOpaque(true);
-		homeSEButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		homeSEButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		searchGamePanel.add(homeSEButton);
 		
 		searchTextField = new JTextField();
@@ -3167,9 +3179,9 @@ public class GraphicInterface {
 						
 							try {
 								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 							} catch(Exception e) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 							}
 							
 							searchedGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3200,7 +3212,7 @@ public class GraphicInterface {
 		searchButton.setBorder(null);
 		searchButton.setContentAreaFilled(false);
 		searchButton.setOpaque(true);
-		searchButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/search.png")).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+		searchButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/search.png")).getImage().getScaledInstance(25, 25, Image.SCALE_FAST)));
 		searchGamePanel.add(searchButton);
 		
 		mostViewedButton = new JButton("Most Viewed");
@@ -3249,9 +3261,9 @@ public class GraphicInterface {
 						
 							try {
 								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 							}
 							
 							mostViewedGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3320,9 +3332,9 @@ public class GraphicInterface {
 						
 							try {
 								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 							}
 							
 							mostLikedGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3391,9 +3403,9 @@ public class GraphicInterface {
 						
 							try {
 								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 							}
 							
 							mostRecentGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3455,9 +3467,9 @@ public class GraphicInterface {
 					
 						try {
 							url = url.replaceFirst("media/games", replacement); 
-							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 						} catch(Exception ee) {
-							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 						}
 						
 						featuredGamesList.add(new BufferedGame(Integer.parseInt(game._id),game.title,icon));
@@ -3568,9 +3580,9 @@ public class GraphicInterface {
 							
 							  try {
 								  url = url.replaceFirst("media/games", replacement); 
-								  icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								  icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 						      } catch(Exception ee) {
-								  icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								  icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 							  }
 								
 								gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
@@ -3604,9 +3616,9 @@ public class GraphicInterface {
 							
 							  try {
 								  url = url.replaceFirst("media/games", replacement); 
-								  icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								  icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
 						      } catch(Exception ee) {
-								  icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+								  icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 							  }
 								
 								gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
@@ -3693,7 +3705,7 @@ public class GraphicInterface {
 		steamButton.setBounds(62, 257, 73, 62);
 		steamButton.setContentAreaFilled(false);
 		steamButton.setOpaque(true);
-		steamButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/steam.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		steamButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/steam.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(steamButton);
 		
 		nintendoButton = new JButton("");
@@ -3702,7 +3714,7 @@ public class GraphicInterface {
 		nintendoButton.setContentAreaFilled(false);
 		nintendoButton.setOpaque(true);
 		nintendoButton.setBounds(147, 257, 73, 62);
-		nintendoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/nintendo.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		nintendoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/nintendo.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(nintendoButton);
 		
 		playStationButton = new JButton("");
@@ -3711,7 +3723,7 @@ public class GraphicInterface {
 		playStationButton.setBounds(313, 257, 73, 62);
 		playStationButton.setContentAreaFilled(false);
 		playStationButton.setOpaque(true);
-		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		playStationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/playstation.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(playStationButton);
 		
 		XBoxButton = new JButton("");
@@ -3720,7 +3732,7 @@ public class GraphicInterface {
 		XBoxButton.setBounds(232, 257, 73, 62);
 		XBoxButton.setContentAreaFilled(false);
 		XBoxButton.setOpaque(true);
-		XBoxButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/xbox.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		XBoxButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/xbox.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(XBoxButton);
 		
 		homeGameButton = new JButton("");
@@ -3744,7 +3756,7 @@ public class GraphicInterface {
 		homeGameButton.setBorder(null);
 		homeGameButton.setContentAreaFilled(false);
 		homeGameButton.setOpaque(true);
-		homeGameButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		homeGameButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(homeGameButton);
 		
 		actionButton = new JButton("");
@@ -3754,7 +3766,7 @@ public class GraphicInterface {
 		actionButton.setBackground(SystemColor.controlDkShadow);
 		actionButton.setContentAreaFilled(false);
 		actionButton.setOpaque(true);
-		actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+		actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 		actionButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -3767,7 +3779,7 @@ public class GraphicInterface {
 					
 					if( graphHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
 						
-						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
 					}else {
 						
@@ -3777,7 +3789,7 @@ public class GraphicInterface {
 					
 					if( graphHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
 						
-						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
 					} else {
 						
@@ -3885,7 +3897,7 @@ public class GraphicInterface {
 		metacriticScoreLabel.setBounds(789, 182, 98, 62);
 		metacriticScoreLabel.setOpaque(true);
 		metacriticScoreLabel.setText("4.7");
-		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/star.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/star.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(metacriticScoreLabel);
 		
 		videoPlayer = new VideoPlayerPanel();
@@ -3925,7 +3937,7 @@ public class GraphicInterface {
 		nextVideoButton.setContentAreaFilled(false);
 		nextVideoButton.setOpaque(true);
 		nextVideoButton.setBounds(804, 351, 73, 43);
-		nextVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/next.png")).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+		nextVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/next.png")).getImage().getScaledInstance(40, 40, Image.SCALE_FAST)));
 		gamePanel.add(nextVideoButton);
 		
 		previousVideoButton = new JButton("");
@@ -3958,7 +3970,7 @@ public class GraphicInterface {
 		previousVideoButton.setContentAreaFilled(false);
 		previousVideoButton.setOpaque(true);
 		previousVideoButton.setBounds(804, 469, 73, 45);
-		previousVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/back.png")).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+		previousVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/back.png")).getImage().getScaledInstance(40, 40, Image.SCALE_FAST)));
 		gamePanel.add(previousVideoButton);
 		
 		
@@ -4048,7 +4060,7 @@ public class GraphicInterface {
 		searchUserButton.setBorder(null);
 		searchUserButton.setContentAreaFilled(false);
 		searchUserButton.setOpaque(true);
-		searchUserButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/search.png")).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+		searchUserButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/search.png")).getImage().getScaledInstance(25, 25, Image.SCALE_FAST)));
 		userPanel.add(searchUserButton);
 		
 		homeUserButton = new JButton("");
@@ -4072,7 +4084,7 @@ public class GraphicInterface {
 		homeUserButton.setBorder(null);
 		homeUserButton.setContentAreaFilled(false);
 		homeUserButton.setOpaque(true);
-		homeUserButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		homeUserButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		userPanel.add(homeUserButton);
 		
 		userGamesScrollPane = new JScrollPane();
@@ -4386,7 +4398,7 @@ public class GraphicInterface {
 		homeUserInformationButton.setBorder(null);
 		homeUserInformationButton.setContentAreaFilled(false);
 		homeUserInformationButton.setOpaque(true);
-		homeUserInformationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+		homeUserInformationButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/home.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		userInformationPanel.add(homeUserInformationButton);
 		
 		emailTextField = new JTextField();
