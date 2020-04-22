@@ -21,7 +21,7 @@ public class ImageRenderer extends JLabel implements ListCellRenderer<Image> {
  
     
         ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(310, 200, Image.SCALE_SMOOTH));
- 
+
         setIcon(imageIcon); 
         
         setBorder(new LineBorder(Color.WHITE,2,true));

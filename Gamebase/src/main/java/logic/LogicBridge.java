@@ -3,6 +3,8 @@ package logic;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
 import logic.data.*;
 import logic.graphConnector.*;
 import logic.mongoConnection.DataNavigator;
@@ -21,6 +23,7 @@ import scraping.*;
 public class LogicBridge {
 	
 	private MongoConnection MONGO;
+	private ImgCache CACHE;
 	//private GraphConnector graph;
 	
 	public LogicBridge()
@@ -30,7 +33,7 @@ public class LogicBridge {
 			 // ricordare di avere la VPN attiva
 
 			  MONGO = new MongoConnection("172.16.0.80",27018);					 
-
+			  CACHE = new ImgCache("cache");
 			  //graph.connect("bolt://172.16.0.78:7687","neo4j","password");       
 
 			 }
@@ -126,8 +129,18 @@ public class LogicBridge {
 	
 	///////////////  OTHER
 	
+	public boolean cacheImg( String URL , ImageIcon img ) {
+		return CACHE.cacheImg(URL, img );
+	}
+	
+	public ImageIcon getCachedImg( String URL ) {
+		return CACHE.getCachedImg(URL);
+	}
+	
+	
 	public void closeConnection(){
 		MONGO.closeConnection();
 		//graph.close();                 
 	}
+	
 }
