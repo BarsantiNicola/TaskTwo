@@ -489,8 +489,8 @@ public class MongoConnection {
     	//	HashMap<String,Statistics> res = client.statistics.getMaxRatedGameByGen().element;
     	//	for( String a:res.keySet())
     	//		System.out.println(a +" : "+res.get(a).getGames());
-    		//client.statistics.statsTest();
-    		client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeShard3.txt",100);
+    		client.statistics.statsTest();
+    		//client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeShard3.txt",100);
     		client.closeConnection();
     		
     	}catch(Exception e) {

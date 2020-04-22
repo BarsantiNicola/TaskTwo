@@ -143,4 +143,15 @@ public class LogicBridge {
 		//graph.close();                 
 	}
 	
+	public static void main(String[] args) {
+		ImgCache prova = new ImgCache("cache");
+		//ImageIcon img = new ImageIcon("https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg");
+		//System.out.println(img.getIconHeight() + " : " + img.getIconWidth());
+		//System.out.println(img.toString());
+		//prova.cacheImg("https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg", img);
+		ImageIcon img = prova.getCachedImg("https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg");
+		System.out.println(img.toString());
+		//System.out.println(img.getIconHeight() + " : " + img.getIconWidth());
+	}
+	
 }

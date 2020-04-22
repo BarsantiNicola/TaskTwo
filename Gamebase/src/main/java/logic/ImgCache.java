@@ -6,8 +6,10 @@ import javax.swing.ImageIcon;
 
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
+
 import static org.iq80.leveldb.impl.Iq80DBFactory.*;
 import com.google.gson.Gson;
+
 
 public class ImgCache {
 	
@@ -16,7 +18,6 @@ public class ImgCache {
 	private Gson gson;
 	
 	public ImgCache( String cachePath ){
-		
 		
 		databasePath = cachePath;  
 		gson = new Gson();
