@@ -225,12 +225,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
 		
 	}
     public void mouseExited(MouseEvent e) {}
-    
-    public void setEnabled(boolean enable) {
-    	System.out.println(enable);
-    	renderButton.setEnabled(enable);
-    	editButton.setEnabled(enable);
-    }
+   
 }
 
 

@@ -297,24 +297,25 @@ public class GraphicInterface {
 			Object[] object = new Object[2];
 			object[0] = username;
 			object[1] = "SEE GAMES";
-			ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
-				
-				public void actionPerformed(ActionEvent e) {
-					
-					JTable table = (JTable)e.getSource();
-					int modelRow = Integer.valueOf(e.getActionCommand());
-					
-					String followerUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
-					
-					CardLayout cl = (CardLayout)(panel.getLayout());
-					
-					cl.show(panel, "userPanel");
-					
-					initializeUserPage(followerUsername);
-				}
-			},1);
 			followedTableModel.addRow(object);
 		}
+		
+		ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				JTable table = (JTable)e.getSource();
+				int modelRow = Integer.valueOf(e.getActionCommand());
+				
+				String followerUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+				
+				CardLayout cl = (CardLayout)(panel.getLayout());
+				
+				cl.show(panel, "userPanel");
+				
+				initializeUserPage(followerUsername);
+			}
+		},1);
 	}
 	
 	private void fillSearchedGamesList(List<BufferedGame> games) {
@@ -344,7 +345,7 @@ public class GraphicInterface {
 			
 			if( followStatus.statusCode != StatusCode.OK ) {
 				System.out.println("->[GraphicInterface] impossible to determine if user " + friend.getUsername() + 
-						" is followed. User not inserted into the list");
+						" is followed. User not inserted into the list.");
 				continue;
 			}
 			
@@ -352,94 +353,108 @@ public class GraphicInterface {
 			
 			Object[] object = new Object[3];
 			object[0] = friend.getUsername();
-			object[1] = "SEE GAMES";
+			object[1] = followed?"SEE GAMES":"x";
 			object[2] = followed?"UNFOLLOW":"FOLLOW";
-			ButtonColumn buttonColumnGames = new ButtonColumn(usersTable, new AbstractAction() {
-				
-				public void actionPerformed(ActionEvent e) {
-					
-					JTable table = (JTable)e.getSource();
-					int modelRow = Integer.valueOf(e.getActionCommand());
-					
-					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
-				
-					StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
-					
-					if( favGamesStatus.statusCode == StatusCode.OK ) {
-						
-						List<BufferedGame> favGamesList = new ArrayList<>();
-						
-						for( int i = 0; i < favGamesStatus.element.size(); i++ ) {
-							
-							GraphGame gm = favGamesStatus.element.get(i);
-							String url = gm.previewImage;
-					        String replacement = "media/crop/600/400/games";
-					        ImageIcon icon = null;
-
-							try {
-								url = url.replaceFirst("media/games", replacement);
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
-							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
-							}
-					        
-							favGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
-						}
-						
-						fillUserGamesList(favGamesList);
-						
-						if( favGamesList.size()!=0 ) {
-							displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
-						}
-					}	
-				}
-			},1);
-			
-			ButtonColumn buttonColumnAction = new ButtonColumn(usersTable, new AbstractAction() {
-				
-				public void actionPerformed(ActionEvent e) {
-
-					JTable table = (JTable)e.getSource();
-					int modelRow = Integer.valueOf(e.getActionCommand());
-					
-					String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
-					
-					StatusObject<Boolean> followStatus = graphHandler.doIFollow(selectedUsername);
-					
-					if( followStatus.statusCode == StatusCode.OK ) {
-						
-						if( followStatus.element ) { //I already follow the user, so I may unfollow him/her
-							
-							if( graphHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
-								System.out.println("->[GraphicInterface] error in unfollow user procedure");
-								return;
-							}
-							
-							System.out.println("->[GraphicInterface] unfollow procedure terminated correctly");
-							buttonColumnGames.setEnabled(false);
-					    	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
-						} else { //I don't follow the user so I may follow him/her
-						
-							if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
-								System.out.println("->[GraphicInterface] error in follow user procedure");
-								return;
-							}
-							
-							System.out.println("->[GraphicInterface] follow procedure terminated correctly");
-							buttonColumnGames.setEnabled(true);
-							usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
-						}
-					} else {
-						
-						System.out.println("->[GraphicInterface] error: impossible to determine if user is followed or not");
-						usersTableModel.setValueAt("N/A", modelRow, 2);
-					}
-				}
-			},2);
 			
 			usersTableModel.addRow(object);
-			buttonColumnGames.setEnabled(followed);
 		}
+		
+		ButtonColumn buttonColumnGames = new ButtonColumn(usersTable, new AbstractAction() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				JTable table = (JTable)e.getSource();
+				int modelRow = Integer.valueOf(e.getActionCommand());
+				
+				String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+				
+				StatusObject<Boolean> followed = graphHandler.doIFollow(selectedUsername);
+				
+				if( followed.statusCode != StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] impossible to determine if " + selectedUsername + " is followed. See games operation aborted.");
+				    return;
+				}
+				
+				if( !followed.element ) {
+					
+					System.out.println("->[GraphicInterface] you have no rights to see "  + selectedUsername + "'s games.");
+					displayedUserLabel.setText("Follow " + selectedUsername + " to see his/her games");
+					fillUserGamesList(null);
+					return;
+				}
+				
+				StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
+				
+				if( favGamesStatus.statusCode == StatusCode.OK ) {
+					
+					List<BufferedGame> favGamesList = new ArrayList<>();
+					
+					for( int i = 0; i < favGamesStatus.element.size(); i++ ) {
+						
+						GraphGame gm = favGamesStatus.element.get(i);
+						String url = gm.previewImage;
+				        String replacement = "media/crop/600/400/games";
+				        ImageIcon icon = null;
+
+						try {
+							url = url.replaceFirst("media/games", replacement);
+							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+						} catch(Exception ee) {
+							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH));
+						}
+				        
+						favGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
+					}
+					
+					fillUserGamesList(favGamesList);
+					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
+					
+				}	
+			}
+		},1);
+		
+		ButtonColumn buttonColumnAction = new ButtonColumn(usersTable, new AbstractAction() {
+			
+			public void actionPerformed(ActionEvent e) {
+
+				JTable table = (JTable)e.getSource();
+				int modelRow = Integer.valueOf(e.getActionCommand());
+				
+				String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+				
+				StatusObject<Boolean> followStatus = graphHandler.doIFollow(selectedUsername);
+				
+				if( followStatus.statusCode == StatusCode.OK ) {
+					
+					if( followStatus.element ) { //I already follow the user, so I may unfollow him/her
+						
+						if( graphHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
+							System.out.println("->[GraphicInterface] error in unfollow user procedure.");
+							return;
+						}
+						
+						System.out.println("->[GraphicInterface] unfollow procedure terminated correctly.");
+						usersTableModel.setValueAt("x", modelRow, 1);
+				    	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+					} else { //I don't follow the user so I may follow him/her
+					
+						if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
+							System.out.println("->[GraphicInterface] error in follow user procedure.");
+							return;
+						}
+						
+						System.out.println("->[GraphicInterface] follow procedure terminated correctly.");
+						usersTableModel.setValueAt("SEE GAMES", modelRow, 1);
+						usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
+					}
+				} else {
+					
+					System.out.println("->[GraphicInterface] error: impossible to determine if user is followed or not. Action set to N/A.");
+					usersTableModel.setValueAt("N/A", modelRow, 2);
+				}
+			}
+		},2);
 	}
 	
 	private void fillUserGamesList(List<BufferedGame> gamesList) {
@@ -494,6 +509,8 @@ public class GraphicInterface {
 	
 	private void initializeHomePage() {
 		
+		System.out.println("->[GraphicInterface] Initializing home page.");
+		
 		long followersLong = currentUser.getFollowedCount();
 		String followersNumber = Long.toString(followersLong);
 		
@@ -529,6 +546,7 @@ public class GraphicInterface {
 		} else {
 			
 			gamesNumber = "N/A";
+			System.out.println("->[GraphicInterface] impossible to retrieve favourite games list.");
 		}
 		
 		gamesNumberHPLabel.setText(gamesNumber);
@@ -556,6 +574,9 @@ public class GraphicInterface {
 					mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			    }
 			}
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to retrieve most viewed game.");
 		}
 		
 		StatusObject<PreviewGame> mostPopularStatus = logicHandler.getMostPopularPreview();
@@ -575,6 +596,9 @@ public class GraphicInterface {
 					mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(211, 145, Image.SCALE_SMOOTH)));	
 			    }
 			}	
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to retrieve most popular game.");
 		}
 	
 		StatusObject<List<User>> friendListStatus = graphHandler.getFollowedUsersList();
@@ -582,6 +606,9 @@ public class GraphicInterface {
 		if( friendListStatus.statusCode == StatusCode.OK ) {
 			
 			fillFollowedTable(friendListStatus.element);
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to retrieve followed users list");
 		}
 		
 		UserType type = graphHandler.getUserType();
@@ -618,6 +645,8 @@ public class GraphicInterface {
 
 	private void cleanHomePage() {
 		
+		System.out.println("->[GraphicInterface] cleaning home page.");
+		
 		gamesNumberHPLabel.setText("");
 		followerNumberHPLabel.setText("");
 		
@@ -642,7 +671,7 @@ public class GraphicInterface {
 		
 		if( gameStatus.statusCode != StatusCode.OK || gameStatus.element == null ) {
 			
-			cleanGamePage();
+			System.out.println("->[GraphicInterface] game not found. Redirecting to home page.");
 			
 			CardLayout cl = (CardLayout)(panel.getLayout());
 			
@@ -650,6 +679,8 @@ public class GraphicInterface {
 			
 			return;
 		}
+		
+		System.out.println("->[GraphicInterface] initializing game page.");
 		
 		Game game = gameStatus.element;
 		currentGame = game;
@@ -806,6 +837,9 @@ public class GraphicInterface {
 				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 				isGameFavourite = false;
 			}
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to determine if game is favourite.");
 		}
 			
 		List<String> imagesURL = game.getImagesURLs();
@@ -828,6 +862,9 @@ public class GraphicInterface {
 		
 		if( videoURLs != null && videoURLs.size()!=0 ) {
 			
+			System.out.println("->[GraphicInterface] " + videoURLs.size() + " video(s) found for " + game.getTitle() + ".");
+			System.out.println("->[GraphicInterface] currently displayed video 1.");
+			
 			currentVideosURLlist = videoURLs;
 			currentVideoIndex = 0;
 			lastVideoIndex = videoURLs.size()-1;
@@ -842,19 +879,22 @@ public class GraphicInterface {
 			previousVideoButton.setEnabled(false);
 		} else {
 			
+			System.out.println("->[GraphicInterface] no videos available for " + game.getTitle() +".");
 			nextVideoButton.setEnabled(false);
 			previousVideoButton.setEnabled(false);
 			videoPlayer.playVideo(null);
 		}
 		
 		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
-			System.out.println("->[GraphicInterface] -> error while incrementing view count");
+			System.out.println("->[GraphicInterface] error while incrementing view count.");
 		} else {
-			System.out.println("->[GraphicInterface] -> increment view count performed");
+			System.out.println("->[GraphicInterface] increment view count performed.");
 		}
 	}
 	
 	private void cleanGamePage() {
+		
+		System.out.println("->[GraphicInterface] cleaning game page.");
 		
 		gameDescriptionTextArea.setText("");
 		
@@ -896,6 +936,8 @@ public class GraphicInterface {
 	
 	private void initializeUserPage( String searchedUser ) {
 		
+		System.out.println("->[GraphicInterface] initialing user page.");
+		
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
 		
@@ -908,6 +950,9 @@ public class GraphicInterface {
 			fillUsersTable(featuredUsersStatus.element);
 			
 			displayedUser = searchedUser==null?featuredUsersStatus.element.get(0).getUsername():searchedUser;
+		} else {
+			
+			System.out.println("->[GraphicInterface] immpossible to retrieve featured users.");
 		}
 		
 		if( displayedUser != null ) {
@@ -936,10 +981,15 @@ public class GraphicInterface {
 				}
 				
 				fillUserGamesList(friendGamesList);
+				displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games." );
+			} else {
+				
+				System.out.println("->[GraphicInterface] impossible to retrieve friend's games.");
 			}	
+		} else {
+			
+			displayedUserLabel.setText("No games displayed.");
 		}
-		
-		displayedUserLabel.setText("Currently Displayed: " + displayedUser + "'s Games." );
 		
 		searchUserTextField.setText("Search User");
 		
@@ -947,6 +997,8 @@ public class GraphicInterface {
 	}
 	
 	private void cleanUserPage() {
+		
+		System.out.println("->[GraphicInterface] cleaning user page");
 		
 		usersTableModel.setRowCount(0);
 		userGamesListModel.removeAllElements();
@@ -958,6 +1010,8 @@ public class GraphicInterface {
 	}
 	
 	private void initializeAdminPage() {
+		
+		System.out.println("->[GraphicInterface] initializing admin page.");
 		
 		String userCount, gameCount;
 		
@@ -991,6 +1045,8 @@ public class GraphicInterface {
 	
 	private void cleanAdminPage() {
 		
+		System.out.println("->[GraphicInterface] cleaning admin page");
+		
 		userCountLabel.setText("User Count:");
 		gameCountLabel.setText("Game Count:");
 		
@@ -1004,6 +1060,8 @@ public class GraphicInterface {
 	
 	
 	private void initializeSearchGamePage() {
+		
+		System.out.println("->[GraphicInterface] initializing admin page");
 		
 		featuredButton.setForeground(Color.WHITE);
 		featuredButton.setBackground(new Color(30,144,255));
@@ -1046,7 +1104,10 @@ public class GraphicInterface {
 										break;
 								    }
 								}	
-							}					
+							} else {
+								
+								System.out.println("->[GraphicInterface] impossible to retrieve " + game.getTitle() + " genre.");
+							}
 						}
 						
 						fillSearchedGamesList(genreList);
@@ -1055,6 +1116,9 @@ public class GraphicInterface {
 				});
 				gameGenreMenu.add(item);
 			}
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to retrieve genre list.");
 		}
 		
 		StatusObject<List<GraphGame>> featuredGamesStatus = graphHandler.getFeaturedGamesList();
@@ -1082,6 +1146,9 @@ public class GraphicInterface {
 			
 			fillSearchedGamesList(featuredGamesList);
 			supportGamesList = featuredGamesList;
+		} else {
+			
+			System.out.println("->[GraphicInterface] impossible to retrieve featured games list.");
 		}
 		
 		
@@ -1349,7 +1416,7 @@ public class GraphicInterface {
 					
 					if( registrationStatus.statusCode == StatusCode.ERR_GRAPH_USER_ALREADYEXISTS ) {
 						
-						errorMessageLabel.setText("Error occured during registration");
+						errorMessageLabel.setText("->[GraphicInterface] Error occured during registration: user already exists");
 					} else {
 						
 						errorMessageLabel.setText("Generic Error");
@@ -4037,6 +4104,11 @@ public class GraphicInterface {
 		userGamesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				
+				if( userGamesList.getToolTipText(arg0) == null ) {
+					
+					return;
+				}
 				
 				BufferedGame selectedGame = userGamesList.getSelectedValue();
 				
