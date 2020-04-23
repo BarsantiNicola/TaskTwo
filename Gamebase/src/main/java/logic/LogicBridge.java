@@ -24,7 +24,6 @@ public class LogicBridge {
 	
 	private MongoConnection MONGO;
 	private ImgCache CACHE;
-	//private GraphConnector graph;
 	
 	public LogicBridge()
 	 {
@@ -33,8 +32,7 @@ public class LogicBridge {
 			 // ricordare di avere la VPN attiva
 
 			  MONGO = new MongoConnection("172.16.0.80",27018);					 
-			  CACHE = new ImgCache("cache");
-			  //graph.connect("bolt://172.16.0.78:7687","neo4j","password");       
+			  CACHE = new ImgCache("cache");      
 
 			 }
 		 catch( Exception e )
@@ -140,7 +138,7 @@ public class LogicBridge {
 	
 	public void closeConnection(){
 		MONGO.closeConnection();
-		//graph.close();                 
+		               
 	}
 	
 	public static void main(String[] args) {

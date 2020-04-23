@@ -394,22 +394,41 @@ public class GraphicInterface {
 						
 						GraphGame gm = favGamesStatus.element.get(i);
 						String url = gm.previewImage;
-				        String replacement = "media/crop/600/400/games";
-				        ImageIcon icon = null;
-
-						try {
-							url = url.replaceFirst("media/games", replacement);
-							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-						} catch(Exception ee) {
-							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+						ImageIcon icon = null;
+						
+						icon = logicHandler.getCachedImg(url);
+						
+						if( icon == null ) {
+							
+							String replacement = "media/crop/600/400/games";
+							String croppedUrl = null;
+							
+							try {
+								croppedUrl = url.replaceFirst("media/games", replacement);
+								icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+								
+								if(logicHandler.cacheImg(url, icon)) {
+									
+									System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+								}
+								
+							} catch(Exception ee) {
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							}
+						} else {
+							
+							System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+							
+							if( icon.getIconHeight() != 80 || icon.getIconHeight() != 100 ) {
+								
+								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							}
 						}
-				        
 						favGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 					}
 					
 					fillUserGamesList(favGamesList);
 					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
-					
 				}	
 			}
 		},1);
@@ -482,18 +501,33 @@ public class GraphicInterface {
 		}
 
 		Image image = null;
-		URL url;
+		ImageIcon icon = null;
+		String url;
 		
 		for( int i=0; i < imagesURLList.size(); i++ ) {
-			try {
-				url = new URL(imagesURLList.get(i));
-				image = ImageIO.read(url);
-			} catch (Exception e) {
+			
+			url = imagesURLList.get(i);
+			icon = logicHandler.getCachedImg(url);
+			
+			if( icon == null ) {
+				
 				try {
-					image = ImageIO.read(new File("/resources/defaultGamePicture.png"));
-				} catch (IOException e1) {
-					e1.printStackTrace();
+					image = ImageIO.read(new URL(url));
+					
+					if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+						
+						System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+					}
+				} catch (Exception e) {
+					try {
+						image = ImageIO.read(new File("/resources/defaultGamePicture.png"));
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
+			} else {
+				
+				image = icon.getImage();
 			}
 			
 			imagesListModel.addElement(image);
@@ -526,16 +560,37 @@ public class GraphicInterface {
 				
 				GraphGame gm = gamesListStatus.element.get(i);
 				String url = gm.previewImage;
-		        String replacement = "media/crop/600/400/games"; 
 				ImageIcon icon = null;
-			
-				try {
-					url = url.replaceFirst("media/games", replacement); 
-					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-				} catch(Exception e) {
-					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+				
+				icon = logicHandler.getCachedImg(url);
+				
+				if( icon == null ) {
+					
+					String replacement = "media/crop/600/400/games"; 
+					String croppedUrl = null;
+					
+					try {
+						croppedUrl = url.replaceFirst("media/games", replacement); 
+						icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+						
+						if(logicHandler.cacheImg(url, icon)) {
+							
+							System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+						}
+						
+					} catch(Exception e) {
+						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+					}
+				} else {
+					
+					System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+					
+					if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+						
+						icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+					}
 				}
-		
+
 				favouriteGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 			}
 				
@@ -2247,7 +2302,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "topGamesPanel");
 							
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most liked games.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2305,7 +2363,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "topGenresPanel");
 				
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most liked genres.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2353,7 +2414,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "topRatedGamesByYearPanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve top rated games by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2402,7 +2466,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "topViewedGamesByYearPanel");
 						
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2446,7 +2513,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "maxViewedGameByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2498,7 +2568,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "maxRatedGameByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve max rated games by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2546,7 +2619,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "viewCountByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2594,7 +2670,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "gamesCountByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve games count by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2641,7 +2720,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "ratingsCountByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve ratings count by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2693,7 +2775,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "gamesCountByYearPanel");
 						
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve games count by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2745,8 +2830,11 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "viewsCountByYearPanel");
 						
-				} 
-				
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by year.");
+				}
+								
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
 				gameCountTextField.setText("Insert Year");
@@ -2797,7 +2885,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "ratingsCountByYearPanel");
 						
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve ratings count by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2879,6 +2970,9 @@ public class GraphicInterface {
 				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "gameCountYearGenPanel");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve game count for year " + year + ".");
 				}
 			}
 		});
@@ -2957,6 +3051,9 @@ public class GraphicInterface {
 				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "ratingsCountYearGenPanel");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve ratings count for year " + year + ".");
 				}
 			}
 		});
@@ -3035,6 +3132,9 @@ public class GraphicInterface {
 				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "viewsCountYearGenPanel");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve views count for year " + year + ".");
 				}
 			}
 		});
@@ -3152,11 +3252,15 @@ public class GraphicInterface {
 					return;
 				}
 				
+				System.out.println("->[GraphicInterface] searched string: " + searchedString + "." );
+				
 				StatusObject<DataNavigator> searchStatusObject  = logicHandler.searchGamesPreviews(searchedString);
 				
 				if( searchStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( searchStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] data navigator object is null.");
 						return;
 					}
 
@@ -3185,13 +3289,16 @@ public class GraphicInterface {
 							}
 							
 							searchedGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
-						}
+						} 
 						
 						searchGamesDataNavigator = searchStatusObject.element;
 						fillSearchedGamesList(searchedGamesList);
 						supportGamesList = searchedGamesList;
 					    
-					}	
+					} else {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve list of preview games.");
+					}
 				}
 				
 				mostViewedButton.setBackground(Color.LIGHT_GRAY);
@@ -3239,6 +3346,8 @@ public class GraphicInterface {
 				if( viewedStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( viewedStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
 						return;
 					}
 
@@ -3272,7 +3381,10 @@ public class GraphicInterface {
 						searchGamesDataNavigator = viewedStatusObject.element;
 						fillSearchedGamesList(mostViewedGamesList);
 						supportGamesList = mostViewedGamesList;   
-					}	
+					} else {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve list of preview game (most viewed).");
+					}
 				}
 			}
 		});
@@ -3310,6 +3422,8 @@ public class GraphicInterface {
 				if( likedStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( likedStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
 						return;
 					}
 
@@ -3343,6 +3457,9 @@ public class GraphicInterface {
 						searchGamesDataNavigator = likedStatusObject.element;
 						fillSearchedGamesList(mostLikedGamesList);
 						supportGamesList = mostLikedGamesList;   
+					} else{
+						
+						System.out.println("->[GraphicInterface] impossible to retieve list of preview games (most liked).");
 					}
 				}
 			}
@@ -3381,6 +3498,8 @@ public class GraphicInterface {
 				if( recentStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( recentStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
 						return;
 					}
 
@@ -3414,6 +3533,9 @@ public class GraphicInterface {
 						searchGamesDataNavigator = recentStatusObject.element;
 						fillSearchedGamesList(mostRecentGamesList);
 						supportGamesList = mostRecentGamesList;   
+					} else {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve list of preview games (most recent).");
 					}
 				}
 			}
@@ -3453,6 +3575,7 @@ public class GraphicInterface {
 					
 					if( featuredStatusObject.element == null || featuredStatusObject.element.size() == 0 ) {
 						
+						System.out.println("->[GraphicInterface] no feaured games.");
 						return;
 					}
 					
@@ -3478,6 +3601,9 @@ public class GraphicInterface {
 					searchGamesDataNavigator = null;
 					fillSearchedGamesList(featuredGamesList);
 					supportGamesList = featuredGamesList;
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve featured games.");
 				}
 			}
 		});
@@ -3566,6 +3692,7 @@ public class GraphicInterface {
 			    		  
 			    		  if( status.element == null || status.element.size() == 0) {
 			    			  
+			    			  System.out.println("->[GraphicInterface] no more games.");
 			    			  return;
 			    		  }
 			    		  
@@ -3591,7 +3718,10 @@ public class GraphicInterface {
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
 			    		  bar.setValue(1);
-			    	  }  
+			    	  }  else {
+			    		  
+			    		  System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
+			    	  }
 			      } 
 			      
 			      if( value+extent == max  ) {
@@ -3602,6 +3732,7 @@ public class GraphicInterface {
 			    		  
 			    		  if( status.element == null || status.element.size() == 0) {
 			    			  
+			    			  System.out.println("->[GraphicInterface] no more games.");
 			    			  return;
 			    		  }
 			    		  
@@ -3627,6 +3758,9 @@ public class GraphicInterface {
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
 			    		  bar.setValue(1);
+			    	  } else{
+			    		  
+			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
 			    	  }
 			      }
 		      }
@@ -3781,8 +3915,11 @@ public class GraphicInterface {
 						
 						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
+						
+						System.out.println("->[GraphicInterface] game correctly remove from favourites.");
 					}else {
 						
+						System.out.println("->[GraphicInterface] impossbile to remove game from favourites.");
 						isGameFavourite = (Boolean) null;
 					}
 				} else if( !isGameFavourite ){
@@ -3791,8 +3928,11 @@ public class GraphicInterface {
 						
 						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
+						
+						System.out.println("->[GraphicInterface] game correctly added to favourites.");
 					} else {
 						
+						System.out.println("->[GraphicInterface] impossible to add game to favourites.");
 						isGameFavourite = (Boolean) null;
 					}
 				} 
@@ -3919,6 +4059,8 @@ public class GraphicInterface {
 				
 				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
+				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
+				
 				if( currentVideoIndex == 1 ) {
 					
 					previousVideoButton.setEnabled(true);
@@ -3951,7 +4093,11 @@ public class GraphicInterface {
 				
 				currentVideoIndex--;
 				
+				videoPlayer.stopVideo();
+				
 				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
+				
+				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
 				
 				if( currentVideoIndex == lastVideoIndex-1 ) {
 					
@@ -4001,6 +4147,9 @@ public class GraphicInterface {
 				if( featuredUserStatus.statusCode == StatusCode.OK ) {
 					
 					fillUsersTable(featuredUserStatus.element);
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve featured users.");
 				}
 				
 			}
@@ -4038,8 +4187,12 @@ public class GraphicInterface {
 				String searchedString = searchUserTextField.getText();
 				
 				if( searchedString.equals("") ) {
+					
+					System.out.println("->[GraphicInterface] searched empty string.");
 					return;
 				}
+				
+				System.out.println("->[GraphicInterface] searched string: " + searchedString + ".");
 				
 				featuredUserButton.setBackground(Color.WHITE);
 				featuredUserButton.setForeground(Color.BLACK);
@@ -4051,6 +4204,9 @@ public class GraphicInterface {
 					fillUsersTable(searchedUserStatus.element);
 					userGamesListModel.removeAllElements();
 					displayedUserLabel.setText("Currently Displayed: ");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve searched users.");
 				}
 			}
 		});
@@ -4278,6 +4434,9 @@ public class GraphicInterface {
 				if( graphHandler.saveUser() == StatusCode.OK ) {
 					
 					initializeUserInformationPage();
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to save user info.");
 				}
 				
 			}
