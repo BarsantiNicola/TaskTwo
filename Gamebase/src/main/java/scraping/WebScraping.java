@@ -30,25 +30,25 @@ public class WebScraping {
 
 	
 	//Update database using dynamic scraping (NEED TEST)
-	public static boolean updateDatabase(int MaxGameID) { 
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Starting.");
+	public static List<Game> scrapeNewGames(int MaxGameID) { 
+		System.out.println("WEBSCRAPING/scrapeNewGames--> Starting.");
 		if (MaxGameID == 0) {
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> MaxGameID value is not accettable");
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> UpdateDatabase can't be executed. Returning.");
-			return false;
+			System.out.println("WEBSCRAPING/scrapeNewGames--> MaxGameID value is not accettable");
+			System.out.println("WEBSCRAPING/scrapeNewGames--> UpdateDatabase can't be executed. Returning.");
+			return null;
 		}
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new games");
+		System.out.println("WEBSCRAPING/scrapeNewGames--> Search for new games");
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new game: ID=" + MaxGameID);
+			System.out.println("WEBSCRAPING/scrapeNewGames--> Search for new game: ID=" + MaxGameID);
 			JSONObject newGame = searchNewGame(MaxGameID);
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> New game obtained");
+			System.out.println("WEBSCRAPING/scrapeNewGames--> New game obtained");
 			MaxGameID++;
 			if(newGame.has("detail")) {
-				System.out.println("WEBSCRAPING/UPDATEDATABASE--> Game not suitable");
+				System.out.println("WEBSCRAPING/scrapeNewGames--> Game not suitable");
 				failed ++;
 				continue;
 			}
@@ -59,24 +59,24 @@ public class WebScraping {
 			newGames.add(newGame);
 		}
 		
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> New games list:"+ newGames.size());
+		System.out.println("WEBSCRAPING/scrapeNewGames--> New games list:"+ newGames.size());
 		for(int j =0; j < newGames.size(); j++) {
 			System.out.println(newGames.get(j));
 			
 		}
 		
 		//Add Games to database
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Creating objects Game and GraphGame for new games");
+		System.out.println("WEBSCRAPING/scrapeNewGames--> Creating objects Game and GraphGame for new games");
 		List<Game> gamesToAdd = new ArrayList<Game>();
 		List<GraphGame> graphGamesToAdd = new ArrayList<GraphGame>();
 		for(int k = 0; k < newGames.size(); k++) {
 			
-			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));
-			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gameToAdd);			
+			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));	
+			gamesToAdd.add(gameToAdd);
 		}
 		
-		//Inserisci nel database le due liste
-		return false; 
+		//Return list of games to add
+		return gamesToAdd;
 	}
 	
 	

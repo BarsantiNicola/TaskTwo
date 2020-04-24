@@ -115,9 +115,20 @@ public class LogicBridge {
 	
 	public boolean updateDatabase() { 
 		int MaxGameId= MONGO.getMaxGameId().element;
-		return WebScraping.updateDatabase(MaxGameId); 
+		List<Game> gamesToAdd = WebScraping.scrapeNewGames(MaxGameId); 
 		
+		for(int i= 0; i < gamesToAdd.size(); i++) {
+			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gamesToAdd.get(i));
+			if(GraphInterface.addGame(graphGameToAdd)!=StatusCode.OK)
+				return false;
+			if(MONGO.addGame(gamesToAdd.get(i)) != StatusCode.OK) {
+				GraphConnector.deleteGame(graphGameToAdd._id));
+				return false;
+			}
+			System.out.println("LogicBridge/updateDatabase()--> Added game:" + gamesToAdd.get(i).getTitle() + " to the database");
 		}
+	return true;
+	}
 	
 	public static String getTwitchURLChannel( String GAME ) { return WebScraping.getTwitchURLChannel(GAME); }
 	
