@@ -421,6 +421,7 @@ public class GraphicInterface {
 							
 							if( icon.getIconHeight() != 80 || icon.getIconHeight() != 100 ) {
 								
+								System.out.println("->[GraphicInterface] cached image need to be resized.");
 								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
 							}
 						}
