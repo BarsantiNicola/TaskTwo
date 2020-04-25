@@ -54,8 +54,10 @@ public class WebScraping {
 			}
 			i++;
 			if (failed == 100){
+				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> More than 100 attempts failed. Stopping the search for new games...");
 				break;
 			}
+			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Game suitable");
 			newGames.add(newGame);
 		}
 		
