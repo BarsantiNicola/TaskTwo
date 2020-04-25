@@ -1,5 +1,6 @@
 package logic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -125,16 +126,25 @@ public class LogicBridge {
 		int MaxGameId= MONGO.getMaxGameId().element;
 		List<Game> gamesToAdd = WebScraping.scrapeNewGames(MaxGameId); 
 		
+		if (gamesToAdd.isEmpty()){
+			System.out.println("LogicBridge/updateDatabase()--> List gamesToAdd is empty. Returning false.");
+			return false;
+		}
 		for(int i= 0; i < gamesToAdd.size(); i++) {
 			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gamesToAdd.get(i));
 			if(GRAPH.addGame(graphGameToAdd)!=StatusCode.OK)
+				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Graph database. Interrupting update");
+				util.recapUpdate(gamesToAdd, i);
 				return false;
 			if(MONGO.addGame(gamesToAdd.get(i)) != StatusCode.OK) {
+				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Document database. Interrupting update");
 				GRAPH.deleteGame(graphGameToAdd._id);
+				util.recapUpdate(gamesToAdd, i);
 				return false;
 			}
 			System.out.println("LogicBridge/updateDatabase()--> Added game:" + gamesToAdd.get(i).getTitle() + " to the database");
 		}
+		util.recapUpdate(gamesToAdd, gamesToAdd.size());
 	return true;
 	}
 	
