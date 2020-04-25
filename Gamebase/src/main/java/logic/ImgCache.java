@@ -63,7 +63,7 @@ public class ImgCache {
 	   public ImageIcon createImage(byte[] img){
 
 		   	try {
-		   	  System.out.println(img.length);
+		   	  //System.out.println(img.length);
 		   	  BufferedImage bImageFromConvert = ImageIO.read(new ByteArrayInputStream(img));
 		      ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		      ImageIO.write(bImageFromConvert, "jpg", bos );

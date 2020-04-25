@@ -112,7 +112,7 @@ public class LogicBridge {
 	
 	
 	///////////////  DATASCRAPER FUNCTIONS
-	
+	/*
 	public boolean updateDatabase() { 
 		int MaxGameId= MONGO.getMaxGameId().element;
 		List<Game> gamesToAdd = WebScraping.scrapeNewGames(MaxGameId); 
@@ -128,7 +128,7 @@ public class LogicBridge {
 			System.out.println("LogicBridge/updateDatabase()--> Added game:" + gamesToAdd.get(i).getTitle() + " to the database");
 		}
 	return true;
-	}
+	}*/
 	
 	public static String getTwitchURLChannel( String GAME ) { return WebScraping.getTwitchURLChannel(GAME); }
 	
