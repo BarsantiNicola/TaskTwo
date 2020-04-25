@@ -119,7 +119,7 @@ public class LogicBridge {
 		
 		for(int i= 0; i < gamesToAdd.size(); i++) {
 			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gamesToAdd.get(i));
-			if(GraphInterface.addGame(graphGameToAdd)!=StatusCode.OK)
+			if(GraphInterace.addGame(graphGameToAdd)!=StatusCode.OK)
 				return false;
 			if(MONGO.addGame(gamesToAdd.get(i)) != StatusCode.OK) {
 				GraphConnector.deleteGame(graphGameToAdd._id));
