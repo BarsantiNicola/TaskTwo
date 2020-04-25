@@ -29,7 +29,8 @@ public class GraphicInterface {
 	private JFrame frame;
 	private JPanel panel;
 	
-	//LOGIN PANEL 
+	///////////LOGIN PANEL 
+	
 	private JPanel loginPanel;
 	private JLabel usernameLabel;
 	private JLabel passwordLabel;
@@ -40,7 +41,8 @@ public class GraphicInterface {
 	private JLabel errorMessageLabel;
 	private JLabel myGamesLabel;
 
-	//HOME PANEL 
+	//////////HOME PANEL 
+	
 	private JPanel homePagePanel;
 	private JLabel gamesNumberHPLabel;
 	private JLabel followerNumberHPLabel;
@@ -62,27 +64,8 @@ public class GraphicInterface {
 	private JTable followedTable;
 	private JTableHeader followedTableHeader;
 	private JList<BufferedGame> myGamesList;
-	private DefaultListModel<BufferedGame> myGamesListModel = new DefaultListModel<BufferedGame>();	
-	private DefaultTableModel followedTableModel = new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Username", "Games", 
-			}
-		) {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			@SuppressWarnings("rawtypes")
-			Class[] columnTypes = new Class[] {
-				String.class, String.class
-			};
-			@SuppressWarnings("unchecked")
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-		};
+	private DefaultListModel<BufferedGame> myGamesListModel;	
+	private DefaultTableModel followedTableModel;
 	
 	///////// ADMIN PANEL
 		
@@ -102,6 +85,7 @@ public class GraphicInterface {
 	private JLabel updateDatabaseResultLabel;
 	
 	///////// ANALYST PANEL
+	
 	private JPanel analystPanel;
 	private JButton analystHomeButton;
 	private JButton topUsersButton;
@@ -122,7 +106,6 @@ public class GraphicInterface {
 	private PieChartPanel ratingsCountYearGenPanel;
 	private PieChartPanel viewsCountYearGenPanel;
 	private PieChartPanel gameCountYearGenPanel;
-	
 	private JButton topGamesButton;
 	private JButton topGenresButton;
 	private JButton topRatedGameByYearButton;
@@ -138,12 +121,12 @@ public class GraphicInterface {
 	private JButton ratingsCountYearGenButton;
     private JButton viewsCountByYearGenButton;
     private JButton gameCountYearGenButton;
-	
 	private JTextField gameCountTextField;
 	private JTextField viewCountTextField;
 	private JTextField ratingsCountTextField;
 		
 	///////// SEARCH GAME PANEL
+	
 	private JPanel searchGamePanel;	
 	private JButton homeSEButton;
 	private JButton featuredButton;
@@ -154,14 +137,15 @@ public class GraphicInterface {
 	private JButton searchButton;
 	private JScrollPane searchGameScrollPane;
 	private JList<BufferedGame> searchedGamesJList;	
-	private DefaultListModel<BufferedGame> searchedGamesListModel = new DefaultListModel<BufferedGame>();
+	private DefaultListModel<BufferedGame> searchedGamesListModel;
 	private JMenu gameGenreMenu;
 	private JMenuBar gameGenreMenuBar;
 	private AdjustmentListener searchGamesVerticalScrollBarListener;
 	private JScrollBar searchGamesVerticalScrollBar;
 	private DataNavigator searchGamesDataNavigator;
 	
-	/////// GAME PANEL
+	//////////GAME PANEL
+	
 	private JPanel gamePanel;	
 	private JTextArea gameDescriptionTextArea;
 	private JScrollPane gameDescriptionScrollPane;
@@ -175,7 +159,7 @@ public class GraphicInterface {
 	private ActionListener playstationButtonListener;
 	private ActionListener xboxButtonListener;
 	private JButton homeGameButton;
-	private DefaultListModel<Image> imagesListModel = new DefaultListModel<Image>();
+	private DefaultListModel<Image> imagesListModel;
 	private JScrollPane gameImagesScrollPane;
 	private JList<Image> imagesList;
 	private JMenuBar voteMenuBar;
@@ -194,40 +178,25 @@ public class GraphicInterface {
 	private JButton XBoxButton;
 	
 	////////USER PANEL
+	
 	private JPanel userPanel;
 	private JButton searchUserButton;
 	private JButton homeUserButton;
 	private JScrollPane userGamesScrollPane;
 	private JList<BufferedGame> userGamesList;
-	private DefaultListModel<BufferedGame> userGamesListModel = new DefaultListModel<BufferedGame>();
+	private DefaultListModel<BufferedGame> userGamesListModel;
 	private JScrollPane usersScrollPane;
 	private JLabel displayedUserLabel;
 	private JButton featuredUserButton;
 	private JTextField searchUserTextField;
 	private JTable usersTable;
 	private JTableHeader usersTableHeader;
-	private DefaultTableModel usersTableModel = new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Username", "Games", "Action"
-			}
-		) {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class
-			};
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-	};
+	private DefaultTableModel usersTableModel;
 	private JLabel searchUserLabel;
 	private JLabel searchUserWelcomeLabel;
 	
 	///////// USER INFORMATION PANEL
+	
 	private JPanel userInformationPanel;	
 	private JButton homeUserInformationButton;
 	private JTextField ageTextField;
@@ -252,17 +221,18 @@ public class GraphicInterface {
 	private JLabel genreLabel;
 	
 	///////// LOGIC AND SUPPORT INFO
-	private LogicBridge logicHandler = new LogicBridge();
-	private GraphConnector graphHandler = new GraphConnector();
+	
+	private LogicBridge logicHandler;
 	private User currentUser;
-	private Game currentGame = null;
-	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
-	private List<BufferedGame> supportGamesList = null;
-	private List<String> currentVideosURLlist = null;
-	private int currentVideoIndex = 0;
-	private int lastVideoIndex = 0;
-	private Boolean isGameFavourite =  null;
-	private DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	private Game currentGame;
+	private Font titleFont;
+	private List<BufferedGame> supportGamesList;
+	private List<String> currentVideosURLlist;
+	private int currentVideoIndex;
+	private int lastVideoIndex;
+	private Boolean isGameFavourite;
+	private DefaultTableCellRenderer centerRenderer;
+	
 	
 	/////// SUPPORT FUNCTIONS
 	
@@ -300,6 +270,7 @@ public class GraphicInterface {
 			followedTableModel.addRow(object);
 		}
 		
+		@SuppressWarnings({ "unused", "serial" })
 		ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -341,7 +312,7 @@ public class GraphicInterface {
 		
 		for( User friend: usersList ) {
 			
-			StatusObject<Boolean> followStatus = graphHandler.doIFollow(friend.getUsername());
+			StatusObject<Boolean> followStatus = logicHandler.doIFollow(friend.getUsername());
 			
 			if( followStatus.statusCode != StatusCode.OK ) {
 				System.out.println("->[GraphicInterface] impossible to determine if user " + friend.getUsername() + 
@@ -359,6 +330,7 @@ public class GraphicInterface {
 			usersTableModel.addRow(object);
 		}
 		
+		@SuppressWarnings({ "unused", "serial" })
 		ButtonColumn buttonColumnGames = new ButtonColumn(usersTable, new AbstractAction() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -368,7 +340,7 @@ public class GraphicInterface {
 				
 				String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 				
-				StatusObject<Boolean> followed = graphHandler.doIFollow(selectedUsername);
+				StatusObject<Boolean> followed = logicHandler.doIFollow(selectedUsername);
 				
 				if( followed.statusCode != StatusCode.OK ) {
 					
@@ -384,7 +356,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
+				StatusObject<List<GraphGame>> favGamesStatus = logicHandler.getFavouritesGamesList(selectedUsername);
 				
 				if( favGamesStatus.statusCode == StatusCode.OK ) {
 					
@@ -434,6 +406,7 @@ public class GraphicInterface {
 			}
 		},1);
 		
+		@SuppressWarnings({ "unused", "serial" })
 		ButtonColumn buttonColumnAction = new ButtonColumn(usersTable, new AbstractAction() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -443,13 +416,13 @@ public class GraphicInterface {
 				
 				String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 				
-				StatusObject<Boolean> followStatus = graphHandler.doIFollow(selectedUsername);
+				StatusObject<Boolean> followStatus = logicHandler.doIFollow(selectedUsername);
 				
 				if( followStatus.statusCode == StatusCode.OK ) {
 					
 					if( followStatus.element ) { //I already follow the user, so I may unfollow him/her
 						
-						if( graphHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
+						if( logicHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
 							System.out.println("->[GraphicInterface] error in unfollow user procedure.");
 							return;
 						}
@@ -459,7 +432,7 @@ public class GraphicInterface {
 				    	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
 					} else { //I don't follow the user so I may follow him/her
 					
-						if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
+						if( logicHandler.followUser(selectedUsername) != StatusCode.OK ) {
 							System.out.println("->[GraphicInterface] error in follow user procedure.");
 							return;
 						}
@@ -549,7 +522,7 @@ public class GraphicInterface {
 		long followersLong = currentUser.getFollowedCount();
 		String followersNumber = Long.toString(followersLong);
 		
-		StatusObject<List<GraphGame>> gamesListStatus = graphHandler.getFavouritesGamesList();
+		StatusObject<List<GraphGame>> gamesListStatus = logicHandler.getFavouritesGamesList();
 		
 		String gamesNumber = null;
 		
@@ -657,7 +630,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve most popular game.");
 		}
 	
-		StatusObject<List<User>> friendListStatus = graphHandler.getFollowedUsersList();
+		StatusObject<List<User>> friendListStatus = logicHandler.getFollowedUsersList();
 		
 		if( friendListStatus.statusCode == StatusCode.OK ) {
 			
@@ -667,7 +640,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve followed users list");
 		}
 		
-		UserType type = graphHandler.getUserType();
+		UserType type = logicHandler.getUserType();
 		
 		switch(type) {
 			case ADMINISTRATOR:
@@ -749,6 +722,7 @@ public class GraphicInterface {
 		} else {
 			
 			gameDescriptionTextArea.setText(gameDescription);
+			
 		}
 		
 		gameTitleLabel.setText(game.getTitle());
@@ -867,24 +841,11 @@ public class GraphicInterface {
 			XBoxButton.setEnabled(false);
 		}
 		
-		StatusObject<List<GraphGame>> myGamesStatus = graphHandler.getFavouritesGamesList();
+		StatusObject<Boolean> isFavourite = logicHandler.doIFavourite(game.getId().toString());
 		
-		if( myGamesStatus.statusCode == StatusCode.OK ) {
+		if( isFavourite.statusCode == StatusCode.OK ) {
 			
-			boolean favourite = false;
-			
-			for( int i = 0; i < myGamesStatus.element.size(); i++ ) {
-				
-				if( Integer.parseInt(myGamesStatus.element.get(i)._id) == game.getId() ) {
-					
-					favourite = true;
-					break;
-				}
-			}
-			
-			isGameFavourite = favourite;
-			
-			if( favourite ) {
+			if( isFavourite.element ) {
 				
 				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 				isGameFavourite = true;
@@ -893,6 +854,7 @@ public class GraphicInterface {
 				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 				isGameFavourite = false;
 			}
+			
 		} else {
 			
 			System.out.println("->[GraphicInterface] impossible to determine if game is favourite.");
@@ -997,7 +959,7 @@ public class GraphicInterface {
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
 		
-		StatusObject<List<User>> featuredUsersStatus = graphHandler.getSuggestedUsersList();
+		StatusObject<List<User>> featuredUsersStatus = logicHandler.getSuggestedUsersList();
 		
 		if( featuredUsersStatus.statusCode == StatusCode.OK ) {
 			
@@ -1010,7 +972,7 @@ public class GraphicInterface {
 		
 		if( searchedUser != null ) {
 			
-			StatusObject<List<GraphGame>> friendGamesStatus = graphHandler.getFavouritesGamesList(searchedUser);
+			StatusObject<List<GraphGame>> friendGamesStatus = logicHandler.getFavouritesGamesList(searchedUser);
 			
 			if( friendGamesStatus.statusCode == StatusCode.OK ) {
 				
@@ -1090,7 +1052,7 @@ public class GraphicInterface {
 		
 		String userCount, gameCount;
 		
-		StatusObject<Long> userCountStatus = graphHandler.getTotalUsersCount();
+		StatusObject<Long> userCountStatus = logicHandler.getTotalUsersCount();
 		
 		if( userCountStatus.statusCode == StatusCode.OK ) {
 			
@@ -1196,7 +1158,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve genre list.");
 		}
 		
-		StatusObject<List<GraphGame>> featuredGamesStatus = graphHandler.getFeaturedGamesList();
+		StatusObject<List<GraphGame>> featuredGamesStatus = logicHandler.getFeaturedGamesList();
 		
 		if( featuredGamesStatus.statusCode == StatusCode.OK ) {
 			
@@ -1336,7 +1298,7 @@ public class GraphicInterface {
 		
 		System.out.println("->[GraphicInterface] initializing analyst page.");
 		
-		StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
+		StatusObject<List<User>> topUsersStatus = logicHandler.getMostFollowedUsers(6);
 		
 		if( topUsersStatus.statusCode == StatusCode.OK ) {
 			
@@ -1415,16 +1377,65 @@ public class GraphicInterface {
 	 */
 	public GraphicInterface() {
 		
-		StatusCode graphConnection = graphHandler.connect("bolt://172.16.0.78:7687","neo4j","password");
+		logicHandler = new LogicBridge();
 		
-		if( graphConnection != StatusCode.OK ) {
-			
-			System.out.println("->[GraphicInterface] Failed to connect to graph database");
-			System.exit(0);
-		}
-		
+		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
 		currentUser = null;
+		currentGame = null;
+		isGameFavourite =  null;
+		lastVideoIndex = 0;
+		currentVideoIndex = 0;
+		titleFont = new Font("Corbel", Font.BOLD, 20);
+		supportGamesList = null;
+		currentVideosURLlist = null;
+		
+		userGamesListModel = new DefaultListModel<BufferedGame>();
+		imagesListModel = new DefaultListModel<Image>();
+		searchedGamesListModel = new DefaultListModel<BufferedGame>();
+		myGamesListModel = new DefaultListModel<BufferedGame>();
+
+		followedTableModel = new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Username", "Games", 
+				}
+			) {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				@SuppressWarnings("rawtypes")
+				Class[] columnTypes = new Class[] {
+					String.class, String.class
+				};
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+			};
+		
+		usersTableModel = new DefaultTableModel(
+					new Object[][] {
+					},
+					new String[] {
+						"Username", "Games", "Action"
+					}
+				) {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+					@SuppressWarnings("rawtypes")
+					Class[] columnTypes = new Class[] {
+						String.class, String.class, String.class
+					};
+					@SuppressWarnings({ "unchecked", "rawtypes" })
+					public Class getColumnClass(int columnIndex) {
+						return columnTypes[columnIndex];
+					}
+			};
 		
 		initialize();
 	}
@@ -1438,7 +1449,6 @@ public class GraphicInterface {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
 				logicHandler.closeConnection();
-				graphHandler.close();
 			}
 		});
 		frame.setBounds(100, 100, 952, 615);
@@ -1532,7 +1542,7 @@ public class GraphicInterface {
 				
 				User registeredUser = new User(username, password,LocalDate.now());
 				
-				StatusObject<UserInfo> registrationStatus = graphHandler.register(registeredUser);
+				StatusObject<UserInfo> registrationStatus = logicHandler.register(registeredUser);
 				
 				if( registrationStatus.statusCode == StatusCode.OK ) {
 					
@@ -1589,7 +1599,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				StatusObject<UserInfo> loginStatus = graphHandler.login(username, password);
+				StatusObject<UserInfo> loginStatus = logicHandler.login(username, password);
 				
 				if( loginStatus.statusCode == StatusCode.OK ) {
 					
@@ -1657,7 +1667,7 @@ public class GraphicInterface {
 				
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
-				if( graphHandler.logout() == StatusCode.OK ) {
+				if( logicHandler.logout() == StatusCode.OK ) {
 					
 					currentUser = null;
 					cleanHomePage();
@@ -1734,7 +1744,7 @@ public class GraphicInterface {
 		becomeAnalystButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				StatusObject<UserInfo> upgradeStatus = graphHandler.upgradeToAnalyst();
+				StatusObject<UserInfo> upgradeStatus = logicHandler.upgradeToAnalyst();
 				
 				if( upgradeStatus.statusCode == StatusCode.OK ) {
 					
@@ -2117,7 +2127,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				if( graphHandler.deleteUser(username) == StatusCode.OK ) {
+				if( logicHandler.deleteUser(username) == StatusCode.OK ) {
 					deleteUserResultLabel.setText("Success!");
 					deleteUserResultLabel.setVisible(true);
 				} else {
@@ -2304,7 +2314,7 @@ public class GraphicInterface {
 		topUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 					
-				StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
+				StatusObject<List<User>> topUsersStatus = logicHandler.getMostFollowedUsers(6);
 				
 				if( topUsersStatus.statusCode == StatusCode.OK ) {
 					
@@ -2349,7 +2359,7 @@ public class GraphicInterface {
 		topGamesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				StatusObject<List<GraphGame>> topGamesStatus = graphHandler.getMostFavouriteGames(6);
+				StatusObject<List<GraphGame>> topGamesStatus = logicHandler.getMostFavouriteGames(6);
 				
 				if( topGamesStatus.statusCode == StatusCode.OK ) {
 					
@@ -2395,7 +2405,7 @@ public class GraphicInterface {
 		topGenresButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				StatusObject<List<UserStats>> userStatsStatus = graphHandler.getUsersSummaryStats();
+				StatusObject<List<UserStats>> userStatsStatus = logicHandler.getUsersSummaryStats();
 				
 				if( userStatsStatus.statusCode == StatusCode.OK ) {
 					
@@ -3728,7 +3738,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				StatusObject<List<GraphGame>> featuredStatusObject  = graphHandler.getFeaturedGamesList();
+				StatusObject<List<GraphGame>> featuredStatusObject  = logicHandler.getFeaturedGamesList();
 				
 				if( featuredStatusObject.statusCode == StatusCode.OK ) {
 					
@@ -4140,7 +4150,7 @@ public class GraphicInterface {
 				
 				if( isGameFavourite ) {
 					
-					if( graphHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+					if( logicHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
 						
 						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
@@ -4153,7 +4163,7 @@ public class GraphicInterface {
 					}
 				} else if( !isGameFavourite ){
 					
-					if( graphHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+					if( logicHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
 						
 						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
@@ -4204,7 +4214,7 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 1);
+				logicHandler.rateGame(currentGame.getTitle(), 1);
 					
 			}
 		});
@@ -4216,7 +4226,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 2);
+				logicHandler.rateGame(currentGame.getTitle(), 2);
 			}
 		});
 		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4227,7 +4237,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 3);
+				logicHandler.rateGame(currentGame.getTitle(), 3);
 			}
 		});
 		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4238,7 +4248,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 4);
+				logicHandler.rateGame(currentGame.getTitle(), 4);
 			}
 		});
 		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4249,7 +4259,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 5);
+				logicHandler.rateGame(currentGame.getTitle(), 5);
 			}
 		});
 		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4371,7 +4381,7 @@ public class GraphicInterface {
 				featuredUserButton.setBackground(new Color(30, 144, 255));
 				featuredUserButton.setForeground(Color.WHITE);
 				
-				StatusObject<List<User>> featuredUserStatus = graphHandler.getSuggestedUsersList();
+				StatusObject<List<User>> featuredUserStatus = logicHandler.getSuggestedUsersList();
 				
 				if( featuredUserStatus.statusCode == StatusCode.OK ) {
 					
@@ -4426,7 +4436,7 @@ public class GraphicInterface {
 				featuredUserButton.setBackground(Color.WHITE);
 				featuredUserButton.setForeground(Color.BLACK);
 				
-				StatusObject<List<User>> searchedUserStatus = graphHandler.searchUsers(searchedString);
+				StatusObject<List<User>> searchedUserStatus = logicHandler.searchUsers(searchedString);
 				
 				if( searchedUserStatus.statusCode == StatusCode.OK ) {
 					
@@ -4660,7 +4670,7 @@ public class GraphicInterface {
 					currentUser.setCountry(country);
 				}
 				
-				if( graphHandler.saveUser() == StatusCode.OK ) {
+				if( logicHandler.saveUser() == StatusCode.OK ) {
 					
 					initializeUserInformationPage();
 				} else {
