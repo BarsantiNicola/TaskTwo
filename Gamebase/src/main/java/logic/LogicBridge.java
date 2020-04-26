@@ -124,7 +124,7 @@ public class LogicBridge {
 	
 	public boolean updateDatabase() { 
 		int MaxGameId= MONGO.getMaxGameId().element;
-		List<Game> gamesToAdd = WebScraping.scrapeNewGames(MaxGameId); 
+		List<Game> gamesToAdd = WebScraping.scrapeNewGames(MaxGameId + 1); 
 		
 		if (gamesToAdd.isEmpty()){
 			System.out.println("LogicBridge/updateDatabase()--> List gamesToAdd is empty. Returning false.");
@@ -135,12 +135,12 @@ public class LogicBridge {
 			if(GRAPH.addGame(graphGameToAdd)!=StatusCode.OK)
 				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Graph database. Interrupting update");
 				util.recapUpdate(gamesToAdd, i);
-				return false;
+				return true;
 			if(MONGO.addGame(gamesToAdd.get(i)) != StatusCode.OK) {
 				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Document database. Interrupting update");
 				GRAPH.deleteGame(graphGameToAdd._id);
 				util.recapUpdate(gamesToAdd, i);
-				return false;
+				return true;
 			}
 			System.out.println("LogicBridge/updateDatabase()--> Added game:" + gamesToAdd.get(i).getTitle() + " to the database");
 		}

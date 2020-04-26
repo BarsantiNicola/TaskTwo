@@ -48,7 +48,7 @@ public class WebScraping {
 			JSONObject newGame = searchNewGame(MaxGameID);
 			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> New game obtained");
 			MaxGameID++;
-			if(!newGame.has("id")) {
+			if(!newGame.has("id") || !newGame.has("name")) {
 				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Game not suitable");
 				failed ++;
 				continue;
@@ -180,10 +180,10 @@ public class WebScraping {
 	
 
 	
-	
+	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
 		 scrapeNewGames(4200);
 	 }
-	 
+	 */
 }

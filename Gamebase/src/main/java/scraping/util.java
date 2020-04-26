@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -33,13 +34,13 @@ public class util {
 		gameToAdd.setFavouritesCount(0);
 		//Title
 		if(newGame.has("name")) {
-			if(newGame.get("name") instanceof String) {
+			if(newGame.get("name") instanceof String && !newGame.get("name").equals(null)) {
 				gameToAdd.setTitle(newGame.getString("name"));
 			}
 		}
 		//Background_image
 		if(newGame.has("background_image")) {
-			if(newGame.get("background_image") instanceof String) {
+			if(newGame.get("background_image") instanceof String && !newGame.get("background_image").equals(null)) {
 				gameToAdd.setBackground_image(newGame.getString("background_image"));
 			}
 		}		
@@ -49,20 +50,20 @@ public class util {
 		gameToAdd.setRatingCount(0);
 		//Metacritic
 		if(newGame.has("metacritic")) {
-			if(!newGame.get("metacritic").equals(null)) {
+			if(newGame.get("metacritic") instanceof Integer && !newGame.get("metacritic").equals(null)) {
 				gameToAdd.setMetacritic(newGame.getInt("metacritic"));
 			}
 		}
 		//ViewsCount
 		gameToAdd.setViewsCount(0);
 		if(newGame.has("description_raw")) {
-			if(newGame.get("description_raw") instanceof String) {
+			if(newGame.get("description_raw") instanceof String && !newGame.get("description_raw").equals(null)) {
 			gameToAdd.setDescription(newGame.getString("description_raw"));;
 			}
 		}
 		//Released
 		if(newGame.has("released")) {
-			if(newGame.get("released") instanceof String) {
+			if(newGame.get("released") instanceof String && !newGame.get("released").equals(null)) {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				Date releaseDate = new Date();
 				try {
@@ -80,7 +81,7 @@ public class util {
 		}
 		//Genres and subgenres
 		if(newGame.has("genres")) {
-			if(newGame.get("genres") instanceof JSONArray) {
+			if(newGame.get("genres") instanceof JSONArray && !newGame.get("genres").equals(null)) {
 				JSONArray genres = newGame.getJSONArray("genres");
 				ArrayList<String> subgenres = new ArrayList<String>();
 				if (genres.getJSONObject(0).has("name")) {
@@ -98,7 +99,7 @@ public class util {
 		}
 		//Releases
 		if(newGame.has("platforms")) {
-			if(newGame.get("platforms") instanceof JSONArray) {
+			if(newGame.get("platforms") instanceof JSONArray && !newGame.get("platforms").equals(null)) {
 				JSONArray platforms = newGame.getJSONArray("platforms");
 				ArrayList<String> releases = new ArrayList<String>();
 				for (int i = 1; i < platforms.length(); i++) {
@@ -115,7 +116,7 @@ public class util {
 		}
 		//Sales
 		if(newGame.has("stores")) {
-			if(newGame.get("stores") instanceof JSONArray) {
+			if(newGame.get("stores") instanceof JSONArray && !newGame.get("stores").equals(null)) {
 				ArrayList<PlatformInfo> sales = new ArrayList<PlatformInfo>();
 				//store, company, url 
 				//name, domain, url_en
@@ -145,7 +146,7 @@ public class util {
 		ArrayList<String> images = new ArrayList<String>();
 		ArrayList<Video> videos = new ArrayList<Video>();
 		if(newGame.has("short_screenshots")) {
-			if(newGame.get("short_screenshots") instanceof JSONArray) {
+			if(newGame.get("short_screenshots") instanceof JSONArray && !newGame.get("short_screenshots").equals(null)) {
 				JSONArray short_screenshots = newGame.getJSONArray("short_screenshots");
 				for(int i = 0; i < short_screenshots.length(); i++) {
 					if(short_screenshots.getJSONObject(i).has("image")) {
@@ -156,7 +157,7 @@ public class util {
 		}
 		//multimedia: video
 		if(newGame.has("clip")) {
-			if(newGame.get("clip") instanceof JSONObject) {
+			if(newGame.get("clip") instanceof JSONObject && !newGame.get("clip").equals(null)) {
 				JSONObject clip = newGame.getJSONObject("clip");
 				if(clip.has("clips")) {
 					JSONObject clips = newGame.getJSONObject("clip").getJSONObject("clips");
@@ -198,8 +199,8 @@ public class util {
 	//Create GraphGame consistent with the new game just scraped
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
 		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Initializing GraphGame for game: " + gameToAdd.getTitle());
-		
 		Long zero = new Long(0);
+			
 		/* All-parameters Constructor */
 		/* Id, title, background_image, favorite_count, rating */
 		GraphGame graphGameToAdd = new GraphGame(gameToAdd.getId().toString(), gameToAdd.getTitle(), gameToAdd.getBackground_image(), zero, zero);
@@ -212,7 +213,7 @@ public class util {
 		System.out.println("UTIL/RECAPUPDATE--> Recap of database update:");
 		System.out.println("UTIL/RECAPUPDATE--> Games added: " + numberOfGamesAdded);
 		for(int i = 0; i < numberOfGamesAdded; i++) {
-			System.out.println("UTIL/RECAPUPDATE-->Game: " + gamesAdded.get(i).getTitle());
+			System.out.println("UTIL/RECAPUPDATE-->GameId: " + gamesAdded.get(i).getId() + ", title: " + gamesAdded.get(i).getTitle());
 		}
 		
 	}
