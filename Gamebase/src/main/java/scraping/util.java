@@ -39,11 +39,13 @@ public class util {
 			}
 		}
 		//Background_image
+		gameToAdd.setBackground_image(null);
 		if(newGame.has("background_image")) {
 			if(newGame.get("background_image") instanceof String && !newGame.get("background_image").equals(null)) {
 				gameToAdd.setBackground_image(newGame.getString("background_image"));
 			}
-		}		
+		}	
+		
 		//Rating
 		gameToAdd.setRating(0.0);
 		//Rating Count
@@ -205,11 +207,9 @@ public class util {
 	//Create GraphGame consistent with the new game just scraped
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
 		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Initializing GraphGame for game: " + gameToAdd.getTitle());
-		Long zero = new Long(0);
 			
-		/* All-parameters Constructor */
-		/* Id, title, background_image, favorite_count, rating */
-		GraphGame graphGameToAdd = new GraphGame(gameToAdd.getId().toString(), gameToAdd.getTitle(), gameToAdd.getBackground_image(), zero, zero);
+		/* _id + title + previewImage Constructor */
+		GraphGame graphGameToAdd = new GraphGame(gameToAdd.getId().toString(), gameToAdd.getTitle(), gameToAdd.getBackground_image());
 		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Created GraphGame");
 		return graphGameToAdd;
 	}

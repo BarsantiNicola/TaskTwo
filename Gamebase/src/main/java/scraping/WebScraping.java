@@ -44,6 +44,10 @@ public class WebScraping {
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
+			if (failed == 100){
+				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> More than 100 attempts failed. Stopping the search for new games...");
+				break;
+			}
 			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Search for new game: ID=" + MaxGameID);
 			JSONObject newGame = searchNewGame(MaxGameID);
 			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> New game obtained");
@@ -54,10 +58,6 @@ public class WebScraping {
 				continue;
 			}
 			i++;
-			if (failed == 100){
-				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> More than 100 attempts failed. Stopping the search for new games...");
-				break;
-			}
 			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Game suitable");
 			newGames.add(newGame);
 		}
@@ -78,12 +78,7 @@ public class WebScraping {
 			
 			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));	
 			gamesToAdd.add(gameToAdd);
-		}
-		
-		for(int h=0; h < gamesToAdd.size(); h++) {
-			util.initializeGraphGameToAdd(gamesToAdd.get(h));
-		}
-		util.recapUpdate(gamesToAdd, gamesToAdd.size());
+		}		
 		
 		//Return list of games to add
 		return gamesToAdd;
@@ -185,10 +180,10 @@ public class WebScraping {
 	
 
 	
-	
+	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 scrapeNewGames(404424);
+		scrapeNewGames(4200);
 	 }
-	 
+	 */
 }
