@@ -81,19 +81,21 @@ public class util {
 		}
 		//Genres and subgenres
 		if(newGame.has("genres")) {
-			if(newGame.get("genres") instanceof JSONArray && !newGame.get("genres").equals(null)) {
+			if(newGame.get("genres") instanceof JSONArray && !newGame.get("genres").equals(null) ) {
 				JSONArray genres = newGame.getJSONArray("genres");
 				ArrayList<String> subgenres = new ArrayList<String>();
-				if (genres.getJSONObject(0).has("name")) {
-					gameToAdd.setGenres(genres.getJSONObject(0).getString("name"));
-				}
-				for (int i = 1; i < genres.length(); i++) {
-					if(genres.getJSONObject(1).has("name")) {
-						subgenres.add(genres.getJSONObject(0).getString("name"));
+				if(!genres.isEmpty()) {
+					if (genres.getJSONObject(0).has("name")) {
+						gameToAdd.setGenres(genres.getJSONObject(0).getString("name"));
 					}
-				}
-				if (subgenres.size() > 0) {
-					gameToAdd.setSubGenres(subgenres);
+					for (int i = 1; i < genres.length(); i++) {
+						if(genres.getJSONObject(i).has("name")) {
+							subgenres.add(genres.getJSONObject(i).getString("name"));
+						}
+					}
+					if (subgenres.size() > 0) {
+						gameToAdd.setSubGenres(subgenres);
+					}
 				}
 			}
 		}
@@ -102,15 +104,17 @@ public class util {
 			if(newGame.get("platforms") instanceof JSONArray && !newGame.get("platforms").equals(null)) {
 				JSONArray platforms = newGame.getJSONArray("platforms");
 				ArrayList<String> releases = new ArrayList<String>();
-				for (int i = 1; i < platforms.length(); i++) {
-					if(platforms.getJSONObject(i).has("plaform")) {
-						if(platforms.getJSONObject(i).getJSONObject("plaform").has("name")) {
-							releases.add(platforms.getJSONObject(i).getJSONObject("platform").getString("name"));
-						}	
+				if(!platforms.isEmpty()) {
+					for (int i = 1; i < platforms.length(); i++) {
+						if(platforms.getJSONObject(i).has("plaform")) {
+							if(platforms.getJSONObject(i).getJSONObject("plaform").has("name")) {
+								releases.add(platforms.getJSONObject(i).getJSONObject("platform").getString("name"));
+							}	
+						}
 					}
-				}
-				if(releases.size() > 0) {
-					gameToAdd.setReleases(releases);
+					if(releases.size() > 0) {
+						gameToAdd.setReleases(releases);
+					}
 				}
 			}
 		}
@@ -121,23 +125,25 @@ public class util {
 				//store, company, url 
 				//name, domain, url_en
 				JSONArray stores = newGame.getJSONArray("stores");
-				for(int i = 0; i < stores.length(); i++) {
-					PlatformInfo PI = new PlatformInfo();
-					if(stores.getJSONObject(i).has("store")) {
-						if(stores.getJSONObject(i).getJSONObject("store").has("name")) {
-							PI.setStore(stores.getJSONObject(i).getJSONObject("store").getString("name"));
-						}
-						if(stores.getJSONObject(i).getJSONObject("store").has("domain")) {
-							PI.setCompany(stores.getJSONObject(i).getJSONObject("store").getString("domain"));
-						}
-						if(stores.getJSONObject(i).getJSONObject("store").has("url_en")) {
-							PI.setSaleUrl(stores.getJSONObject(i).getJSONObject("store").getString("url_en"));
-						}
-						sales.add(PI);
-					}		
-				}
-				if(sales.size() > 0) {
-					gameToAdd.setSales(sales);
+				if(!stores.isEmpty()) {
+					for(int i = 0; i < stores.length(); i++) {
+						PlatformInfo PI = new PlatformInfo();
+						if(stores.getJSONObject(i).has("store")) {
+							if(stores.getJSONObject(i).getJSONObject("store").has("name")) {
+								PI.setStore(stores.getJSONObject(i).getJSONObject("store").getString("name"));
+							}
+							if(stores.getJSONObject(i).getJSONObject("store").has("domain")) {
+								PI.setCompany(stores.getJSONObject(i).getJSONObject("store").getString("domain"));
+							}
+							if(stores.getJSONObject(i).getJSONObject("store").has("url_en")) {
+								PI.setSaleUrl(stores.getJSONObject(i).getJSONObject("store").getString("url_en"));
+							}
+							sales.add(PI);
+						}		
+					}
+					if(sales.size() > 0) {
+						gameToAdd.setSales(sales);
+					}
 				}
 			}
 		}

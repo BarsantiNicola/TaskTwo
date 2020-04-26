@@ -73,12 +73,17 @@ public class WebScraping {
 		}
 		
 		//Add Games to database
-		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Creating objects Game and GraphGame for new games");
+		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Creating objectsì Game for new games");
 		for(int k = 0; k < newGames.size(); k++) {
 			
 			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));	
 			gamesToAdd.add(gameToAdd);
 		}
+		
+		for(int h=0; h < gamesToAdd.size(); h++) {
+			util.initializeGraphGameToAdd(gamesToAdd.get(h));
+		}
+		util.recapUpdate(gamesToAdd, gamesToAdd.size());
 		
 		//Return list of games to add
 		return gamesToAdd;
@@ -180,10 +185,10 @@ public class WebScraping {
 	
 
 	
-	/*
+	
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 scrapeNewGames(4200);
+		 scrapeNewGames(404424);
 	 }
-	 */
+	 
 }
