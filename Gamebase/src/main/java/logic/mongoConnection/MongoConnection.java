@@ -9,12 +9,10 @@ import logic.StatusCode;
 import logic.data.StatusObject;
 import logic.data.Game;
 import logic.data.PreviewGame;
-import logic.data.Statistics;
-
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -589,7 +587,7 @@ public class MongoConnection {
     	
     }
     
-    @SuppressWarnings({ "deprecation", "unused" })
+    @SuppressWarnings({ "unused" })
 	private void updateViewsCount() {
     	
     	MongoCursor<Game> games = this.gamesCollection.find().noCursorTimeout(true).iterator();

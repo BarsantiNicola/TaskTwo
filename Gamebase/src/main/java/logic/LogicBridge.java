@@ -74,13 +74,13 @@ public class LogicBridge {
 	
 	public StatusObject<PreviewGame> getMostPopularPreview() { return MONGO.getMostPopularPreview(); }
 	
-	public StatusObject<DataNavigator> getMostViewedPreviews(){ return MONGO.getMostViewedPreviews(); }
+	public StatusObject<DataNavigator> getMostViewedPreviews(){ return MONGO.getMostViewedPreviews(50); }
 	
-	public StatusObject<DataNavigator> getMostLikedPreviews(){ return MONGO.getMostLikedPreviews(); }
+	public StatusObject<DataNavigator> getMostLikedPreviews(){ return MONGO.getMostLikedPreviews(50); }
 	
-	public StatusObject<DataNavigator> getMostRecentPreviews(){ return MONGO.getMostRecentPreviews(); }
+	public StatusObject<DataNavigator> getMostRecentPreviews(){ return MONGO.getMostRecentPreviews(50); }
 	
-	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( searchedString ); }
+	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( 50,searchedString ); }
 	
 	//////  SCRAPER & ADMIN INTERFACE
 	StatusCode addGameDescription( int gameId , String description ) { return MONGO.addGameDescription( gameId , description);}
@@ -132,10 +132,11 @@ public class LogicBridge {
 		}
 		for(int i= 0; i < gamesToAdd.size(); i++) {
 			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gamesToAdd.get(i));
-			if(GRAPH.addGame(graphGameToAdd)!=StatusCode.OK)
+			if(GRAPH.addGame(graphGameToAdd)!=StatusCode.OK) {
 				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Graph database. Interrupting update");
 				util.recapUpdate(gamesToAdd, i);
 				return true;
+			}
 			if(MONGO.addGame(gamesToAdd.get(i)) != StatusCode.OK) {
 				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Document database. Interrupting update");
 				GRAPH.deleteGame(graphGameToAdd._id);
