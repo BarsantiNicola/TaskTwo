@@ -1,5 +1,6 @@
 package logic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,25 +24,31 @@ import scraping.*;
 public class LogicBridge {
 	
 	private MongoConnection MONGO;
+	private GraphConnector GRAPH;
 	private ImgCache CACHE;
-	//private GraphConnector graph;
 	
 	public LogicBridge()
-	 {
-		 try 
-		  {
-			 // ricordare di avere la VPN attiva
+	 {	
+		// ricordare di avere la VPN attiva
+		
+		GRAPH = new GraphConnector();
+		StatusCode graphConnection = GRAPH.connect("bolt://172.16.0.78:7687","neo4j","password");
+		
+		if( graphConnection != StatusCode.OK ) {
+			
+			System.out.println("-->[LogicBridge] Fatal Error, error in graph database connection");
+			System.exit(1);
+		}
+		
+		try {
+			 
+			MONGO = new MongoConnection("172.16.0.80",27018);					 
+			CACHE = new ImgCache("cache");    
 
-			  MONGO = new MongoConnection("172.16.0.80",27018);					 
-			  CACHE = new ImgCache("cache");
-			  //graph.connect("bolt://172.16.0.78:7687","neo4j","password");       
-
-			 }
-		 catch( Exception e )
-		  {
+		} catch( Exception e ){
 		   System.out.println("-->[LogicBridge] Fatal Error, Invalid NET configuration");
-			  System.exit(1);
-			 }
+		   System.exit(1);
+	    }
 	 }
 
 	
@@ -117,15 +124,91 @@ public class LogicBridge {
 	
 	public boolean updateDatabase() { 
 		int MaxGameId= MONGO.getMaxGameId().element;
-		return WebScraping.updateDatabase(MaxGameId); 
+		List<Game> gamesToAdd = WebScraping.scrapeNewGames(MaxGameId + 1); 
 		
+		if (gamesToAdd.isEmpty()){
+			System.out.println("LogicBridge/updateDatabase()--> List gamesToAdd is empty. Returning false.");
+			return false;
 		}
+		for(int i= 0; i < gamesToAdd.size(); i++) {
+			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gamesToAdd.get(i));
+			if(GRAPH.addGame(graphGameToAdd)!=StatusCode.OK)
+				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Graph database. Interrupting update");
+				util.recapUpdate(gamesToAdd, i);
+				return true;
+			if(MONGO.addGame(gamesToAdd.get(i)) != StatusCode.OK) {
+				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Document database. Interrupting update");
+				GRAPH.deleteGame(graphGameToAdd._id);
+				util.recapUpdate(gamesToAdd, i);
+				return true;
+			}
+			System.out.println("LogicBridge/updateDatabase()--> Added game:" + gamesToAdd.get(i).getTitle() + " to the database");
+		}
+		util.recapUpdate(gamesToAdd, gamesToAdd.size());
+	return true;
+	}
 	
 	public static String getTwitchURLChannel( String GAME ) { return WebScraping.getTwitchURLChannel(GAME); }
 	
 	public String getGameDescription( int GAME_ID) { return WebScraping.getGameDescription(GAME_ID); }
 	
-	public String getGameLowerResScreenshot( String GAME) { return WebScraping.getGameLowerResScreenshot(GAME); }
+	///////////////  GRAPH FUNCTIONS
+	
+	public StatusObject<UserInfo> register(User user){ return GRAPH.register(user); }
+	
+	public StatusObject<UserInfo> login(String username, String password){ return GRAPH.login(username, password); }
+	
+	public StatusCode logout() { return GRAPH.logout(); }
+	
+	public User getUser() { return GRAPH.getUser(); }
+	
+	public UserType getUserType() { return GRAPH.getUserType(); }
+	
+	public StatusObject<Long> getTotalUsersCount(){ return GRAPH.getTotalUsersCount(); }
+	
+	public StatusObject<Long> getGamesCount(){ return GRAPH.getGamesCount(); }
+	
+	public StatusCode saveUser() { return GRAPH.saveUser(); }
+	
+	public StatusCode deleteUser(String username) { return GRAPH.deleteUser(username); }
+	
+	public StatusObject<UserInfo> upgradeToAnalyst(){ return GRAPH.upgradeToAnalyst(); }
+	
+	public StatusCode followUser(String username) { return GRAPH.followUser(username); }
+	
+	public StatusCode unFollowUser(String username) { return GRAPH.unFollowUser(username); }
+	
+	public StatusObject<List<User>> searchUsers(String mask){ return GRAPH.searchUsers(mask); }
+	
+	public StatusObject<List<User>> getSuggestedUsersList(){ return GRAPH.getSuggestedUsersList(); }
+	
+	public StatusObject<Boolean> doIFollow(String username){ return GRAPH.doIFollow(username); }
+	
+	public StatusObject<List<User>> getFollowedUsersList(){ return GRAPH.getFollowedUsersList(); }
+	
+	//delete game
+	
+	public StatusCode addToFavourites(String _id) { return GRAPH.addToFavourites(_id); }
+	
+	public StatusCode removeFromFavourites(String _id) { return GRAPH.removeFromFavourites(_id); }
+	
+	public StatusObject<List<GraphGame>> getFavouritesGamesList(String username){ return GRAPH.getFavouritesGamesList(username); }
+	
+	public StatusObject<Long> getGameFavouriteCount(String _id){ return GRAPH.getGameFavouriteCount(_id); }
+	
+	public StatusCode rateGame(String _id, int vote) { return GRAPH.rateGame(_id, vote); }
+	
+	public StatusObject<List<GraphGame>> getFeaturedGamesList(){ return GRAPH.getFeaturedGamesList(); }
+	
+	public StatusObject<Boolean> doIFavourite(String _id){ return GRAPH.doIFavourite(_id); }
+	
+	public StatusObject<List<GraphGame>> getFavouritesGamesList(){ return GRAPH.getFavouritesGamesList(); }
+	
+	public StatusObject<List<User>> getMostFollowedUsers(int max){ return GRAPH.getMostFollowedUsers(max); }
+	
+	public StatusObject<List<GraphGame>> getMostFavouriteGames(int max){ return GRAPH.getMostFavouriteGames(max); }
+	
+	public StatusObject<List<UserStats>> getUsersSummaryStats(){ return GRAPH.getUsersSummaryStats(); }
 	
 	///////////////  OTHER
 	
@@ -140,7 +223,18 @@ public class LogicBridge {
 	
 	public void closeConnection(){
 		MONGO.closeConnection();
-		//graph.close();                 
+		GRAPH.close();
+	}
+	
+	public static void main(String[] args) {
+		ImgCache prova = new ImgCache("cache");
+		//ImageIcon img = new ImageIcon("https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg");
+		//System.out.println(img.getIconHeight() + " : " + img.getIconWidth());
+		//System.out.println(img.toString());
+		//prova.cacheImg("https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg", img);
+		ImageIcon img = prova.getCachedImg("https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg");
+		System.out.println(img.toString());
+		//System.out.println(img.getIconHeight() + " : " + img.getIconWidth());
 	}
 	
 }

@@ -29,7 +29,8 @@ public class GraphicInterface {
 	private JFrame frame;
 	private JPanel panel;
 	
-	//LOGIN PANEL 
+	///////////LOGIN PANEL 
+	
 	private JPanel loginPanel;
 	private JLabel usernameLabel;
 	private JLabel passwordLabel;
@@ -40,7 +41,8 @@ public class GraphicInterface {
 	private JLabel errorMessageLabel;
 	private JLabel myGamesLabel;
 
-	//HOME PANEL 
+	//////////HOME PANEL 
+	
 	private JPanel homePagePanel;
 	private JLabel gamesNumberHPLabel;
 	private JLabel followerNumberHPLabel;
@@ -62,27 +64,8 @@ public class GraphicInterface {
 	private JTable followedTable;
 	private JTableHeader followedTableHeader;
 	private JList<BufferedGame> myGamesList;
-	private DefaultListModel<BufferedGame> myGamesListModel = new DefaultListModel<BufferedGame>();	
-	private DefaultTableModel followedTableModel = new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Username", "Games", 
-			}
-		) {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			@SuppressWarnings("rawtypes")
-			Class[] columnTypes = new Class[] {
-				String.class, String.class
-			};
-			@SuppressWarnings("unchecked")
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-		};
+	private DefaultListModel<BufferedGame> myGamesListModel;	
+	private DefaultTableModel followedTableModel;
 	
 	///////// ADMIN PANEL
 		
@@ -102,6 +85,7 @@ public class GraphicInterface {
 	private JLabel updateDatabaseResultLabel;
 	
 	///////// ANALYST PANEL
+	
 	private JPanel analystPanel;
 	private JButton analystHomeButton;
 	private JButton topUsersButton;
@@ -122,7 +106,6 @@ public class GraphicInterface {
 	private PieChartPanel ratingsCountYearGenPanel;
 	private PieChartPanel viewsCountYearGenPanel;
 	private PieChartPanel gameCountYearGenPanel;
-	
 	private JButton topGamesButton;
 	private JButton topGenresButton;
 	private JButton topRatedGameByYearButton;
@@ -138,12 +121,12 @@ public class GraphicInterface {
 	private JButton ratingsCountYearGenButton;
     private JButton viewsCountByYearGenButton;
     private JButton gameCountYearGenButton;
-	
 	private JTextField gameCountTextField;
 	private JTextField viewCountTextField;
 	private JTextField ratingsCountTextField;
 		
 	///////// SEARCH GAME PANEL
+	
 	private JPanel searchGamePanel;	
 	private JButton homeSEButton;
 	private JButton featuredButton;
@@ -154,14 +137,15 @@ public class GraphicInterface {
 	private JButton searchButton;
 	private JScrollPane searchGameScrollPane;
 	private JList<BufferedGame> searchedGamesJList;	
-	private DefaultListModel<BufferedGame> searchedGamesListModel = new DefaultListModel<BufferedGame>();
+	private DefaultListModel<BufferedGame> searchedGamesListModel;
 	private JMenu gameGenreMenu;
 	private JMenuBar gameGenreMenuBar;
 	private AdjustmentListener searchGamesVerticalScrollBarListener;
 	private JScrollBar searchGamesVerticalScrollBar;
 	private DataNavigator searchGamesDataNavigator;
 	
-	/////// GAME PANEL
+	//////////GAME PANEL
+	
 	private JPanel gamePanel;	
 	private JTextArea gameDescriptionTextArea;
 	private JScrollPane gameDescriptionScrollPane;
@@ -175,7 +159,7 @@ public class GraphicInterface {
 	private ActionListener playstationButtonListener;
 	private ActionListener xboxButtonListener;
 	private JButton homeGameButton;
-	private DefaultListModel<Image> imagesListModel = new DefaultListModel<Image>();
+	private DefaultListModel<Image> imagesListModel;
 	private JScrollPane gameImagesScrollPane;
 	private JList<Image> imagesList;
 	private JMenuBar voteMenuBar;
@@ -194,40 +178,25 @@ public class GraphicInterface {
 	private JButton XBoxButton;
 	
 	////////USER PANEL
+	
 	private JPanel userPanel;
 	private JButton searchUserButton;
 	private JButton homeUserButton;
 	private JScrollPane userGamesScrollPane;
 	private JList<BufferedGame> userGamesList;
-	private DefaultListModel<BufferedGame> userGamesListModel = new DefaultListModel<BufferedGame>();
+	private DefaultListModel<BufferedGame> userGamesListModel;
 	private JScrollPane usersScrollPane;
 	private JLabel displayedUserLabel;
 	private JButton featuredUserButton;
 	private JTextField searchUserTextField;
 	private JTable usersTable;
 	private JTableHeader usersTableHeader;
-	private DefaultTableModel usersTableModel = new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Username", "Games", "Action"
-			}
-		) {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class
-			};
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-	};
+	private DefaultTableModel usersTableModel;
 	private JLabel searchUserLabel;
 	private JLabel searchUserWelcomeLabel;
 	
 	///////// USER INFORMATION PANEL
+	
 	private JPanel userInformationPanel;	
 	private JButton homeUserInformationButton;
 	private JTextField ageTextField;
@@ -252,17 +221,18 @@ public class GraphicInterface {
 	private JLabel genreLabel;
 	
 	///////// LOGIC AND SUPPORT INFO
-	private LogicBridge logicHandler = new LogicBridge();
-	private GraphConnector graphHandler = new GraphConnector();
-	private User currentUser = null;
-	private Game currentGame = null;
-	private Font titleFont = new Font("Corbel", Font.BOLD, 20);
-	private List<BufferedGame> supportGamesList = null;
-	private List<String> currentVideosURLlist = null;
-	private int currentVideoIndex = 0;
-	private int lastVideoIndex = 0;
-	private Boolean isGameFavourite =  null;
-	private DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	
+	private LogicBridge logicHandler;
+	private User currentUser;
+	private Game currentGame;
+	private Font titleFont;
+	private List<BufferedGame> supportGamesList;
+	private List<String> currentVideosURLlist;
+	private int currentVideoIndex;
+	private int lastVideoIndex;
+	private Boolean isGameFavourite;
+	private DefaultTableCellRenderer centerRenderer;
+	
 	
 	/////// SUPPORT FUNCTIONS
 	
@@ -300,6 +270,7 @@ public class GraphicInterface {
 			followedTableModel.addRow(object);
 		}
 		
+		@SuppressWarnings({ "unused", "serial" })
 		ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -341,7 +312,7 @@ public class GraphicInterface {
 		
 		for( User friend: usersList ) {
 			
-			StatusObject<Boolean> followStatus = graphHandler.doIFollow(friend.getUsername());
+			StatusObject<Boolean> followStatus = logicHandler.doIFollow(friend.getUsername());
 			
 			if( followStatus.statusCode != StatusCode.OK ) {
 				System.out.println("->[GraphicInterface] impossible to determine if user " + friend.getUsername() + 
@@ -359,6 +330,7 @@ public class GraphicInterface {
 			usersTableModel.addRow(object);
 		}
 		
+		@SuppressWarnings({ "unused", "serial" })
 		ButtonColumn buttonColumnGames = new ButtonColumn(usersTable, new AbstractAction() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -368,7 +340,7 @@ public class GraphicInterface {
 				
 				String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 				
-				StatusObject<Boolean> followed = graphHandler.doIFollow(selectedUsername);
+				StatusObject<Boolean> followed = logicHandler.doIFollow(selectedUsername);
 				
 				if( followed.statusCode != StatusCode.OK ) {
 					
@@ -384,7 +356,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				StatusObject<List<GraphGame>> favGamesStatus = graphHandler.getFavouritesGamesList(selectedUsername);
+				StatusObject<List<GraphGame>> favGamesStatus = logicHandler.getFavouritesGamesList(selectedUsername);
 				
 				if( favGamesStatus.statusCode == StatusCode.OK ) {
 					
@@ -394,26 +366,47 @@ public class GraphicInterface {
 						
 						GraphGame gm = favGamesStatus.element.get(i);
 						String url = gm.previewImage;
-				        String replacement = "media/crop/600/400/games";
-				        ImageIcon icon = null;
-
-						try {
-							url = url.replaceFirst("media/games", replacement);
-							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-						} catch(Exception ee) {
-							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+						ImageIcon icon = null;
+						
+						icon = logicHandler.getCachedImg(url);
+						
+						if( icon == null ) {
+							
+							String replacement = "media/crop/600/400/games";
+							String croppedUrl = null;
+							
+							try {
+								croppedUrl = url.replaceFirst("media/games", replacement);
+								icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+								
+								if(logicHandler.cacheImg(url, icon)) {
+									
+									System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+								}
+								
+							} catch(Exception ee) {
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							}
+						} else {
+							
+							System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+							
+							if( icon.getIconHeight() != 80 || icon.getIconHeight() != 100 ) {
+								
+								System.out.println("->[GraphicInterface] cached image need to be resized.");
+								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							}
 						}
-				        
 						favGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 					}
 					
 					fillUserGamesList(favGamesList);
 					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
-					
 				}	
 			}
 		},1);
 		
+		@SuppressWarnings({ "unused", "serial" })
 		ButtonColumn buttonColumnAction = new ButtonColumn(usersTable, new AbstractAction() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -423,13 +416,13 @@ public class GraphicInterface {
 				
 				String selectedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
 				
-				StatusObject<Boolean> followStatus = graphHandler.doIFollow(selectedUsername);
+				StatusObject<Boolean> followStatus = logicHandler.doIFollow(selectedUsername);
 				
 				if( followStatus.statusCode == StatusCode.OK ) {
 					
 					if( followStatus.element ) { //I already follow the user, so I may unfollow him/her
 						
-						if( graphHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
+						if( logicHandler.unFollowUser(selectedUsername) != StatusCode.OK ) {
 							System.out.println("->[GraphicInterface] error in unfollow user procedure.");
 							return;
 						}
@@ -439,7 +432,7 @@ public class GraphicInterface {
 				    	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
 					} else { //I don't follow the user so I may follow him/her
 					
-						if( graphHandler.followUser(selectedUsername) != StatusCode.OK ) {
+						if( logicHandler.followUser(selectedUsername) != StatusCode.OK ) {
 							System.out.println("->[GraphicInterface] error in follow user procedure.");
 							return;
 						}
@@ -482,18 +475,33 @@ public class GraphicInterface {
 		}
 
 		Image image = null;
-		URL url;
+		ImageIcon icon = null;
+		String url;
 		
 		for( int i=0; i < imagesURLList.size(); i++ ) {
-			try {
-				url = new URL(imagesURLList.get(i));
-				image = ImageIO.read(url);
-			} catch (Exception e) {
+			
+			url = imagesURLList.get(i);
+			icon = logicHandler.getCachedImg(url);
+			
+			if( icon == null ) {
+				
 				try {
-					image = ImageIO.read(new File("/resources/defaultGamePicture.png"));
-				} catch (IOException e1) {
-					e1.printStackTrace();
+					image = ImageIO.read(new URL(url));
+					
+					if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+						
+						System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+					}
+				} catch (Exception e) {
+					try {
+						image = ImageIO.read(new File("/resources/defaultGamePicture.png"));
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
+			} else {
+				
+				image = icon.getImage();
 			}
 			
 			imagesListModel.addElement(image);
@@ -514,7 +522,7 @@ public class GraphicInterface {
 		long followersLong = currentUser.getFollowedCount();
 		String followersNumber = Long.toString(followersLong);
 		
-		StatusObject<List<GraphGame>> gamesListStatus = graphHandler.getFavouritesGamesList();
+		StatusObject<List<GraphGame>> gamesListStatus = logicHandler.getFavouritesGamesList();
 		
 		String gamesNumber = null;
 		
@@ -526,16 +534,37 @@ public class GraphicInterface {
 				
 				GraphGame gm = gamesListStatus.element.get(i);
 				String url = gm.previewImage;
-		        String replacement = "media/crop/600/400/games"; 
 				ImageIcon icon = null;
-			
-				try {
-					url = url.replaceFirst("media/games", replacement); 
-					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-				} catch(Exception e) {
-					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+				
+				icon = logicHandler.getCachedImg(url);
+				
+				if( icon == null ) {
+					
+					String replacement = "media/crop/600/400/games"; 
+					String croppedUrl = null;
+					
+					try {
+						croppedUrl = url.replaceFirst("media/games", replacement); 
+						icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+						
+						if(logicHandler.cacheImg(url, icon)) {
+							
+							System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+						}
+						
+					} catch(Exception e) {
+						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+					}
+				} else {
+					
+					System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+					
+					if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+						
+						icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+					}
 				}
-		
+
 				favouriteGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 			}
 				
@@ -601,7 +630,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve most popular game.");
 		}
 	
-		StatusObject<List<User>> friendListStatus = graphHandler.getFollowedUsersList();
+		StatusObject<List<User>> friendListStatus = logicHandler.getFollowedUsersList();
 		
 		if( friendListStatus.statusCode == StatusCode.OK ) {
 			
@@ -611,7 +640,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve followed users list");
 		}
 		
-		UserType type = graphHandler.getUserType();
+		UserType type = logicHandler.getUserType();
 		
 		switch(type) {
 			case ADMINISTRATOR:
@@ -685,7 +714,7 @@ public class GraphicInterface {
 		Game game = gameStatus.element;
 		currentGame = game;
 		
-		String gameDescription = game.getDescription();
+		String gameDescription = logicHandler.getGameDescription(id);
 		
 		if( gameDescription == null ) {
 			
@@ -693,6 +722,7 @@ public class GraphicInterface {
 		} else {
 			
 			gameDescriptionTextArea.setText(gameDescription);
+			
 		}
 		
 		gameTitleLabel.setText(game.getTitle());
@@ -811,24 +841,11 @@ public class GraphicInterface {
 			XBoxButton.setEnabled(false);
 		}
 		
-		StatusObject<List<GraphGame>> myGamesStatus = graphHandler.getFavouritesGamesList();
+		StatusObject<Boolean> isFavourite = logicHandler.doIFavourite(game.getId().toString());
 		
-		if( myGamesStatus.statusCode == StatusCode.OK ) {
+		if( isFavourite.statusCode == StatusCode.OK ) {
 			
-			boolean favourite = false;
-			
-			for( int i = 0; i < myGamesStatus.element.size(); i++ ) {
-				
-				if( Integer.parseInt(myGamesStatus.element.get(i)._id) == game.getId() ) {
-					
-					favourite = true;
-					break;
-				}
-			}
-			
-			isGameFavourite = favourite;
-			
-			if( favourite ) {
+			if( isFavourite.element ) {
 				
 				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 				isGameFavourite = true;
@@ -837,6 +854,7 @@ public class GraphicInterface {
 				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 				isGameFavourite = false;
 			}
+			
 		} else {
 			
 			System.out.println("->[GraphicInterface] impossible to determine if game is favourite.");
@@ -868,14 +886,14 @@ public class GraphicInterface {
 			currentVideosURLlist = videoURLs;
 			currentVideoIndex = 0;
 			lastVideoIndex = videoURLs.size()-1;
-			
-			String firstVideo = videoURLs.get(0);
-			videoPlayer.playVideo(firstVideo);
+
+			videoPlayer.playVideo(videoURLs.get(0));
 			
 			if( videoURLs.size() > 1 ) {
 				
 				nextVideoButton.setEnabled(true);
 			}
+			
 			previousVideoButton.setEnabled(false);
 		} else {
 			
@@ -941,7 +959,7 @@ public class GraphicInterface {
 		featuredUserButton.setBackground(new Color(30, 144, 255));
 		featuredUserButton.setForeground(Color.WHITE);
 		
-		StatusObject<List<User>> featuredUsersStatus = graphHandler.getSuggestedUsersList();
+		StatusObject<List<User>> featuredUsersStatus = logicHandler.getSuggestedUsersList();
 		
 		if( featuredUsersStatus.statusCode == StatusCode.OK ) {
 			
@@ -954,7 +972,7 @@ public class GraphicInterface {
 		
 		if( searchedUser != null ) {
 			
-			StatusObject<List<GraphGame>> friendGamesStatus = graphHandler.getFavouritesGamesList(searchedUser);
+			StatusObject<List<GraphGame>> friendGamesStatus = logicHandler.getFavouritesGamesList(searchedUser);
 			
 			if( friendGamesStatus.statusCode == StatusCode.OK ) {
 				
@@ -964,16 +982,38 @@ public class GraphicInterface {
 					
 					GraphGame gm = friendGamesStatus.element.get(i);
 					String url = gm.previewImage;
-			        String replacement = "media/crop/600/400/games";
 					ImageIcon icon = null;
 					
-					try {
-						url = url.replaceFirst("media/games", replacement);
-						icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-					} catch(Exception e) {
-						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
-					}
+					icon = logicHandler.getCachedImg(url);
 					
+					if( icon == null ) {
+						
+						String replacement = "media/crop/600/400/games";
+						String croppedUrl = null;
+						
+						try {
+							
+							croppedUrl = url.replaceFirst("media/games", replacement);
+							icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+							
+							if(logicHandler.cacheImg(url, icon)) {
+								
+								System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+					     	}
+							
+						} catch(Exception e) {
+							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+						}
+					} else {
+						
+						System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+						
+						if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+							
+							System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+							icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+						}
+					}
 					friendGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
 				}
 				
@@ -1012,7 +1052,7 @@ public class GraphicInterface {
 		
 		String userCount, gameCount;
 		
-		StatusObject<Long> userCountStatus = graphHandler.getTotalUsersCount();
+		StatusObject<Long> userCountStatus = logicHandler.getTotalUsersCount();
 		
 		if( userCountStatus.statusCode == StatusCode.OK ) {
 			
@@ -1058,7 +1098,7 @@ public class GraphicInterface {
 	
 	private void initializeSearchGamePage() {
 		
-		System.out.println("->[GraphicInterface] initializing admin page");
+		System.out.println("->[GraphicInterface] initializing search game page");
 		
 		featuredButton.setForeground(Color.WHITE);
 		featuredButton.setBackground(new Color(30,144,255));
@@ -1091,7 +1131,7 @@ public class GraphicInterface {
 							if( gameStatus.statusCode == StatusCode.OK ) {
 								
 								List<String> genres = gameStatus.element.getAllGenres();
-								System.out.println(genres);
+								
 								for( String gen: genres) {
 									if( gen == null ) {
 										continue;
@@ -1118,7 +1158,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve genre list.");
 		}
 		
-		StatusObject<List<GraphGame>> featuredGamesStatus = graphHandler.getFeaturedGamesList();
+		StatusObject<List<GraphGame>> featuredGamesStatus = logicHandler.getFeaturedGamesList();
 		
 		if( featuredGamesStatus.statusCode == StatusCode.OK ) {
 			
@@ -1128,14 +1168,37 @@ public class GraphicInterface {
 				
 				GraphGame gm = featuredGamesStatus.element.get(i);
 				String url = gm.previewImage;
-		        String replacement = "media/crop/600/400/games";
 				ImageIcon icon = null;
 				
-				try {
-					url = url.replaceFirst("media/games", replacement);
-					icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-				} catch(Exception e) {
-					icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+				icon = logicHandler.getCachedImg(url);
+				
+				if( icon == null ) {
+					
+					String replacement = "media/crop/600/400/games";
+					String croppedUrl = null;
+					
+					try {
+						croppedUrl = url.replaceFirst("media/games", replacement);
+						icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+						
+						if(logicHandler.cacheImg(url, icon)) {
+							
+							System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+				     	}
+						
+					} catch(Exception e) {
+						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+					}
+					
+				} else {
+					
+					System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+					
+					if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+						
+						System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+						icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+					}
 				}
 				
 				featuredGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
@@ -1235,7 +1298,7 @@ public class GraphicInterface {
 		
 		System.out.println("->[GraphicInterface] initializing analyst page.");
 		
-		StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
+		StatusObject<List<User>> topUsersStatus = logicHandler.getMostFollowedUsers(6);
 		
 		if( topUsersStatus.statusCode == StatusCode.OK ) {
 			
@@ -1314,15 +1377,65 @@ public class GraphicInterface {
 	 */
 	public GraphicInterface() {
 		
-		StatusCode graphConnection = graphHandler.connect("bolt://172.16.0.78:7687","neo4j","password");
+		logicHandler = new LogicBridge();
 		
-		if( graphConnection != StatusCode.OK ) {
-			
-			System.out.println("->[GraphicInterface] Failed to connect to graph database");
-			System.exit(0);
-		}
-		
+		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+		currentUser = null;
+		currentGame = null;
+		isGameFavourite =  null;
+		lastVideoIndex = 0;
+		currentVideoIndex = 0;
+		titleFont = new Font("Corbel", Font.BOLD, 20);
+		supportGamesList = null;
+		currentVideosURLlist = null;
+		
+		userGamesListModel = new DefaultListModel<BufferedGame>();
+		imagesListModel = new DefaultListModel<Image>();
+		searchedGamesListModel = new DefaultListModel<BufferedGame>();
+		myGamesListModel = new DefaultListModel<BufferedGame>();
+
+		followedTableModel = new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Username", "Games", 
+				}
+			) {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				@SuppressWarnings("rawtypes")
+				Class[] columnTypes = new Class[] {
+					String.class, String.class
+				};
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+			};
+		
+		usersTableModel = new DefaultTableModel(
+					new Object[][] {
+					},
+					new String[] {
+						"Username", "Games", "Action"
+					}
+				) {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+					@SuppressWarnings("rawtypes")
+					Class[] columnTypes = new Class[] {
+						String.class, String.class, String.class
+					};
+					@SuppressWarnings({ "unchecked", "rawtypes" })
+					public Class getColumnClass(int columnIndex) {
+						return columnTypes[columnIndex];
+					}
+			};
 		
 		initialize();
 	}
@@ -1336,7 +1449,6 @@ public class GraphicInterface {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
 				logicHandler.closeConnection();
-				graphHandler.close();
 			}
 		});
 		frame.setBounds(100, 100, 952, 615);
@@ -1369,12 +1481,32 @@ public class GraphicInterface {
 		loginPanel.add(passwordLabel);
 		
 		usernameTextfield = new JTextField();
+		usernameTextfield.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				if( errorMessageLabel.isVisible() ) {
+					
+					errorMessageLabel.setVisible(false);
+				}
+			}
+		});
 		usernameTextfield.setFont(new Font("Corbel", Font.BOLD, 16));
 		usernameTextfield.setBounds(269, 275, 387, 43);
 		loginPanel.add(usernameTextfield);
 		usernameTextfield.setColumns(10);
 		
 		passwordField = new JPasswordField();
+		passwordField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				if( errorMessageLabel.isVisible() ) {
+					
+					errorMessageLabel.setVisible(false);
+				}
+			}
+		});
 		passwordField.setFont(new Font("Corbel", Font.BOLD, 16));
 		passwordField.setBounds(269, 362, 387, 43);
 		loginPanel.add(passwordField);
@@ -1410,7 +1542,7 @@ public class GraphicInterface {
 				
 				User registeredUser = new User(username, password,LocalDate.now());
 				
-				StatusObject<UserInfo> registrationStatus = graphHandler.register(registeredUser);
+				StatusObject<UserInfo> registrationStatus = logicHandler.register(registeredUser);
 				
 				if( registrationStatus.statusCode == StatusCode.OK ) {
 					
@@ -1427,7 +1559,7 @@ public class GraphicInterface {
 					
 					if( registrationStatus.statusCode == StatusCode.ERR_GRAPH_USER_ALREADYEXISTS ) {
 						
-						errorMessageLabel.setText("->[GraphicInterface] Error occured during registration: user already exists");
+						errorMessageLabel.setText("User already exists");
 					} else {
 						
 						errorMessageLabel.setText("Generic Error");
@@ -1467,7 +1599,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				StatusObject<UserInfo> loginStatus = graphHandler.login(username, password);
+				StatusObject<UserInfo> loginStatus = logicHandler.login(username, password);
 				
 				if( loginStatus.statusCode == StatusCode.OK ) {
 					
@@ -1535,7 +1667,7 @@ public class GraphicInterface {
 				
 				CardLayout cl = (CardLayout)(panel.getLayout());
 				
-				if( graphHandler.logout() == StatusCode.OK ) {
+				if( logicHandler.logout() == StatusCode.OK ) {
 					
 					currentUser = null;
 					cleanHomePage();
@@ -1612,7 +1744,7 @@ public class GraphicInterface {
 		becomeAnalystButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				StatusObject<UserInfo> upgradeStatus = graphHandler.upgradeToAnalyst();
+				StatusObject<UserInfo> upgradeStatus = logicHandler.upgradeToAnalyst();
 				
 				if( upgradeStatus.statusCode == StatusCode.OK ) {
 					
@@ -1995,7 +2127,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				if( graphHandler.deleteUser(username) == StatusCode.OK ) {
+				if( logicHandler.deleteUser(username) == StatusCode.OK ) {
 					deleteUserResultLabel.setText("Success!");
 					deleteUserResultLabel.setVisible(true);
 				} else {
@@ -2084,7 +2216,7 @@ public class GraphicInterface {
 		updateDatabaseButton = new JButton("Update Database");
 		updateDatabaseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				/*
 				if( logicHandler.updateDatabase() ) {
 					updateDatabaseResultLabel.setText("Success!");
 					updateDatabaseResultLabel.setVisible(true);
@@ -2097,7 +2229,7 @@ public class GraphicInterface {
 				      public void actionPerformed(ActionEvent evt) {
 				          updateDatabaseResultLabel.setVisible(false);
 				      }
-				  }).start();
+				  }).start();*/
 			}
 		});
 		updateDatabaseButton.setBackground(new Color(30, 144, 255));
@@ -2182,7 +2314,7 @@ public class GraphicInterface {
 		topUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 					
-				StatusObject<List<User>> topUsersStatus = graphHandler.getMostFollowedUsers(6);
+				StatusObject<List<User>> topUsersStatus = logicHandler.getMostFollowedUsers(6);
 				
 				if( topUsersStatus.statusCode == StatusCode.OK ) {
 					
@@ -2227,7 +2359,7 @@ public class GraphicInterface {
 		topGamesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				StatusObject<List<GraphGame>> topGamesStatus = graphHandler.getMostFavouriteGames(6);
+				StatusObject<List<GraphGame>> topGamesStatus = logicHandler.getMostFavouriteGames(6);
 				
 				if( topGamesStatus.statusCode == StatusCode.OK ) {
 					
@@ -2247,7 +2379,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "topGamesPanel");
 							
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most liked games.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2270,7 +2405,7 @@ public class GraphicInterface {
 		topGenresButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				StatusObject<List<UserStats>> userStatsStatus = graphHandler.getUsersSummaryStats();
+				StatusObject<List<UserStats>> userStatsStatus = logicHandler.getUsersSummaryStats();
 				
 				if( userStatsStatus.statusCode == StatusCode.OK ) {
 					
@@ -2305,7 +2440,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "topGenresPanel");
 				
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most liked genres.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2353,7 +2491,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "topRatedGamesByYearPanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve top rated games by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2402,7 +2543,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "topViewedGamesByYearPanel");
 						
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2446,7 +2590,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "maxViewedGameByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2498,7 +2645,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "maxRatedGameByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve max rated games by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2546,7 +2696,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "viewCountByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2594,7 +2747,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "gamesCountByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve games count by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2641,7 +2797,10 @@ public class GraphicInterface {
 					CardLayout cl = (CardLayout)(plotContainer.getLayout());
 					
 					cl.show(plotContainer, "ratingsCountByGenrePanel");
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve ratings count by genre.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2693,7 +2852,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "gamesCountByYearPanel");
 						
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve games count by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2745,8 +2907,11 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "viewsCountByYearPanel");
 						
-				} 
-				
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve most viewed games by year.");
+				}
+								
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
 				gameCountTextField.setText("Insert Year");
@@ -2797,7 +2962,10 @@ public class GraphicInterface {
 						
 					cl.show(plotContainer, "ratingsCountByYearPanel");
 						
-				} 
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve ratings count by year.");
+				}
 				
 				ratingsCountTextField.setText("Insert Year");
 				viewCountTextField.setText("Insert Year");
@@ -2879,6 +3047,9 @@ public class GraphicInterface {
 				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "gameCountYearGenPanel");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve game count for year " + year + ".");
 				}
 			}
 		});
@@ -2957,6 +3128,9 @@ public class GraphicInterface {
 				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "ratingsCountYearGenPanel");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve ratings count for year " + year + ".");
 				}
 			}
 		});
@@ -3035,6 +3209,9 @@ public class GraphicInterface {
 				    CardLayout cl = (CardLayout)(plotContainer.getLayout());
 						
 					cl.show(plotContainer, "viewsCountYearGenPanel");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve views count for year " + year + ".");
 				}
 			}
 		});
@@ -3152,11 +3329,15 @@ public class GraphicInterface {
 					return;
 				}
 				
+				System.out.println("->[GraphicInterface] searched string: " + searchedString + "." );
+				
 				StatusObject<DataNavigator> searchStatusObject  = logicHandler.searchGamesPreviews(searchedString);
 				
 				if( searchStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( searchStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] data navigator object is null.");
 						return;
 					}
 
@@ -3174,24 +3355,50 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							String replacement = "media/crop/600/400/games"; 
 							ImageIcon icon = null;
-						
-							try {
-								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-							} catch(Exception e) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
-							}
 							
+							icon = logicHandler.getCachedImg(url);
+							
+							if( icon == null ) {
+								
+								String replacement = "media/crop/600/400/games"; 
+								String croppedUrl = null;
+								
+								try {
+									croppedUrl = url.replaceFirst("media/games", replacement); 
+									icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+									
+									if(logicHandler.cacheImg(url, icon)) {
+										
+										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+							     	}
+									
+								} catch(Exception e) {
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
+								
+							} else {
+								
+								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+								
+								if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+									
+									System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+									icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
+							}
+
 							searchedGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
-						}
+						} 
 						
 						searchGamesDataNavigator = searchStatusObject.element;
 						fillSearchedGamesList(searchedGamesList);
 						supportGamesList = searchedGamesList;
 					    
-					}	
+					} else {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve list of preview games.");
+					}
 				}
 				
 				mostViewedButton.setBackground(Color.LIGHT_GRAY);
@@ -3239,6 +3446,8 @@ public class GraphicInterface {
 				if( viewedStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( viewedStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
 						return;
 					}
 
@@ -3256,14 +3465,37 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							String replacement = "media/crop/600/400/games"; 
 							ImageIcon icon = null;
 						
-							try {
-								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							icon = logicHandler.getCachedImg(url);
+							
+							if( icon == null ) {
+								
+								String replacement = "media/crop/600/400/games"; 
+								String croppedUrl = null;
+								
+								try {
+									croppedUrl = url.replaceFirst("media/games", replacement); 
+									icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+									
+									if(logicHandler.cacheImg(url, icon)) {
+										
+										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+							     	}
+									
+								} catch(Exception ee) {
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
+								
+							} else {
+								
+								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+								
+								if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+									
+									System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+									icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
 							}
 							
 							mostViewedGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3272,7 +3504,10 @@ public class GraphicInterface {
 						searchGamesDataNavigator = viewedStatusObject.element;
 						fillSearchedGamesList(mostViewedGamesList);
 						supportGamesList = mostViewedGamesList;   
-					}	
+					} else {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve list of preview game (most viewed).");
+					}
 				}
 			}
 		});
@@ -3310,6 +3545,8 @@ public class GraphicInterface {
 				if( likedStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( likedStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
 						return;
 					}
 
@@ -3327,14 +3564,37 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							String replacement = "media/crop/600/400/games"; 
 							ImageIcon icon = null;
 						
-							try {
-								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							icon = logicHandler.getCachedImg(url);
+							
+							if( icon == null ) {
+								
+								String replacement = "media/crop/600/400/games"; 
+								String croppedUrl = null;
+								
+								try {
+									croppedUrl = url.replaceFirst("media/games", replacement); 
+									icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+									
+									if(logicHandler.cacheImg(url, icon)) {
+										
+										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+							     	}
+									
+								} catch(Exception ee) {
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
+								
+							} else {
+								
+								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+								
+								if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+									
+									System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+									icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
 							}
 							
 							mostLikedGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3343,6 +3603,9 @@ public class GraphicInterface {
 						searchGamesDataNavigator = likedStatusObject.element;
 						fillSearchedGamesList(mostLikedGamesList);
 						supportGamesList = mostLikedGamesList;   
+					} else{
+						
+						System.out.println("->[GraphicInterface] impossible to retieve list of preview games (most liked).");
 					}
 				}
 			}
@@ -3381,6 +3644,8 @@ public class GraphicInterface {
 				if( recentStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( recentStatusObject.element == null ) {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
 						return;
 					}
 
@@ -3398,14 +3663,37 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							String replacement = "media/crop/600/400/games"; 
 							ImageIcon icon = null;
 						
-							try {
-								url = url.replaceFirst("media/games", replacement); 
-								icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							icon = logicHandler.getCachedImg(url);
+							
+							if( icon == null ) {
+								
+								String replacement = "media/crop/600/400/games"; 
+								String croppedUrl = null;
+								
+								try {
+									croppedUrl = url.replaceFirst("media/games", replacement); 
+									icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+									
+									if(logicHandler.cacheImg(url, icon)) {
+										
+										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+							     	}
+									
+								} catch(Exception ee) {
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
+								
+							} else {
+								
+								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+								
+								if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+									
+									System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+									icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								}
 							}
 							
 							mostRecentGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3414,6 +3702,9 @@ public class GraphicInterface {
 						searchGamesDataNavigator = recentStatusObject.element;
 						fillSearchedGamesList(mostRecentGamesList);
 						supportGamesList = mostRecentGamesList;   
+					} else {
+						
+						System.out.println("->[GraphicInterface] impossible to retrieve list of preview games (most recent).");
 					}
 				}
 			}
@@ -3447,12 +3738,13 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				StatusObject<List<GraphGame>> featuredStatusObject  = graphHandler.getFeaturedGamesList();
+				StatusObject<List<GraphGame>> featuredStatusObject  = logicHandler.getFeaturedGamesList();
 				
 				if( featuredStatusObject.statusCode == StatusCode.OK ) {
 					
 					if( featuredStatusObject.element == null || featuredStatusObject.element.size() == 0 ) {
 						
+						System.out.println("->[GraphicInterface] no feaured games.");
 						return;
 					}
 					
@@ -3461,15 +3753,38 @@ public class GraphicInterface {
 					for( int i = 0; i < featuredStatusObject.element.size(); i++ ) {
 						
 						GraphGame game = featuredStatusObject.element.get(i);
-						String url = game.previewImage;
-						String replacement = "media/crop/600/400/games"; 
+						String url = game.previewImage; 
 						ImageIcon icon = null;
 					
-						try {
-							url = url.replaceFirst("media/games", replacement); 
-							icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-						} catch(Exception ee) {
-							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+						icon = logicHandler.getCachedImg(url);
+						
+						if( icon == null ) {
+							
+							String replacement = "media/crop/600/400/games"; 
+							String croppedUrl = null;
+							
+							try {
+								croppedUrl = url.replaceFirst("media/games", replacement); 
+								icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+								
+								if(logicHandler.cacheImg(url, icon)) {
+									
+									System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+						     	}
+								
+							} catch(Exception ee) {
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							}
+							
+						} else {
+							
+							System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+							
+							if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+								
+								System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							}
 						}
 						
 						featuredGamesList.add(new BufferedGame(Integer.parseInt(game._id),game.title,icon));
@@ -3478,6 +3793,9 @@ public class GraphicInterface {
 					searchGamesDataNavigator = null;
 					fillSearchedGamesList(featuredGamesList);
 					supportGamesList = featuredGamesList;
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve featured games.");
 				}
 			}
 		});
@@ -3566,6 +3884,7 @@ public class GraphicInterface {
 			    		  
 			    		  if( status.element == null || status.element.size() == 0) {
 			    			  
+			    			  System.out.println("->[GraphicInterface] no more games.");
 			    			  return;
 			    		  }
 			    		  
@@ -3575,23 +3894,49 @@ public class GraphicInterface {
 			    			  
 			    			  PreviewGame game = status.element.get(i);
 			    			  String url = game.getPreviewPicURL();
-							  String replacement = "media/crop/600/400/games"; 
 							  ImageIcon icon = null;
 							
-							  try {
-								  url = url.replaceFirst("media/games", replacement); 
-								  icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-						      } catch(Exception ee) {
-								  icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
-							  }
+							  icon = logicHandler.getCachedImg(url);
 								
-								gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
+								if( icon == null ) {
+									
+									String replacement = "media/crop/600/400/games"; 
+									String croppedUrl = null;
+									
+									try {
+										croppedUrl = url.replaceFirst("media/games", replacement); 
+										icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+										
+										if(logicHandler.cacheImg(url, icon)) {
+											
+											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+								     	}
+										
+									} catch(Exception ee) {
+										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									}
+									
+								} else {
+									
+									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+									
+									if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+										
+										System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+										icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									}
+								}
+								
+							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
 			    		  }
 			    		  
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
 			    		  bar.setValue(1);
-			    	  }  
+			    	  }  else {
+			    		  
+			    		  System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
+			    	  }
 			      } 
 			      
 			      if( value+extent == max  ) {
@@ -3602,6 +3947,7 @@ public class GraphicInterface {
 			    		  
 			    		  if( status.element == null || status.element.size() == 0) {
 			    			  
+			    			  System.out.println("->[GraphicInterface] no more games.");
 			    			  return;
 			    		  }
 			    		  
@@ -3611,22 +3957,48 @@ public class GraphicInterface {
 			    			  
 			    			  PreviewGame game = status.element.get(i);
 			    			  String url = game.getPreviewPicURL();
-							  String replacement = "media/crop/600/400/games"; 
 							  ImageIcon icon = null;
 							
-							  try {
-								  url = url.replaceFirst("media/games", replacement); 
-								  icon = new ImageIcon(ImageIO.read(new URL(url)).getScaledInstance(80, 100, Image.SCALE_FAST));
-						      } catch(Exception ee) {
-								  icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
-							  }
+							  icon = logicHandler.getCachedImg(url);
 								
-								gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
+								if( icon == null ) {
+									
+									String replacement = "media/crop/600/400/games"; 
+									String croppedUrl = null;
+									
+									try {
+										croppedUrl = url.replaceFirst("media/games", replacement); 
+										icon = new ImageIcon(ImageIO.read(new URL(croppedUrl)).getScaledInstance(80, 100, Image.SCALE_FAST));
+										
+										if(logicHandler.cacheImg(url, icon)) {
+											
+											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+								     	}
+										
+									} catch(Exception ee) {
+										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									}
+									
+								} else {
+									
+									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+									
+									if( icon.getIconWidth() != 80 || icon.getIconHeight() != 100 ) {
+										
+										System.out.println("->[GraphicInterface] image " + url + ": resize needed.");
+										icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									}
+								}
+								
+							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
 			    		  }
 			    		  
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
 			    		  bar.setValue(1);
+			    	  } else{
+			    		  
+			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
 			    	  }
 			      }
 		      }
@@ -3681,6 +4053,7 @@ public class GraphicInterface {
 		gameDescriptionTextArea.setFont(new Font("Corbel", Font.PLAIN, 16));
 		gameDescriptionScrollPane.setViewportView(gameDescriptionTextArea);
 		gameDescriptionTextArea.setLineWrap(true);
+		gameDescriptionTextArea.setWrapStyleWord(true);
 		gameDescriptionTextArea.setEditable(false);
 		gameDescriptionTextArea.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		gameDescriptionTextArea.setText("");
@@ -3777,22 +4150,28 @@ public class GraphicInterface {
 				
 				if( isGameFavourite ) {
 					
-					if( graphHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+					if( logicHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
 						
 						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
+						
+						System.out.println("->[GraphicInterface] game correctly remove from favourites.");
 					}else {
 						
+						System.out.println("->[GraphicInterface] impossbile to remove game from favourites.");
 						isGameFavourite = (Boolean) null;
 					}
 				} else if( !isGameFavourite ){
 					
-					if( graphHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+					if( logicHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
 						
 						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 						isGameFavourite = false;
+						
+						System.out.println("->[GraphicInterface] game correctly added to favourites.");
 					} else {
 						
+						System.out.println("->[GraphicInterface] impossible to add game to favourites.");
 						isGameFavourite = (Boolean) null;
 					}
 				} 
@@ -3835,7 +4214,7 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 1);
+				logicHandler.rateGame(currentGame.getTitle(), 1);
 					
 			}
 		});
@@ -3847,7 +4226,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 2);
+				logicHandler.rateGame(currentGame.getTitle(), 2);
 			}
 		});
 		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -3858,7 +4237,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 3);
+				logicHandler.rateGame(currentGame.getTitle(), 3);
 			}
 		});
 		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -3869,7 +4248,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 4);
+				logicHandler.rateGame(currentGame.getTitle(), 4);
 			}
 		});
 		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -3880,7 +4259,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				graphHandler.rateGame(currentGame.getTitle(), 5);
+				logicHandler.rateGame(currentGame.getTitle(), 5);
 			}
 		});
 		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -3919,6 +4298,8 @@ public class GraphicInterface {
 				
 				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
+				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
+				
 				if( currentVideoIndex == 1 ) {
 					
 					previousVideoButton.setEnabled(true);
@@ -3951,7 +4332,11 @@ public class GraphicInterface {
 				
 				currentVideoIndex--;
 				
+				videoPlayer.stopVideo();
+				
 				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
+				
+				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
 				
 				if( currentVideoIndex == lastVideoIndex-1 ) {
 					
@@ -3996,11 +4381,14 @@ public class GraphicInterface {
 				featuredUserButton.setBackground(new Color(30, 144, 255));
 				featuredUserButton.setForeground(Color.WHITE);
 				
-				StatusObject<List<User>> featuredUserStatus = graphHandler.getSuggestedUsersList();
+				StatusObject<List<User>> featuredUserStatus = logicHandler.getSuggestedUsersList();
 				
 				if( featuredUserStatus.statusCode == StatusCode.OK ) {
 					
 					fillUsersTable(featuredUserStatus.element);
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve featured users.");
 				}
 				
 			}
@@ -4038,19 +4426,26 @@ public class GraphicInterface {
 				String searchedString = searchUserTextField.getText();
 				
 				if( searchedString.equals("") ) {
+					
+					System.out.println("->[GraphicInterface] searched empty string.");
 					return;
 				}
+				
+				System.out.println("->[GraphicInterface] searched string: " + searchedString + ".");
 				
 				featuredUserButton.setBackground(Color.WHITE);
 				featuredUserButton.setForeground(Color.BLACK);
 				
-				StatusObject<List<User>> searchedUserStatus = graphHandler.searchUsers(searchedString);
+				StatusObject<List<User>> searchedUserStatus = logicHandler.searchUsers(searchedString);
 				
 				if( searchedUserStatus.statusCode == StatusCode.OK ) {
 					
 					fillUsersTable(searchedUserStatus.element);
 					userGamesListModel.removeAllElements();
 					displayedUserLabel.setText("Currently Displayed: ");
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to retrieve searched users.");
 				}
 			}
 		});
@@ -4275,9 +4670,12 @@ public class GraphicInterface {
 					currentUser.setCountry(country);
 				}
 				
-				if( graphHandler.saveUser() == StatusCode.OK ) {
+				if( logicHandler.saveUser() == StatusCode.OK ) {
 					
 					initializeUserInformationPage();
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to save user info.");
 				}
 				
 			}

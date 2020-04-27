@@ -140,31 +140,5 @@ public class HttpClient {
        
     }
     
-    //Get Game Screenshots
-    public String sendGetScreenshot(String GAME) throws Exception {
-    	System.out.println("HTTPCLIENT/SENDGETGAMESCREENSHOTS-->Preparing request for game screenshots");
 
-        HttpGet request = new HttpGet("https://api.rawg.io/api/games/"+GAME+"/screenshots");
-
-        CloseableHttpResponse response = httpClient.execute(request);
-        try {
-        	System.out.println("HTTPCLIENT/SENDGETGAMESCREENSHOTS-->Request sent");
-            // Get HttpResponse Status
-            System.out.println(response.getStatusLine().toString());
-
-            HttpEntity entity = response.getEntity();
-            Header headers = entity.getContentType();
-            System.out.println(headers);
-
-            String result = EntityUtils.toString(entity);
-            System.out.println("HTTPCLIENT/SENDGETGAMESCREENSHOTS-->Obtained result from request: " + result);	
-            return result;
-        }
-        finally {
-     	   response.close();
-        }
-
-    }
-    
-
-    }
+}

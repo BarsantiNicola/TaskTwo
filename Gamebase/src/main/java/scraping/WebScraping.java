@@ -30,53 +30,58 @@ public class WebScraping {
 
 	
 	//Update database using dynamic scraping (NEED TEST)
-	public static boolean updateDatabase(int MaxGameID) { 
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Starting.");
+	public static List<Game> scrapeNewGames(int MaxGameID) { 
+		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Starting.");
 		if (MaxGameID == 0) {
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> MaxGameID value is not accettable");
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> UpdateDatabase can't be executed. Returning.");
-			return false;
+			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> MaxGameID value is not accettable");
+			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> UpdateDatabase can't be executed. Returning.");
+			return null;
 		}
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new games");
+		System.out.println("WEBSCRAPING/scrapeNewGames--> Search for new games");
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
+		List<Game> gamesToAdd = new ArrayList<Game>();
 		
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> Search for new game: ID=" + MaxGameID);
+			if (failed == 100){
+				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> More than 100 attempts failed. Stopping the search for new games...");
+				break;
+			}
+			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Search for new game: ID=" + MaxGameID);
 			JSONObject newGame = searchNewGame(MaxGameID);
-			System.out.println("WEBSCRAPING/UPDATEDATABASE--> New game obtained");
+			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> New game obtained");
 			MaxGameID++;
-			if(newGame.has("detail")) {
-				System.out.println("WEBSCRAPING/UPDATEDATABASE--> Game not suitable");
+			if(!newGame.has("id") || !newGame.has("name")) {
+				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Game not suitable");
 				failed ++;
 				continue;
 			}
 			i++;
-			if (failed == 100){
-				break;
-			}
+			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Game suitable");
 			newGames.add(newGame);
 		}
 		
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> New games list:"+ newGames.size());
+		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> New games list:"+ newGames.size());
 		for(int j =0; j < newGames.size(); j++) {
 			System.out.println(newGames.get(j));
 			
 		}
 		
-		//Add Games to database
-		System.out.println("WEBSCRAPING/UPDATEDATABASE--> Creating objects Game and GraphGame for new games");
-		List<Game> gamesToAdd = new ArrayList<Game>();
-		List<GraphGame> graphGamesToAdd = new ArrayList<GraphGame>();
-		for(int k = 0; k < newGames.size(); k++) {
-			
-			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));
-			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gameToAdd);			
+		if (newGames.isEmpty()) {
+			return gamesToAdd;
 		}
 		
-		//Inserisci nel database le due liste
-		return false; 
+		//Add Games to database
+		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Creating objectsì Game for new games");
+		for(int k = 0; k < newGames.size(); k++) {
+			
+			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));	
+			gamesToAdd.add(gameToAdd);
+		}		
+		
+		//Return list of games to add
+		return gamesToAdd;
 	}
 	
 	
@@ -173,50 +178,12 @@ public class WebScraping {
 		return gameDescription; 
 	}
 	
-	
-	public static String getGameLowerResScreenshot(String GAME ) { 
-		System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT--> Getting screenshot with lower resolution for game: " + GAME);
-		
-		//Replace spaces in the game title
-		GAME = GAME.replaceAll(" ", "-");
-		
-		String gameScreenshots = null;
-		//Create http object for request
-		HttpClient objRequest = new HttpClient();
-		 
-		try {
-	           System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT-->Sending Http GET request for screenshot");
-	           try {
-				 gameScreenshots = objRequest.sendGetScreenshot(GAME);
-	           } catch (Exception e) {
-					e.printStackTrace();
-					
-				}
 
-	        } finally {
-	            try {
-					objRequest.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-	        }
-		
-		JSONObject result = new JSONObject(gameScreenshots);
-		if(result.has("detail")) {
-			System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT--> Screenshots are not available for game: " + GAME);
-			return "Screenshots not available";
-		}
-		
-		JSONArray screenshots = result.getJSONArray("results");
-		String lowerResScreenshot = util.getLowerResScreenshot(screenshots);
-		System.out.println("WEBSCRAPING/GETGAMELOWERRESSCREESHOT--> Screenshot obtained. Returning URL: " + lowerResScreenshot);
-		return lowerResScreenshot; 
-	}
 	
 	/*
 	//Main per fare prove
 	 public static void main(String[] args) throws Exception {
-		 getGameDescription(999999);
+		scrapeNewGames(4200);
 	 }
 	 */
 }
