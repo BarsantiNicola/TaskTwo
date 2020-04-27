@@ -414,27 +414,27 @@ public class MongoConnection {
 	
     }
     
-    public StatusObject<DataNavigator> getMostViewedPreviews(){
+    public StatusObject<DataNavigator> getMostViewedPreviews( int nGames ){
     	
-    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_VIEWED , "" ));
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , nGames , NavType.PREVIEW_VIEWED , "" ));
     	
     }
     
-    public StatusObject<DataNavigator> getMostLikedPreviews(){
+    public StatusObject<DataNavigator> getMostLikedPreviews( int nGames ){
 
-    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_LIKED , "" ));
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , nGames , NavType.PREVIEW_LIKED , "" ));
     	
     }
     
-    public StatusObject<DataNavigator> getMostRecentPreviews(){
+    public StatusObject<DataNavigator> getMostRecentPreviews( int nGames ){
     		
-    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_RECENT , "" ));
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , nGames , NavType.PREVIEW_RECENT , "" ));
     	
     }
     
-    public StatusObject<DataNavigator> searchGames( String search ){
+    public StatusObject<DataNavigator> searchGames(  int nGames , String search ){
 
-    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , 50 , NavType.PREVIEW_SEARCH , search ));
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , nGames , NavType.PREVIEW_SEARCH , search ));
     	
     }
    
