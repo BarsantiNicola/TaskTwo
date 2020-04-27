@@ -2,8 +2,6 @@ package logic.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.awt.Image;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
