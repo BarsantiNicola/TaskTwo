@@ -215,7 +215,7 @@ public class MongoConnection {
     	
     }
     
-    public StatusCode deleteGame( String gameId ) {
+    public StatusObject<Integer> deleteGame( String gameId ) {
     	
     	gameId = gameId + ".*";
     	Bson findFilter = regex("title", gameId , "i");
@@ -227,7 +227,7 @@ public class MongoConnection {
     		game = gamesCollection.find(findFilter).projection(projection).first();
 
     		if( game == null || game.getId() == null)
-    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
+    			return new StatusObject<Integer>(StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND,null);
 
     		Bson deleteFilter = eq( "_id" , game.getId() );
     		DeleteResult res = gamesCollection.deleteOne( deleteFilter );
@@ -235,16 +235,16 @@ public class MongoConnection {
     		if( res.getDeletedCount() == 0 ) {
     			
     			System.out.println( "---> [MongoConnector][DeleteGame] Error, game not found" );
-    			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
+    			return new StatusObject<Integer>(StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND,null);
     			
     		}
     		
-    		return StatusCode.OK;
+    		return new StatusObject<Integer>(StatusCode.OK,game.getId());
     		
     	}catch(Exception e) {
     		
     		System.out.println( "---> [MongoConnector][DeleteGame] Error, Connection Lost" );
-    		return StatusCode.ERR_NETWORK_UNREACHABLE;
+    		return new StatusObject<Integer>(StatusCode.ERR_NETWORK_UNREACHABLE,null);
     		
     	}
     }
