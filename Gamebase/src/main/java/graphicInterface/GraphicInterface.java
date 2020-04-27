@@ -1158,7 +1158,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve genre list.");
 		}
 		
-		StatusObject<List<GraphGame>> featuredGamesStatus = logicHandler.getFeaturedGamesList();
+		StatusObject<List<GraphGame>> featuredGamesStatus = logicHandler.getFeaturedGamesList(12);
 		
 		if( featuredGamesStatus.statusCode == StatusCode.OK ) {
 			
@@ -2166,7 +2166,7 @@ public class GraphicInterface {
 					return;
 				}
 				
-				if( logicHandler.deleteGame(game) == StatusCode.OK ) {
+				if( logicHandler.deleteGame(game) ) {
 					deleteGameResultLabel.setText("Success!");
 					deleteGameResultLabel.setVisible(true);
 				} else {
@@ -3738,7 +3738,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				StatusObject<List<GraphGame>> featuredStatusObject  = logicHandler.getFeaturedGamesList();
+				StatusObject<List<GraphGame>> featuredStatusObject  = logicHandler.getFeaturedGamesList(12);
 				
 				if( featuredStatusObject.statusCode == StatusCode.OK ) {
 					
