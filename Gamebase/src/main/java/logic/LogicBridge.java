@@ -86,7 +86,7 @@ public class LogicBridge {
 	
 	public StatusCode addGame( Game game ) {return MONGO.addGame(game);}
 	
-	public StatusCode deleteGame( String gameTitle ) { return MONGO.deleteGame( gameTitle );}
+	public StatusObject<Integer> deleteGame( String gameTitle ) { return MONGO.deleteGame( gameTitle );}
 	
 	
 	
