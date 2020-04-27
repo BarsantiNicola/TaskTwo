@@ -1,5 +1,7 @@
 package logic;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -86,10 +88,9 @@ public class LogicBridge {
 	
 	public StatusCode addGame( Game game ) {return MONGO.addGame(game);}
 	
-	public StatusObject<Integer> deleteGame( String gameTitle ) { return MONGO.deleteGame( gameTitle );}
+	public StatusObject<Integer> deleteGameMongo( String gameTitle ) { return MONGO.deleteGame( gameTitle );}
 	
-	
-	
+
 	//////  STATISTICS
 	
 	public StatusObject<List<Statistics>> getMaxRatedGameByYear(){ return MONGO.statistics.getMaxRatedGameByYear(); }
@@ -210,7 +211,7 @@ public class LogicBridge {
 	
 	public StatusObject<List<UserStats>> getUsersSummaryStats(){ return GRAPH.getUsersSummaryStats(); }
 	
-	///////////////  OTHER
+	///////////////  CACHE
 	
 	public boolean cacheImg( String URL , ImageIcon img ) {
 		return CACHE.cacheImg(URL, img );
@@ -220,6 +221,50 @@ public class LogicBridge {
 		return CACHE.getCachedImg(URL);
 	}
 	
+	////////////// DELETE GAME and CLOSE CONNECTION
+	
+	public boolean deleteGame( String gameTitle ) {
+		
+		StatusObject<Integer> mongoDeleteGameStatus = MONGO.deleteGame(gameTitle);
+		
+		if( mongoDeleteGameStatus.statusCode != StatusCode.OK ) {
+			
+			try {
+				FileWriter fw = new FileWriter("logs/errors.txt",true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write("DELETE GAME ERROR: " + gameTitle + " cannot be deleted on Mongo database. The game is still present on Graph database.");
+				bw.newLine();
+				bw.close();
+			} catch( Exception e) {
+				
+				System.out.println("-->[LogicBridge] cannot delete " + gameTitle + " from Mongo database. Failed to write into errors.txt file.");
+			}
+
+			return false;
+		}
+		
+		int id = mongoDeleteGameStatus.element;
+		
+		StatusCode graphDeleteGameStatus = GRAPH.deleteGame(Integer.toString(id));
+		
+		if( graphDeleteGameStatus != StatusCode.OK ) {
+			
+			try {
+				FileWriter fw = new FileWriter("logs/errors.txt",true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write("DELETE GAME ERROR: " + gameTitle + " cannot be deleted on Graph database. The game has already been cancelled from Mongo database.");
+				bw.newLine();
+				bw.close();
+			} catch( Exception e) {
+				
+				System.out.println("-->[LogicBridge] cannot delete " + gameTitle + " from Graph database. Failed to write into errors.txt file.");
+			}
+			
+			return false;
+		}		
+		
+		return true;
+	}
 	
 	public void closeConnection(){
 		MONGO.closeConnection();
