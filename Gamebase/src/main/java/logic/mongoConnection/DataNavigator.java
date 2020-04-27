@@ -225,7 +225,7 @@ public class DataNavigator{
 		}
 		System.out.println("------- DataNavigator Test -------");
 		
-		DataNavigator nav = client.getMostLikedPreviews().element;
+		DataNavigator nav = client.getMostLikedPreviews(50).element;
 		List<PreviewGame> app;
 		if( nav == null ) {
 			System.out.println("Error trying to get navigator");
