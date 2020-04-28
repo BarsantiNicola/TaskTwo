@@ -133,13 +133,17 @@ public class LogicBridge {
 		for(int i= 0; i < gamesToAdd.size(); i++) {
 			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gamesToAdd.get(i));
 			if(GRAPH.addGame(graphGameToAdd)!=StatusCode.OK) {
-				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Graph database. Interrupting update");
+				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game" + graphGameToAdd._id + " : " + graphGameToAdd.title + " to Graph database. Interrupting update");
 				util.recapUpdate(gamesToAdd, i);
+				util.writeErrorLog("Failing in adding game" + graphGameToAdd._id + " : " + graphGameToAdd.title + " to Graph database. Interrupting update.");
 				return true;
 			}
 			if(MONGO.addGame(gamesToAdd.get(i)) != StatusCode.OK) {
-				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game to Document database. Interrupting update");
-				GRAPH.deleteGame(graphGameToAdd._id);
+				System.out.println("LogicBridge/updateDatabase()--> Failing in adding game" + gamesToAdd.get(i).getId() + " : " + gamesToAdd.get(i).getTitle() + " to Document database. Interrupting update");
+				util.writeErrorLog("Failing in adding game" + gamesToAdd.get(i).getId() + " : " + gamesToAdd.get(i).getTitle() + " to Document database. Interrupting update");
+				if(GRAPH.deleteGame(graphGameToAdd._id) !=StatusCode.OK) {
+					util.writeErrorLog("Failing in deleting game" + graphGameToAdd._id + " : " + graphGameToAdd.title + " from Graph database");
+				}
 				util.recapUpdate(gamesToAdd, i);
 				return true;
 			}

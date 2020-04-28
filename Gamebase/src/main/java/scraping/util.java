@@ -1,6 +1,9 @@
 package scraping;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -214,7 +217,7 @@ public class util {
 		return graphGameToAdd;
 	}
 	
-	
+	//Debug function: report informations about the database update
 	public static void recapUpdate(List<Game> gamesAdded, int numberOfGamesAdded) {
 		System.out.println("UTIL/RECAPUPDATE--> Recap of database update:");
 		System.out.println("UTIL/RECAPUPDATE--> Games added: " + numberOfGamesAdded);
@@ -222,6 +225,22 @@ public class util {
 			System.out.println("UTIL/RECAPUPDATE-->GameId: " + gamesAdded.get(i).getId() + ", title: " + gamesAdded.get(i).getTitle());
 		}
 		
+	}
+	
+	public static void writeErrorLog(String error) {
+		Date date = new Date();
+		Timestamp ts = new Timestamp(date.getTime());
+		System.out.println("UTIL/WRITEERRORLOG--> Writing error log in file error.txt");
+		try {
+			FileWriter fw = new FileWriter("logs/errors.txt",true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(ts.toString() + ":" + error);
+			bw.newLine();
+			bw.close();
+		} catch( Exception e) {
+			
+			System.out.println("UTIL/WRITEERRORLOG-->Failed to write into errors.txt file.");
+		}
 	}
 
 }
