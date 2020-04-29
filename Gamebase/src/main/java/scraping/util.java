@@ -227,6 +227,7 @@ public class util {
 		
 	}
 	
+	//Write information about an error in file error.txt
 	public static void writeErrorLog(String error) {
 		Date date = new Date();
 		Timestamp ts = new Timestamp(date.getTime());
