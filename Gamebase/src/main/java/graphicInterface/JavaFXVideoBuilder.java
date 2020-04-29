@@ -2,12 +2,7 @@ package graphicInterface;
 
 import java.awt.BorderLayout;
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javafx.embed.swing.*;
 import javafx.scene.media.*;
 import javafx.scene.*;
@@ -16,9 +11,11 @@ import javafx.beans.property.*;
 import javafx.stage.*;
 import javafx.beans.binding.*;
 
+@SuppressWarnings("restriction")
 public class JavaFXVideoBuilder {
 	
 	private JPanel panel;
+	
 	private JFXPanel VFXPanel;
 	private Media media;
 	private MediaPlayer player;
@@ -64,7 +61,6 @@ public class JavaFXVideoBuilder {
 	    //root.getChildren().add(viewer);
 	
 	    VFXPanel.setScene(scene);
-	    player.setCycleCount(MediaPlayer.INDEFINITE);
 	    player.play();
 	    panel.setLayout(new BorderLayout());
 	    panel.add(VFXPanel, BorderLayout.CENTER);
