@@ -75,13 +75,13 @@ public class LogicBridge {
 	
 	public StatusObject<PreviewGame> getMostPopularPreview() { return MONGO.getMostPopularPreview(); }
 	
-	public StatusObject<DataNavigator> getMostViewedPreviews(){ return MONGO.getMostViewedPreviews(50); }
+	public StatusObject<DataNavigator> getMostViewedPreviews(){ return MONGO.getMostViewedPreviews(12); }
 	
-	public StatusObject<DataNavigator> getMostLikedPreviews(){ return MONGO.getMostLikedPreviews(50); }
+	public StatusObject<DataNavigator> getMostLikedPreviews(){ return MONGO.getMostLikedPreviews(12); }
 	
-	public StatusObject<DataNavigator> getMostRecentPreviews(){ return MONGO.getMostRecentPreviews(50); }
+	public StatusObject<DataNavigator> getMostRecentPreviews(){ return MONGO.getMostRecentPreviews(12); }
 	
-	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( 50,searchedString ); }
+	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( 12,searchedString ); }
 	
 	//////  SCRAPER & ADMIN INTERFACE
 	StatusCode addGameDescription( int gameId , String description ) { return MONGO.addGameDescription( gameId , description);}

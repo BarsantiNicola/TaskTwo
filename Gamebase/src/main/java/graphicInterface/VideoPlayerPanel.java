@@ -2,6 +2,7 @@ package graphicInterface;
 
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class VideoPlayerPanel extends JPanel{
 	
 	private JavaFXVideoBuilder video;

@@ -233,6 +233,7 @@ public class GraphicInterface {
 	private int lastVideoIndex;
 	private Boolean isGameFavourite;
 	private DefaultTableCellRenderer centerRenderer;
+	private int searchedGamesPerPage;
 	
 	
 	/////// SUPPORT FUNCTIONS
@@ -470,6 +471,7 @@ public class GraphicInterface {
 		}
 
 		Image image = null;
+		Image scaledImage = null;
 		ImageIcon icon = null;
 		String url;
 		
@@ -482,6 +484,7 @@ public class GraphicInterface {
 				
 				try {
 					image = ImageIO.read(new URL(url));
+					scaledImage = image.getScaledInstance(310, 200, Image.SCALE_SMOOTH);
 					
 					if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 						
@@ -489,17 +492,17 @@ public class GraphicInterface {
 					}
 				} catch (Exception e) {
 					try {
-						image = ImageIO.read(new File("/resources/defaultGamePicture.png"));
+						scaledImage = ImageIO.read(new File("/resources/defaultGamePicture.png")).getScaledInstance(310, 200, Image.SCALE_SMOOTH);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				}
 			} else {
 				
-				image = icon.getImage();
+				scaledImage = icon.getImage().getScaledInstance(310, 200, Image.SCALE_SMOOTH);
 			}
 			
-			imagesListModel.addElement(image);
+			imagesListModel.addElement(scaledImage);
 		}
 	}
 	
@@ -1187,7 +1190,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to retrieve genre list.");
 		}
 		
-		StatusObject<List<GraphGame>> featuredGamesStatus = logicHandler.getFeaturedGamesList(12);
+		StatusObject<List<GraphGame>> featuredGamesStatus = logicHandler.getFeaturedGamesList(searchedGamesPerPage);
 		
 		if( featuredGamesStatus.statusCode == StatusCode.OK ) {
 			
@@ -1207,7 +1210,7 @@ public class GraphicInterface {
 					try {
 						croppedUrl = url.replaceFirst("media/games", replacement);
 						Image image = ImageIO.read(new URL(croppedUrl));
-						icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+						icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 						
 						if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 							
@@ -1215,14 +1218,14 @@ public class GraphicInterface {
 				     	}
 						
 					} catch(Exception e) {
-						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+						icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 					}
 					
 				} else {
 					
 					System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 					
-					icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+					icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 					
 				}
 				
@@ -1414,6 +1417,7 @@ public class GraphicInterface {
 		titleFont = new Font("Corbel", Font.BOLD, 20);
 		supportGamesList = null;
 		currentVideosURLlist = null;
+		searchedGamesPerPage = 12;
 		
 		userGamesListModel = new DefaultListModel<BufferedGame>();
 		imagesListModel = new DefaultListModel<Image>();
@@ -3390,7 +3394,7 @@ public class GraphicInterface {
 								try {
 									croppedUrl = url.replaceFirst("media/games", replacement); 
 									Image image = ImageIO.read(new URL(croppedUrl));
-									icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
 									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 										
@@ -3398,14 +3402,14 @@ public class GraphicInterface {
 							     	}
 									
 								} catch(Exception e) {
-									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								}
 								
 							} else {
 								
 								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 								
-								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								
 							}
 
@@ -3496,7 +3500,7 @@ public class GraphicInterface {
 								try {
 									croppedUrl = url.replaceFirst("media/games", replacement); 
 									Image image = ImageIO.read(new URL(croppedUrl));
-									icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
 									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 										
@@ -3504,14 +3508,14 @@ public class GraphicInterface {
 							     	}
 									
 								} catch(Exception ee) {
-									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								}
 								
 							} else {
 								
 								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 								
-								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								
 							}
 							
@@ -3591,7 +3595,7 @@ public class GraphicInterface {
 								try {
 									croppedUrl = url.replaceFirst("media/games", replacement); 
 									Image image = ImageIO.read(new URL(croppedUrl));
-									icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
 									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 										
@@ -3599,14 +3603,14 @@ public class GraphicInterface {
 							     	}
 									
 								} catch(Exception ee) {
-									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								}
 								
 							} else {
 								
 								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 								
-								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 				
 							}
 							
@@ -3686,7 +3690,7 @@ public class GraphicInterface {
 								try {
 									croppedUrl = url.replaceFirst("media/games", replacement); 
 									Image image = ImageIO.read(new URL(croppedUrl));
-									icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
 									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 										
@@ -3694,14 +3698,14 @@ public class GraphicInterface {
 							     	}
 									
 								} catch(Exception ee) {
-									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								}
 								
 							} else {
 								
 								System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 								
-								icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 							}
 							
 							mostRecentGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
@@ -3746,7 +3750,7 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				StatusObject<List<GraphGame>> featuredStatusObject  = logicHandler.getFeaturedGamesList(12);
+				StatusObject<List<GraphGame>> featuredStatusObject  = logicHandler.getFeaturedGamesList(searchedGamesPerPage);
 				
 				if( featuredStatusObject.statusCode == StatusCode.OK ) {
 					
@@ -3772,7 +3776,7 @@ public class GraphicInterface {
 							try {
 								croppedUrl = url.replaceFirst("media/games", replacement); 
 								Image image = ImageIO.read(new URL(croppedUrl));
-								icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+								icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 								
 								if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 									
@@ -3780,14 +3784,14 @@ public class GraphicInterface {
 						     	}
 								
 							} catch(Exception ee) {
-								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+								icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 							}
 							
 						} else {
 							
 							System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 							
-							icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 						}
 						
 						featuredGamesList.add(new BufferedGame(Integer.parseInt(game._id),game.title,icon));
@@ -3907,7 +3911,7 @@ public class GraphicInterface {
 									try {
 										croppedUrl = url.replaceFirst("media/games", replacement); 
 										Image image = ImageIO.read(new URL(croppedUrl));
-										icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 										
 										if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 											
@@ -3915,14 +3919,14 @@ public class GraphicInterface {
 								     	}
 										
 									} catch(Exception ee) {
-										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 									}
 									
 								} else {
 									
 									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 									
-									icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								}
 								
 							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
@@ -3965,7 +3969,7 @@ public class GraphicInterface {
 									try {
 										croppedUrl = url.replaceFirst("media/games", replacement); 
 										Image image = ImageIO.read(new URL(croppedUrl));
-										icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 										
 										if(logicHandler.cacheImg(url, new ImageIcon(image))) {
 											
@@ -3973,14 +3977,14 @@ public class GraphicInterface {
 								     	}
 										
 									} catch(Exception ee) {
-										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 									}
 									
 								} else {
 									
 									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 									
-									icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
 								}
 								
 							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  

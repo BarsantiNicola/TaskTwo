@@ -15,7 +15,6 @@ import javafx.beans.binding.*;
 public class JavaFXVideoBuilder {
 	
 	private JPanel panel;
-	
 	private JFXPanel VFXPanel;
 	private Media media;
 	private MediaPlayer player;
@@ -28,8 +27,6 @@ public class JavaFXVideoBuilder {
 	
 	public void playVideo(String location) {
 
-		//File video_source = new File(location);
-	    //Media m = new Media(video_source.toURI().toString());
 		try {
 			media = new Media(location);
 		} catch (Exception e) {
