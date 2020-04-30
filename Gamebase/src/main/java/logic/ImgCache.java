@@ -10,6 +10,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
+
+import logic.data.StatusObject;
+
 import static org.iq80.leveldb.impl.Iq80DBFactory.*;
 
 public class ImgCache {
@@ -37,23 +40,25 @@ public class ImgCache {
 		
 	}
 
-	public ImageIcon getCachedImg( String URL ) {
+	public StatusObject<ImageIcon> getCachedImg( String URL ) {
 		
     	byte[] image;
-
-    	if( URL == null ) return null;
+    	ImageIcon img;
+    	if( URL == null ) return new StatusObject<ImageIcon>(StatusCode.ERR_BAD_PARAM);
     	
     	if( levelDb == null )
     		if( createConnection() == false ) 
-    			return null;
+    			return new StatusObject<ImageIcon>(StatusCode.ERR_CACHE_UNREACHABLE);
     	
     	try {
     		
     		image = levelDb.get(URL.getBytes());
 
-    		if( image == null ) return null;
-
-    		return decodeImage(image);
+    		if( image == null ) return new StatusObject<ImageIcon>(StatusCode.ERR_IMG_NOT_FOUND);
+    		
+    		img = decodeImage(image);
+    		if( img == null ) return new StatusObject<ImageIcon>(StatusCode.ERR_DECODING_IMG);
+    		return new StatusObject<ImageIcon>(StatusCode.OK, decodeImage(image));
     		
     	}catch( Exception e ) {
     		
@@ -61,39 +66,39 @@ public class ImgCache {
 
 			e.printStackTrace();
     		levelDb = null;
-    		return null;
+			return new StatusObject<ImageIcon>(StatusCode.ERR_CACHE_UNREACHABLE);
     		
     	}
 		
 	}
 	
-	public boolean cacheImg( String URL , ImageIcon img ) {
+	public StatusCode cacheImg( String URL , ImageIcon img ) {
 		
 		byte[] ret  = null;
 
-		if( URL == null || img == null ) return false;
+		if( URL == null || img == null ) return StatusCode.ERR_BAD_PARAM;
 		
     	if( levelDb == null )
     		if( createConnection() == false ) 
-    			return false;
+    			return StatusCode.ERR_CACHE_UNREACHABLE;
 
     	ret = encodeImage(img);
 
-    	if( ret == null || ret.length == 0 ) return false;
+    	if( ret == null || ret.length == 0 ) return StatusCode.ERR_ENCODING_IMG;
 
     	try {
 
     		if(levelDb.get( URL.getBytes() ) == null ) 
     			levelDb.put( URL.getBytes() , ret );
 
-    		return true;
+    		return StatusCode.OK;
     		
     	}catch( Exception e ) {
 
 			try{ levelDb.close(); } catch( Exception a ) {}
 
     		levelDb = null;
-    		return false;
+    		return StatusCode.ERR_CACHE_UNREACHABLE;
     		
     	}
     	

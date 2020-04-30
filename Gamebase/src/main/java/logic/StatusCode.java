@@ -5,6 +5,7 @@ public enum StatusCode
  //--------------------------------------------------------
  //                      GENERAL
  //--------------------------------------------------------
+	
  OK,
  ERR_UNKNOWN,
  ERR_WRONG_PORT,
@@ -25,6 +26,15 @@ public enum StatusCode
  ERR_DOCUMENT_HAS_PREV,
  ERR_DOCUMENT_NO_PREV,
  ERR_DOCUMENT_BAD_GAME_ID,
+ 
+//--------------------------------------------------------
+//                 Caching Error Codes
+//--------------------------------------------------------
+ ERR_CACHE_UNREACHABLE,
+ ERR_BAD_PARAM,
+ ERR_IMG_NOT_FOUND,
+ ERR_DECODING_IMG,
+ ERR_ENCODING_IMG,
  
  
  //---------------------------------------------------------------------------------

@@ -368,7 +368,7 @@ public class GraphicInterface {
 						
 						GraphGame gm = favGamesStatus.element.get(i);
 						String url = gm.previewImage;
-						ImageIcon icon = logicHandler.getCachedImg(url);
+						ImageIcon icon = logicHandler.getCachedImg(url).element;
 						
 						if( icon == null ) {
 							
@@ -380,7 +380,7 @@ public class GraphicInterface {
 								Image image = ImageIO.read(new URL(croppedUrl));
 								icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
 								
-								if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+								if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 									
 									System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 								}
@@ -478,7 +478,7 @@ public class GraphicInterface {
 		for( int i=0; i < imagesURLList.size(); i++ ) {
 			
 			url = imagesURLList.get(i);
-			icon = logicHandler.getCachedImg(url);
+			icon = logicHandler.getCachedImg(url).element;
 			
 			if( icon == null ) {
 				
@@ -486,7 +486,7 @@ public class GraphicInterface {
 					image = ImageIO.read(new URL(url));
 					scaledImage = image.getScaledInstance(310, 200, Image.SCALE_SMOOTH);
 					
-					if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+					if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 						
 						System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 					}
@@ -532,7 +532,7 @@ public class GraphicInterface {
 				
 				GraphGame gm = gamesListStatus.element.get(i);
 				String url = gm.previewImage;
-				ImageIcon icon = logicHandler.getCachedImg(url);
+				ImageIcon icon = logicHandler.getCachedImg(url).element;
 				
 				if( icon == null ) {
 					
@@ -544,7 +544,7 @@ public class GraphicInterface {
 						Image image = ImageIO.read(new URL(croppedUrl));
 						icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
 						
-						if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+						if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 							
 							System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 						}
@@ -587,7 +587,7 @@ public class GraphicInterface {
 			
 			String url = mostViewedStatus.element.getPreviewPicURL();
 			
-			ImageIcon icon = logicHandler.getCachedImg(url);
+			ImageIcon icon = logicHandler.getCachedImg(url).element;
 			
 			if( icon == null ) {
 				
@@ -599,7 +599,7 @@ public class GraphicInterface {
 					Image image = ImageIO.read(new URL(croppedUrl));
 					icon = new ImageIcon(image.getScaledInstance(238, 155, Image.SCALE_FAST));
 					
-					if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+					if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 						
 						System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 					}
@@ -627,7 +627,7 @@ public class GraphicInterface {
 			
 			String url = mostPopularStatus.element.getPreviewPicURL();
 			
-			ImageIcon icon = logicHandler.getCachedImg(url);
+			ImageIcon icon = logicHandler.getCachedImg(url).element;
 			
 			if( icon == null ) {
 				
@@ -639,7 +639,7 @@ public class GraphicInterface {
 					Image image = ImageIO.read(new URL(croppedUrl));
 					icon = new ImageIcon(image.getScaledInstance(238, 155, Image.SCALE_FAST));
 					
-					if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+					if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 						
 						System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 					}
@@ -778,7 +778,7 @@ public class GraphicInterface {
 			Image image = ImageIO.read(new URL(background_image_url));
 			background_image_icon = new ImageIcon(image.getScaledInstance(342, 188, Image.SCALE_SMOOTH));
 			
-			if(logicHandler.cacheImg(background_image_url, new ImageIcon(image))) {
+			if(logicHandler.cacheImg(background_image_url, new ImageIcon(image)) == StatusCode.OK) {
 					
 				System.out.println("->[GraphicInterface] image " + background_image_url + " stored in cache");
 			}
@@ -1018,7 +1018,7 @@ public class GraphicInterface {
 					
 					GraphGame gm = friendGamesStatus.element.get(i);
 					String url = gm.previewImage;
-					ImageIcon icon = logicHandler.getCachedImg(url);
+					ImageIcon icon = logicHandler.getCachedImg(url).element;
 					
 					if( icon == null ) {
 						
@@ -1031,7 +1031,7 @@ public class GraphicInterface {
 							Image image = ImageIO.read(new URL(croppedUrl));
 							icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
 							
-							if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+							if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 								
 								System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 					     	}
@@ -1200,7 +1200,7 @@ public class GraphicInterface {
 				
 				GraphGame gm = featuredGamesStatus.element.get(i);
 				String url = gm.previewImage;
-				ImageIcon icon = logicHandler.getCachedImg(url);
+				ImageIcon icon = logicHandler.getCachedImg(url).element;
 				
 				if( icon == null ) {
 					
@@ -1212,7 +1212,7 @@ public class GraphicInterface {
 						Image image = ImageIO.read(new URL(croppedUrl));
 						icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 						
-						if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+						if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 							
 							System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 				     	}
@@ -3384,7 +3384,7 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							ImageIcon icon = logicHandler.getCachedImg(url);
+							ImageIcon icon = logicHandler.getCachedImg(url).element;
 							
 							if( icon == null ) {
 								
@@ -3396,7 +3396,7 @@ public class GraphicInterface {
 									Image image = ImageIO.read(new URL(croppedUrl));
 									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
-									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+									if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 										
 										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 							     	}
@@ -3490,7 +3490,7 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							ImageIcon icon = logicHandler.getCachedImg(url);
+							ImageIcon icon = logicHandler.getCachedImg(url).element;
 							
 							if( icon == null ) {
 								
@@ -3502,7 +3502,7 @@ public class GraphicInterface {
 									Image image = ImageIO.read(new URL(croppedUrl));
 									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
-									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+									if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 										
 										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 							     	}
@@ -3585,7 +3585,7 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							ImageIcon icon = logicHandler.getCachedImg(url);
+							ImageIcon icon = logicHandler.getCachedImg(url).element;
 							
 							if( icon == null ) {
 								
@@ -3597,7 +3597,7 @@ public class GraphicInterface {
 									Image image = ImageIO.read(new URL(croppedUrl));
 									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
-									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+									if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 										
 										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 							     	}
@@ -3680,7 +3680,7 @@ public class GraphicInterface {
 							
 							PreviewGame game = listStatusObject.element.get(i);
 							String url = game.getPreviewPicURL();
-							ImageIcon icon = logicHandler.getCachedImg(url);
+							ImageIcon icon = logicHandler.getCachedImg(url).element;
 							
 							if( icon == null ) {
 								
@@ -3692,7 +3692,7 @@ public class GraphicInterface {
 									Image image = ImageIO.read(new URL(croppedUrl));
 									icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 									
-									if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+									if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 										
 										System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 							     	}
@@ -3766,7 +3766,7 @@ public class GraphicInterface {
 						
 						GraphGame game = featuredStatusObject.element.get(i);
 						String url = game.previewImage; 
-						ImageIcon icon = logicHandler.getCachedImg(url);
+						ImageIcon icon = logicHandler.getCachedImg(url).element;
 						
 						if( icon == null ) {
 							
@@ -3778,7 +3778,7 @@ public class GraphicInterface {
 								Image image = ImageIO.read(new URL(croppedUrl));
 								icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 								
-								if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+								if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 									
 									System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 						     	}
@@ -3901,7 +3901,7 @@ public class GraphicInterface {
 			    			  
 			    			  PreviewGame game = status.element.get(i);
 			    			  String url = game.getPreviewPicURL();
-							  ImageIcon icon = logicHandler.getCachedImg(url);
+							  ImageIcon icon = logicHandler.getCachedImg(url).element;
 								
 								if( icon == null ) {
 									
@@ -3913,7 +3913,7 @@ public class GraphicInterface {
 										Image image = ImageIO.read(new URL(croppedUrl));
 										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 										
-										if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 											
 											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 								     	}
@@ -3959,7 +3959,7 @@ public class GraphicInterface {
 			    			  
 			    			  PreviewGame game = status.element.get(i);
 			    			  String url = game.getPreviewPicURL();
-							  ImageIcon icon = logicHandler.getCachedImg(url);
+							  ImageIcon icon = logicHandler.getCachedImg(url).element;
 								
 								if( icon == null ) {
 									
@@ -3971,7 +3971,7 @@ public class GraphicInterface {
 										Image image = ImageIO.read(new URL(croppedUrl));
 										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 										
-										if(logicHandler.cacheImg(url, new ImageIcon(image))) {
+										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 											
 											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
 								     	}
