@@ -19,16 +19,21 @@ public class ImgCache {
 	
 	ImgCache( String cachePath ){
 		
-		databasePath = cachePath;  
-		createConnection();   
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			public void run() {
-				if( levelDb != null ) 
-					try{
-						levelDb.close();
-					}catch( Exception e ) {}
-			}
-		});
+		if(cachePath != null ) {
+			databasePath = cachePath;  
+			createConnection();   
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					if( levelDb != null ) 
+						try{
+							levelDb.close();
+						}catch( Exception e ) {}
+				}
+			});
+		}else {
+			databasePath = null;
+			levelDb = null;
+		}
 		
 	}
 
@@ -36,6 +41,8 @@ public class ImgCache {
 		
     	byte[] image;
 
+    	if( URL == null ) return null;
+    	
     	if( levelDb == null )
     		if( createConnection() == false ) 
     			return null;
@@ -64,6 +71,8 @@ public class ImgCache {
 		
 		byte[] ret  = null;
 
+		if( URL == null || img == null ) return false;
+		
     	if( levelDb == null )
     		if( createConnection() == false ) 
     			return false;
