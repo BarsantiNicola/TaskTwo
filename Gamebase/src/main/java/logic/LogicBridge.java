@@ -84,7 +84,7 @@ public class LogicBridge {
 	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( 12,searchedString ); }
 	
 	//////  SCRAPER & ADMIN INTERFACE
-	StatusCode addGameDescription( int gameId , String description ) { return MONGO.addGameDescription( gameId , description);}
+	public StatusCode addGameDescription( int gameId , String description ) { return MONGO.addGameDescription( gameId , description);}
 	
 	public StatusCode addGame( Game game ) {return MONGO.addGame(game);}
 	

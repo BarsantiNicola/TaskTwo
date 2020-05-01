@@ -84,6 +84,7 @@ public class GraphicInterface {
 	private JLabel deleteUserResultLabel;
 	private JLabel deleteGameResultLabel;
 	private JLabel updateDatabaseResultLabel;
+	private SwingWorker<Boolean,Void> updateDatabaseSwingWorker;
 	
 	///////// ANALYST PANEL
 	
@@ -745,17 +746,30 @@ public class GraphicInterface {
 		Game game = gameStatus.element;
 		currentGame = game;
 		
-		String gameDescription = logicHandler.getGameDescription(id);
+		String gameDescription = game.getDescription();
 		
 		if( gameDescription == null ) {
 			
-			gameDescriptionTextArea.setText("          -- Game Description not Available --");
+			System.out.println("->[GraphicInterface] description for " + game.getTitle() + " not present.");
+			gameDescription = logicHandler.getGameDescription(id);
+			
+			if( !gameDescription.equals("No description available")) {
+				
+				if( logicHandler.addGameDescription(id,gameDescription) == StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] description for " + game.getTitle() + " correctly added.");
+				}
+			} else {
+				
+				gameDescription = "          -- Game Description not Available --";
+			}
 		} else {
 			
-			gameDescriptionTextArea.setText(gameDescription);
-			gameDescriptionTextArea.setCaretPosition(0);
-			
+			System.out.println("->[GraphicInterface] description for " + game.getTitle() + " already present.");
 		}
+		
+		gameDescriptionTextArea.setText(gameDescription);
+		gameDescriptionTextArea.setCaretPosition(0);
 		
 		gameTitleLabel.setText(game.getTitle());
 		
@@ -1465,6 +1479,63 @@ public class GraphicInterface {
 						return columnTypes[columnIndex];
 					}
 			};
+			
+		updateDatabaseSwingWorker = new SwingWorker<Boolean,Void>() {
+			
+			@Override
+			protected Boolean doInBackground() {
+				
+				updateDatabaseButton.setEnabled(false);
+				
+				return logicHandler.updateDatabase();
+			}
+			
+			@Override
+			protected void done() {
+				
+				updateDatabaseButton.setEnabled(true);
+				
+				boolean result;
+				
+				try{
+					
+					result = get();
+					
+				} catch( Exception e ) {
+					
+					result = false;
+				}
+				
+				if( result ) {
+					
+					updateDatabaseResultLabel.setText("Success!");
+				} else {
+					
+					updateDatabaseResultLabel.setText("Failure!");
+				}
+				
+				updateDatabaseResultLabel.setVisible(true);
+				
+				new Timer(3000,new ActionListener() {
+				      public void actionPerformed(ActionEvent evt) {
+				          updateDatabaseResultLabel.setVisible(false);
+				      }
+				  }).start();
+				
+			    StatusObject<Long> gamesCountStatusObject = logicHandler.getGameCount();
+			    String gamesCount = null;
+			    
+			    if( gamesCountStatusObject.statusCode == StatusCode.OK ) {
+			    	
+			    	gamesCount = Long.toString(gamesCountStatusObject.element);
+				} else {
+					
+					gamesCount = "N/A";
+				}
+				
+				gameCountLabel.setText("Game Count: " + gamesCount);
+			}
+		};
 		
 		initialize();
 	}
@@ -2245,20 +2316,9 @@ public class GraphicInterface {
 		updateDatabaseButton = new JButton("Update Database");
 		updateDatabaseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*
-				if( logicHandler.updateDatabase() ) {
-					updateDatabaseResultLabel.setText("Success!");
-					updateDatabaseResultLabel.setVisible(true);
-				} else {
-					updateDatabaseResultLabel.setText("Failure!");
-					updateDatabaseResultLabel.setVisible(true);
-				}
 				
-				new Timer(3000,new ActionListener() {
-				      public void actionPerformed(ActionEvent evt) {
-				          updateDatabaseResultLabel.setVisible(false);
-				      }
-				  }).start();*/
+				updateDatabaseSwingWorker.execute();
+				
 			}
 		});
 		updateDatabaseButton.setBackground(new Color(30, 144, 255));
