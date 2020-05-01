@@ -28,7 +28,7 @@ public class util {
 	
 	//Create a Game consistent with the new game just scraped
 	public static Game initializeGameToAdd(JSONObject newGame) {
-		System.out.println("UTIL/INITIALIZEGAMETOADD--> Initializing new game. ID:" + newGame.getInt("id"));
+		System.out.println("-->[util][initializeGameToAdd] Initializing new game. ID:" + newGame.getInt("id"));
 		Game gameToAdd = new Game();
 		
 		//Id
@@ -202,27 +202,27 @@ public class util {
 		if(images.size() > 0 || videos.size() > 0) {
 				gameToAdd.setMultimedia(multimedia);
 		}
-		System.out.println("UTIL/INITIALIZEGAMETOADD--> Created new game");
+		System.out.println("-->[util][initializeGameToAdd] Created new game");
 		return gameToAdd;
 	}
 	
 	
 	//Create GraphGame consistent with the new game just scraped
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
-		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Initializing GraphGame for game: " + gameToAdd.getTitle());
+		System.out.println("-->[util][initializeGraphGameToAdd] Initializing GraphGame for game: " + gameToAdd.getTitle());
 			
 		/* _id + title + previewImage Constructor */
 		GraphGame graphGameToAdd = new GraphGame(gameToAdd.getId().toString(), gameToAdd.getTitle(), gameToAdd.getBackground_image());
-		System.out.println("UTIL/INITIALIZEGRAPHGAMETOADD--> Created GraphGame");
+		System.out.println("-->[util][initializeGraphGameToAdd] Created GraphGame");
 		return graphGameToAdd;
 	}
 	
 	//Debug function: report informations about the database update
 	public static void recapUpdate(List<Game> gamesAdded, int numberOfGamesAdded) {
-		System.out.println("UTIL/RECAPUPDATE--> Recap of database update:");
-		System.out.println("UTIL/RECAPUPDATE--> Games added: " + numberOfGamesAdded);
+		System.out.println("-->[util][recapUpdate] Recap of database update:");
+		System.out.println("-->[util][recapUpdate] Games added: " + numberOfGamesAdded);
 		for(int i = 0; i < numberOfGamesAdded; i++) {
-			System.out.println("UTIL/RECAPUPDATE-->GameId: " + gamesAdded.get(i).getId() + ", title: " + gamesAdded.get(i).getTitle());
+			System.out.println("-->[util][recapUpdate] GameId: " + gamesAdded.get(i).getId() + ", title: " + gamesAdded.get(i).getTitle());
 		}
 		
 	}
@@ -231,7 +231,7 @@ public class util {
 	public static void writeErrorLog(String error) {
 		Date date = new Date();
 		Timestamp ts = new Timestamp(date.getTime());
-		System.out.println("UTIL/WRITEERRORLOG--> Writing error log in file error.txt");
+		System.out.println("-->[util][writeErrorLog] Writing error log in file error.txt");
 		try {
 			FileWriter fw = new FileWriter("logs/errors.txt",true);
 			BufferedWriter bw = new BufferedWriter(fw);
@@ -240,7 +240,7 @@ public class util {
 			bw.close();
 		} catch( Exception e) {
 			
-			System.out.println("UTIL/WRITEERRORLOG-->Failed to write into errors.txt file.");
+			System.out.println("-->[util][writeErrorLog] Failed to write into errors.txt file.");
 		}
 	}
 

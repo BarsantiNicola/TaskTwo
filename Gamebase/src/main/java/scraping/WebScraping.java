@@ -31,13 +31,13 @@ public class WebScraping {
 	
 	//Update database using dynamic scraping (NEED TEST)
 	public static List<Game> scrapeNewGames(int MaxGameID) { 
-		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Starting.");
+		System.out.println("--->[WebScraping] Starting...");
 		if (MaxGameID == 0) {
-			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> MaxGameID value is not accettable");
-			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> UpdateDatabase can't be executed. Returning.");
+			System.out.println("--->[WebScraping][scrapeNewGames] MaxGameID value is not accettable");
+			System.out.println("--->[WebScraping][scrapeNewGames] UpdateDatabase can't be executed. Returning.");
 			return null;
 		}
-		System.out.println("WEBSCRAPING/scrapeNewGames--> Search for new games");
+		System.out.println("--->[WebScraping][scrapeNewGames] Search for new games");
 		List<JSONObject> newGames = new ArrayList<JSONObject>();
 		List<Game> gamesToAdd = new ArrayList<Game>();
 		
@@ -45,35 +45,36 @@ public class WebScraping {
 		int failed=0;
 		while (i < 10) {
 			if (failed == 100){
-				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> More than 100 attempts failed. Stopping the search for new games...");
+				System.out.println("--->[WebScraping][scrapeNewGames] More than 100 attempts failed. Stopping the search for new games...");
 				break;
 			}
-			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Search for new game: ID=" + MaxGameID);
+			System.out.println("--->[WebScraping][scrapeNewGames] Search for new game: ID=" + MaxGameID);
 			JSONObject newGame = searchNewGame(MaxGameID);
-			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> New game obtained");
+			System.out.println("--->[WebScraping][scrapeNewGames] New game obtained");
 			MaxGameID++;
 			if(!newGame.has("id") || !newGame.has("name")) {
-				System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Game not suitable");
+				System.out.println("--->[WebScraping][scrapeNewGames] Game not suitable");
 				failed ++;
 				continue;
 			}
 			i++;
-			System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Game suitable");
+			System.out.println("--->[WebScraping][scrapeNewGames] Game suitable");
 			newGames.add(newGame);
 		}
 		
-		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> New games list:"+ newGames.size());
+		System.out.println("--->[WebScraping][scrapeNewGames] New games list:"+ newGames.size());
+		/* DEBUG
 		for(int j =0; j < newGames.size(); j++) {
 			System.out.println(newGames.get(j));
 			
-		}
+		}*/
 		
 		if (newGames.isEmpty()) {
 			return gamesToAdd;
 		}
 		
 		//Add Games to database
-		System.out.println("WEBSCRAPING/SCRAPENEWGAMES--> Creating objectsì Game for new games");
+		System.out.println("--->[WebScraping][scrapeNewGames] Creating objectsì Game for new games");
 		for(int k = 0; k < newGames.size(); k++) {
 			
 			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));	
@@ -96,7 +97,7 @@ public class WebScraping {
 		JSONObject newGame = new JSONObject();
 			
 		try {
-	           System.out.println("WEBSCRAPING/SEARCHNEWGAME-->Sending Http GET request for new game. ID:" + ID_GAME);
+	           System.out.println("--->[WebScraping][searchNewGame] Sending Http GET request for new game. ID:" + ID_GAME);
 	           try {
 				newGame = objRequest.sendGetNewGame(ID_GAME);
 	           } catch (Exception e) {
@@ -111,7 +112,7 @@ public class WebScraping {
 				}
 	        }
 		
-		System.out.println("WEBSCRAPING/SEARCHNEWGAME-->New game obtained:" + newGame);
+		System.out.println("--->[WebScraping][searchNewGame] New game obtained:" + newGame);
 		
 		return newGame;
 	}
@@ -119,7 +120,7 @@ public class WebScraping {
 	
 	//Get URL of the Twitch channel currently having the higher number of views for a game
 	public static String getTwitchURLChannel( String GAME ) { 
-		System.out.println("WEBSCRAPING/GETTWITCHURLCHANNEL--> Getting Twitch channel for game " + GAME);
+		System.out.println("--->[WebScraping][getTwitchURLChannel] Getting Twitch channel for game " + GAME);
 		
 		//Replace spaces in the game title
 		GAME = GAME.replaceAll(" ", "%20");
@@ -129,7 +130,7 @@ public class WebScraping {
 		HttpClient objRequest = new HttpClient();
 		 
 		try {
-	           System.out.println("WEBSCRAPING/GETTWITCHURLCHANNEL-->Sending Http GET request for Twitch channel");
+	           System.out.println("--->[WebScraping][getTwitchURLChannel] Sending Http GET request for Twitch channel");
 	           try {
 				 twitchChannel = objRequest.sendGetTwitch(GAME);
 	           } catch (Exception e) {
@@ -145,21 +146,21 @@ public class WebScraping {
 				}
 	        }
 		
-		System.out.println("WEBSCRAPING/GETTWITCHURLCHANNEL--> Twitch channel obtained. Returning URL: " + twitchChannel);
+		System.out.println("--->[WebScraping][getTwitchURLChannel] Twitch channel obtained. Returning URL: " + twitchChannel);
 		return twitchChannel; 
 	}
 	
 	
 	//Get description of a given Game (Needs Game_id)
 	public static String getGameDescription(int GAME_ID ) { 
-		System.out.println("WEBSCRAPING/GETGAMEDESCRIPTION--> Getting Description for game_id = " + GAME_ID);
+		System.out.println("--->[WebScraping][getGameDescription] Getting Description for game_id = " + GAME_ID);
 		
 		String gameDescription = "No description available";
 		//Create http object for request
 		HttpClient objRequest = new HttpClient();
 		
 		 try {
-	            System.out.println("WEBSCRAPING/GETGAMEDESCRIPTION-->Sending Http GET request for GameDescription");
+	            System.out.println("--->[WebScraping][getGameDescription] Sending Http GET request for GameDescription");
 	            try {
 					gameDescription = objRequest.sendGetGameDescription(GAME_ID);
 				} catch (Exception e) {
@@ -174,16 +175,16 @@ public class WebScraping {
 				}
 	        }
 		
-		 System.out.println("WEBSCRAPING/GETGAMEDESCRIPTION--> Returning Description: " + gameDescription);
+		 System.out.println("--->[WebScraping][getGameDescription] Returning Description: " + gameDescription);
 		return gameDescription; 
 	}
 	
 
 	
 	/*
-	//Main per fare prove
+	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
-		scrapeNewGames(4200);
+		scrapeNewGames(397500);
 	 }
 	 */
 }
