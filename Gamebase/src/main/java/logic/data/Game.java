@@ -106,31 +106,34 @@ public class Game implements Serializable{
     }
     
     public String getNintendoURL() {
-    	if( sales.size()>0 )
-    		return sales.get(0).getSaleUrl();
-    	else
-    		return null;
+    	for( PlatformInfo plat : sales )
+    		if( plat.getCompany().charAt(0) == 'N')
+    			return sales.get(0).getSaleUrl();
+    	return null;
     }
     
     public String getSteamURL() {
-    	if( sales.size()>1 )
-    		return sales.get(1).getSaleUrl();    	
-    	else
-    		return null;
+
+    	for( PlatformInfo plat : sales )
+    		if( plat.getCompany().charAt(0) == 'V')
+    			return sales.get(0).getSaleUrl();
+    	return null;
     }
     
     public String getPlaystationURL() {
-    	if( sales.size()>2)
-    		return sales.get(2).getSaleUrl();
-    	else
-    		return null;
+
+    	for( PlatformInfo plat : sales )
+    		if( plat.getCompany().charAt(0) == 'S')
+    			return sales.get(0).getSaleUrl();
+    	return null;
     }
     
     public String getXboxURL() {
-    	if( sales.size()>3 )
-    		return sales.get(3).getSaleUrl();  
-    	else
-    		return null;
+
+    	for( PlatformInfo plat : sales )
+    		if( plat.getCompany().charAt(0) == 'M')
+    			return sales.get(0).getSaleUrl();
+    	return null;
     }
      
     public List<String> getVideoURLs(){
