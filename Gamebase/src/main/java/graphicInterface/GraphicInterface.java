@@ -2230,6 +2230,21 @@ public class GraphicInterface {
 				if( logicHandler.deleteUser(username) == StatusCode.OK ) {
 					deleteUserResultLabel.setText("Success!");
 					deleteUserResultLabel.setVisible(true);
+					
+					StatusObject<Long> usersNumberStatusObject = logicHandler.getTotalUsersCount();
+					String usersNumber = null;
+					
+					if( usersNumberStatusObject.statusCode == StatusCode.OK ) {
+						
+						usersNumber = Long.toString(usersNumberStatusObject.element);
+						
+					} else {
+						
+						usersNumber = "N/A";
+					}
+					
+					gameCountLabel.setText("Game Count: " + usersNumber);
+					
 				} else {
 					deleteUserResultLabel.setText("Failure!");
 					deleteUserResultLabel.setVisible(true);
@@ -2238,7 +2253,7 @@ public class GraphicInterface {
 				new Timer(5000,new ActionListener() {
 				      public void actionPerformed(ActionEvent evt) {
 				          deleteUserResultLabel.setVisible(false);
-				          deleteUserTextField.setText("");
+				          deleteUserTextField.setText("User");
 				      }
 				  }).start();
 			}
@@ -2269,6 +2284,21 @@ public class GraphicInterface {
 				if( logicHandler.deleteGame(game) ) {
 					deleteGameResultLabel.setText("Success!");
 					deleteGameResultLabel.setVisible(true);
+					
+					StatusObject<Long> gamesNumberStatusObject = logicHandler.getGameCount();
+					String gamesNumber = null;
+					
+					if( gamesNumberStatusObject.statusCode == StatusCode.OK ) {
+						
+						gamesNumber = Long.toString(gamesNumberStatusObject.element);
+						
+					} else {
+						
+						gamesNumber = "N/A";
+					}
+					
+					gameCountLabel.setText("Game Count: " + gamesNumber);
+					
 				} else {
 					deleteGameResultLabel.setText("Failure! See errors.txt for more");
 					deleteGameResultLabel.setVisible(true);
@@ -2277,7 +2307,7 @@ public class GraphicInterface {
 				new Timer(5000,new ActionListener() {
 				      public void actionPerformed(ActionEvent evt) {
 				          deleteGameResultLabel.setVisible(false);
-				          deleteGameTextField.setText("");
+				          deleteGameTextField.setText("Game");
 				      }
 				  }).start();
 			
