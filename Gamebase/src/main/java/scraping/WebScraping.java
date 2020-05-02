@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.json.JSONArray;
@@ -44,6 +45,12 @@ public class WebScraping {
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
+			//Wait for polite scraping
+			try {
+			TimeUnit.SECONDS.sleep(3);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			if (failed == 100){
 				System.out.println("--->[WebScraping][scrapeNewGames] More than 100 attempts failed. Stopping the search for new games...");
 				break;
