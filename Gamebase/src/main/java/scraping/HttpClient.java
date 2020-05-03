@@ -9,6 +9,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -21,8 +22,15 @@ import org.jsoup.nodes.Document;
 
 public class HttpClient {
 
+	//Configuration for httpClient
+	int timeout = 5;
+	RequestConfig config = RequestConfig.custom()
+	  .setConnectTimeout(timeout * 1000)
+	  .setConnectionRequestTimeout(timeout * 1000)
+	  .setSocketTimeout(timeout * 1000).build();
+	
 	// one instance, reuse
-    private final CloseableHttpClient httpClient = HttpClients.createDefault();
+    private final CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
 
     //Close the response
     public void close() throws IOException {

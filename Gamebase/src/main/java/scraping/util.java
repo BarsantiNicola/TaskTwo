@@ -61,6 +61,7 @@ public class util {
 		}
 		//ViewsCount
 		gameToAdd.setViewsCount(0);
+		//Description
 		if(newGame.has("description_raw")) {
 			if(newGame.get("description_raw") instanceof String && !newGame.get("description_raw").equals(null)) {
 			gameToAdd.setDescription(newGame.getString("description_raw"));;
