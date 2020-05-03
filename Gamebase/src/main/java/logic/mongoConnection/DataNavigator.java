@@ -65,25 +65,25 @@ public class DataNavigator{
 					games = data.find().sort(ratingSort).projection(projection).skip(position).limit(numGames).iterator();
 					position += numGames;
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 				case PREVIEW_VIEWED:
 					games = data.find().sort(viewsSort).projection(projection).skip(position).limit(numGames).iterator();
 					position += numGames;
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 				case PREVIEW_RECENT:
 					games = data.find().sort(idSort).projection(projection).skip(position).limit(numGames).iterator();
 					position += numGames;
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 				case PREVIEW_SEARCH:
 					games = data.find(like).projection(projection).skip(position).limit(numGames).iterator();
 					position += numGames;
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 	
 			}
@@ -132,25 +132,25 @@ public class DataNavigator{
 					position -= numGames;
 					games = data.find().sort(ratingSort).projection(projection).skip(position).limit(numGames).iterator();
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 				case PREVIEW_VIEWED:
 					position -= numGames;
 					games = data.find().sort(viewsSort).projection(projection).skip(position).limit(numGames).iterator();
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 				case PREVIEW_RECENT:
 					position -= numGames;
 					games = data.find().sort(idSort).projection(projection).skip(position).limit(numGames).iterator();
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 				case PREVIEW_SEARCH:
 					position -= numGames;
 					games = data.find(like).projection(projection).skip(position).limit(numGames).iterator();
 					while(games.hasNext())
-						previews.add(games.next().getPreview());
+						previews.add(games.next().generatePreview());
 					break;
 			
 			}

@@ -222,7 +222,7 @@ public class Game implements Serializable{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	
-	public PreviewGame getPreview() {
+	public PreviewGame generatePreview() {
 		return new PreviewGame(id,title,background_image);
 	}
 

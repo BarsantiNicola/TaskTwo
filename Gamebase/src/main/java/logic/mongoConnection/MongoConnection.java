@@ -375,7 +375,7 @@ public class MongoConnection {
     			return new StatusObject<PreviewGame>( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND, null );
     			
     		}else
-    			return new StatusObject<PreviewGame>( StatusCode.OK, game.getPreview());
+    			return new StatusObject<PreviewGame>( StatusCode.OK, game.generatePreview());
     		
     	}catch( Exception e) {
     		
@@ -401,7 +401,7 @@ public class MongoConnection {
     			return new StatusObject<PreviewGame>( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND, null );
     			
     		}else
-    			return new StatusObject<PreviewGame>( StatusCode.OK, game.getPreview());
+    			return new StatusObject<PreviewGame>( StatusCode.OK, game.generatePreview());
     		
     	}catch( Exception e) {
     		
@@ -632,6 +632,7 @@ public class MongoConnection {
 
     	}catch(Exception e ){
     		System.out.println( "---> [MongoConnector][GetMaxId] Error, Connection Lost" );
+    		e.printStackTrace();
     		return new StatusObject<Integer>(StatusCode.ERR_NETWORK_UNREACHABLE);
     	}
     }
@@ -644,7 +645,7 @@ public class MongoConnection {
     	try {
     		PrintWriter out = new PrintWriter(new FileOutputStream(file),true);
     		while(games.hasNext()) {
-    			game = games.next().getPreview();
+    			game = games.next().generatePreview();
     			counter++;
     			
     			if(game.getPreviewPicURL() != null )
