@@ -80,8 +80,8 @@ public class WebScraping {
 			return gamesToAdd;
 		}
 		
-		//Add Games to database
-		System.out.println("--->[WebScraping][scrapeNewGames] Creating objectsì Game for new games");
+		//Create list of objects Game
+		System.out.println("--->[WebScraping][scrapeNewGames] Creating objects Game for new games");
 		for(int k = 0; k < newGames.size(); k++) {
 			
 			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));	
@@ -191,7 +191,7 @@ public class WebScraping {
 	/*
 	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
-		scrapeNewGames(397500);
+		 scrapeNewGames(4200);
 	 }
 	 */
 }
