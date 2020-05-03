@@ -821,6 +821,7 @@ public class GraphicInterface {
 				}
 			};
 			steamButton.addActionListener(steamButtonListener);
+			steamButton.setEnabled(true);
 		} else {
 			steamButton.setEnabled(false);
 		}
@@ -843,6 +844,7 @@ public class GraphicInterface {
 				}
 			};
 			nintendoButton.addActionListener(nintendoButtonListener);
+			nintendoButton.setEnabled(true);
 		} else {
 			nintendoButton.setEnabled(false);
 		}
@@ -865,6 +867,7 @@ public class GraphicInterface {
 				}
 			};
 			playStationButton.addActionListener(playstationButtonListener);
+			playStationButton.setEnabled(true);
 		} else {
 			playStationButton.setEnabled(false);
 		}
@@ -887,6 +890,7 @@ public class GraphicInterface {
 				}
 			};
 			XBoxButton.addActionListener(xboxButtonListener);
+			XBoxButton.setEnabled(true);
 		} else {
 			XBoxButton.setEnabled(false);
 		}
@@ -1516,11 +1520,17 @@ public class GraphicInterface {
 				
 				updateDatabaseResultLabel.setVisible(true);
 				
-				new Timer(3000,new ActionListener() {
+				ActionListener taskPerformerDB = new ActionListener() {
 				      public void actionPerformed(ActionEvent evt) {
 				          updateDatabaseResultLabel.setVisible(false);
 				      }
-				  }).start();
+				};
+				
+				Timer returnToDefaultUpdateTimer = new Timer(4000,taskPerformerDB);
+				
+				returnToDefaultUpdateTimer.setRepeats(false);
+				
+				returnToDefaultUpdateTimer.start();
 				
 			    StatusObject<Long> gamesCountStatusObject = logicHandler.getGameCount();
 			    String gamesCount = null;
@@ -2191,6 +2201,7 @@ public class GraphicInterface {
 			public void mouseClicked(MouseEvent arg0) {
 				
 				deleteUserTextField.setText("");
+				deleteGameTextField.setText("Game");
 			}
 		});
 		deleteUserTextField.setBounds(12, 30, 189, 37);
@@ -2206,6 +2217,7 @@ public class GraphicInterface {
 			public void mouseClicked(MouseEvent e) {
 				
 				deleteGameTextField.setText("");
+				deleteUserTextField.setText("User");
 			}
 		});
 		deleteGameTextField.setBounds(12, 114, 189, 37);
@@ -2250,12 +2262,18 @@ public class GraphicInterface {
 					deleteUserResultLabel.setVisible(true);
 				}
 				
-				new Timer(5000,new ActionListener() {
+				ActionListener taskPerformerUsers = new ActionListener() {
 				      public void actionPerformed(ActionEvent evt) {
 				          deleteUserResultLabel.setVisible(false);
 				          deleteUserTextField.setText("User");
 				      }
-				  }).start();
+				};
+				
+				Timer returnToDefaultUsersTimer = new Timer(4000,taskPerformerUsers);
+				
+				returnToDefaultUsersTimer.setRepeats(false);
+				
+				returnToDefaultUsersTimer.start();
 			}
 		});
 		deleteUserButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -2304,12 +2322,18 @@ public class GraphicInterface {
 					deleteGameResultLabel.setVisible(true);
 				}
 				
-				new Timer(5000,new ActionListener() {
+				ActionListener taskPerformerGames = new ActionListener() {
 				      public void actionPerformed(ActionEvent evt) {
 				          deleteGameResultLabel.setVisible(false);
 				          deleteGameTextField.setText("Game");
 				      }
-				  }).start();
+				};
+				
+				Timer returnToDefaultGameTimer = new Timer(4000,taskPerformerGames);
+				
+				returnToDefaultGameTimer.setRepeats(false);
+				
+				returnToDefaultGameTimer.start();
 			
 			}
 		});
