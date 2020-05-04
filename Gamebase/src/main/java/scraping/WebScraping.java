@@ -49,7 +49,7 @@ public class WebScraping {
 			try {
 			TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("--->[WebScraping][scrapeNewGames] Error: sleep() function failed");
 			}
 			if (failed == 100){
 				System.out.println("--->[WebScraping][scrapeNewGames] More than 100 attempts failed. Stopping the search for new games...");
@@ -108,14 +108,14 @@ public class WebScraping {
 	           try {
 				newGame = objRequest.sendGetNewGame(ID_GAME);
 	           } catch (Exception e) {
-					e.printStackTrace();
+	        	   System.out.println("--->[WebScraping][searchNewGamel] Something went wrong in sending http request");
 				}
 
 	        } finally {
 	            try {
 					objRequest.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println("--->[WebScraping][searchNewGamel] Something went wrong in closing http request");
 				}
 	        }
 		
@@ -141,7 +141,7 @@ public class WebScraping {
 	           try {
 				 twitchChannel = objRequest.sendGetTwitch(GAME);
 	           } catch (Exception e) {
-					e.printStackTrace();
+	        	   System.out.println("--->[WebScraping][getTwitchURLChannel] Something went wrong in sending http request");
 					
 				}
 
@@ -149,7 +149,7 @@ public class WebScraping {
 	            try {
 					objRequest.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println("--->[WebScraping][getTwitchURLChannel] Something went wrong in closing http request");
 				}
 	        }
 		
@@ -171,14 +171,14 @@ public class WebScraping {
 	            try {
 					gameDescription = objRequest.sendGetGameDescription(GAME_ID);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println("--->[WebScraping][getGameDescription] Something went wrong in sending http request");
 				}
 
 	        } finally {
 	            try {
 					objRequest.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println("--->[WebScraping][getGameDescription] Something went wrong in closing http request");
 				}
 	        }
 		
@@ -191,7 +191,7 @@ public class WebScraping {
 	/*
 	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
-		 scrapeNewGames(397563);
+		 scrapeNewGames(999999999);
 	 }
 	 */
 }

@@ -52,16 +52,19 @@ public class HttpClient {
             System.out.println(response.getStatusLine().toString());
 
             HttpEntity entity = response.getEntity();
-            Header headers = entity.getContentType();
 
             String result = EntityUtils.toString(entity);
             JSONObject newGame = new JSONObject(result);
            
             System.out.println("-->[HttpClient][sendGetNewGame] Returning a new game");
             return newGame;
-        } finally {
+        } catch (Exception e){
+     	   System.out.println("-->[HttpClient][sendGetNewGame] Error: something went wrong. Please check your connection");
+        }
+        finally {
         	response.close();
         }
+		return null;
     }
 
     
@@ -111,9 +114,13 @@ public class HttpClient {
             else {
             	return "No streaming available!";
             }
-       } finally {
+       } catch (Exception e){
+    	   System.out.println("-->[HttpClient][sendGetTwitch] Error: something went wrong. Please check your connection");
+       }
+        finally {
     	   response.close();
        }
+		return "No streaming available!";
     }
     
     
@@ -130,7 +137,6 @@ public class HttpClient {
             System.out.println(response.getStatusLine().toString());
 
             HttpEntity entity = response.getEntity();
-            Header headers = entity.getContentType();
 
             String result = EntityUtils.toString(entity);
             JSONObject jsonObject = new JSONObject(result);
@@ -139,9 +145,13 @@ public class HttpClient {
             	return jsonObject.getString("description_raw");
             }
             return "No description available";
-       } finally {
+       } catch (Exception e){
+    	   System.out.println("-->[HttpClient][sendGetGameDescription] Error: something went wrong. Please check your connection");
+       }
+       finally {
     	   response.close();
        }
+	return null;
        
     }
     
