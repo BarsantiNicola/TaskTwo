@@ -26,7 +26,7 @@ public class JavaFXVideoBuilder {
 	}
 	
 	public void playVideo(String location) {
-
+		
 		try {
 			media = new Media(location);
 		} catch (Exception e) {
@@ -39,7 +39,7 @@ public class JavaFXVideoBuilder {
 	
 	    StackPane root = new StackPane();
 	    Scene scene = new Scene(root);
-	
+	    
 	    
 	    // center video position
 	    javafx.geometry.Rectangle2D screen = Screen.getPrimary().getVisualBounds();
@@ -58,16 +58,16 @@ public class JavaFXVideoBuilder {
 	    //root.getChildren().add(viewer);
 	
 	    VFXPanel.setScene(scene);
-	    player.play();
 	    panel.setLayout(new BorderLayout());
 	    panel.add(VFXPanel, BorderLayout.CENTER);
+	    player.play();
     
 	}
 	
 	public void stopVideo() {
 		player.stop();
-		player = null;
 		media = null;
+		player = null;
 		viewer = null;
 	}
 }

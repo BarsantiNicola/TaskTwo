@@ -1562,6 +1562,7 @@ public class GraphicInterface {
 			}
 		});
 		frame.setBounds(100, 100, 952, 615);
+		frame.setIconImage(new ImageIcon(GraphicInterface.class.getResource("/resources/defaultGamePicture.png")).getImage());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		panel = new JPanel();
