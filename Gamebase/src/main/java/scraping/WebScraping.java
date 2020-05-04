@@ -191,7 +191,7 @@ public class WebScraping {
 	/*
 	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
-		 scrapeNewGames(4200);
+		 scrapeNewGames(397563);
 	 }
 	 */
 }
