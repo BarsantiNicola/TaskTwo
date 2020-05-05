@@ -974,18 +974,18 @@ public class GraphicInterface {
 		nintendoButton.setVisible(true);
 		playStationButton.setVisible(true);
 		
+		steamButton.removeActionListener(steamButtonListener);
 		steamButtonListener = null;
-		steamButton.addActionListener(null);
 		
+		nintendoButton.removeActionListener(nintendoButtonListener);
 		nintendoButtonListener = null;
-		nintendoButton.addActionListener(null);
-		
+
+		playStationButton.removeActionListener(playstationButtonListener);
 		playstationButtonListener = null;
-		playStationButton.addActionListener(null);
 		
+		XBoxButton.removeActionListener(xboxButtonListener);
 		xboxButtonListener = null;
-		XBoxButton.addActionListener(null);
-		
+
 		metacriticScoreLabel.setText("");
 		
 		currentGame = null;
