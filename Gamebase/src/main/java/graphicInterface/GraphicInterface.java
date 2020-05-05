@@ -174,7 +174,8 @@ public class GraphicInterface {
 	private JLabel metacriticScoreLabel;
 	private JButton actionButton;
 	private JLabel releaseDateLabel;
-	private VideoPlayerPanel videoPlayer;
+	//private VideoPlayerPanel videoPlayer;
+	private VideoPlayerPanel2 videoPlayer;
 	private JButton previousVideoButton;
 	private JButton nextVideoButton;
 	private JButton XBoxButton;
@@ -933,7 +934,7 @@ public class GraphicInterface {
 		List<String> videoURLs = game.getVideoURLs();
 		
 		if( videoURLs != null && videoURLs.size()!=0 ) {
-			
+			/*
 			System.out.println("->[GraphicInterface] " + videoURLs.size() + " video(s) found for " + game.getTitle() + ".");
 			System.out.println("->[GraphicInterface] currently displayed video 1.");
 			
@@ -948,13 +949,14 @@ public class GraphicInterface {
 				nextVideoButton.setEnabled(true);
 			}
 			
-			previousVideoButton.setEnabled(false);
+			previousVideoButton.setEnabled(false);*/
+			videoPlayer.initializeVideoPlayerPanel(videoURLs);
 		} else {
 			
 			System.out.println("->[GraphicInterface] no videos available for " + game.getTitle() +".");
 			nextVideoButton.setEnabled(false);
 			previousVideoButton.setEnabled(false);
-			videoPlayer.playVideo(null);
+			//videoPlayer.playVideo(null);
 		}
 		
 		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
@@ -994,7 +996,7 @@ public class GraphicInterface {
 		
 		previewImageLabel.setIcon(null);
 		
-		videoPlayer.stopVideo();
+		//videoPlayer.stopVideo();
 		
 		currentVideosURLlist = null;
 		currentVideoIndex = 0;
@@ -4391,7 +4393,8 @@ public class GraphicInterface {
 		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/star.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(metacriticScoreLabel);
 		
-		videoPlayer = new VideoPlayerPanel();
+		//videoPlayer = new VideoPlayerPanel();
+		videoPlayer = new VideoPlayerPanel2();
 		videoPlayer.setSize(342, 210);
 		videoPlayer.setLocation(426, 332);
 		gamePanel.add(videoPlayer);
@@ -4399,7 +4402,7 @@ public class GraphicInterface {
 		nextVideoButton = new JButton("");
 		nextVideoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				/*
 				if( currentVideoIndex == lastVideoIndex ) {
 					return;
 				}
@@ -4421,7 +4424,7 @@ public class GraphicInterface {
 				if( currentVideoIndex == lastVideoIndex ) {
 					
 					nextVideoButton.setEnabled(false);
-				}
+				}*/
 			}
 		});
 		nextVideoButton.setToolTipText("Next Video");
@@ -4436,7 +4439,7 @@ public class GraphicInterface {
 		previousVideoButton = new JButton("");
 		previousVideoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				/*
 				if( currentVideoIndex == 0 ) {
 					
 					return;
@@ -4458,7 +4461,7 @@ public class GraphicInterface {
 				if( currentVideoIndex == 0 ) {
 					
 					previousVideoButton.setEnabled(false);
-				}
+				}*/
 			}
 		});
 		previousVideoButton.setToolTipText("Previous Video");
