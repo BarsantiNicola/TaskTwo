@@ -599,7 +599,7 @@ public class MongoConnection {
     	
     }
     
-    @SuppressWarnings({ "unused", "deprecation" })
+    @SuppressWarnings({ "unused" })
 	private void updateViewsCount() {
     	
     	MongoCursor<Game> games = this.gamesCollection.find().noCursorTimeout(true).iterator();

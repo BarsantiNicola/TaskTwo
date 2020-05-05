@@ -131,8 +131,9 @@ public class Game implements Serializable{
     public String getXboxURL() {
 
     	for( PlatformInfo plat : sales )
-    		if( plat.getStore().charAt(4) == '3')
-    			return plat.getSaleUrl();
+    		if( plat.getStore().charAt(4) == 'O'|| plat.getStore().charAt(4) == '3')
+    			return plat.getSaleUrl();    	
+
     	return null;
     }
      
