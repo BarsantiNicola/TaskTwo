@@ -107,32 +107,32 @@ public class Game implements Serializable{
     
     public String getNintendoURL() {
     	for( PlatformInfo plat : sales )
-    		if( plat.getCompany().charAt(0) == 'N')
-    			return sales.get(0).getSaleUrl();
+    		if( plat.getStore().charAt(4) == 'e')
+    			return plat.getSaleUrl();
     	return null;
     }
     
     public String getSteamURL() {
 
     	for( PlatformInfo plat : sales )
-    		if( plat.getCompany().charAt(0) == 'V')
-    			return sales.get(0).getSaleUrl();
+    		if( plat.getStore().charAt(4) == 'm')
+    			return plat.getSaleUrl();
     	return null;
     }
     
     public String getPlaystationURL() {
 
     	for( PlatformInfo plat : sales )
-    		if( plat.getCompany().charAt(0) == 'S')
-    			return sales.get(0).getSaleUrl();
+    		if( plat.getStore().charAt(4) == 's')
+    			return plat.getSaleUrl();
     	return null;
     }
     
     public String getXboxURL() {
 
     	for( PlatformInfo plat : sales )
-    		if( plat.getCompany().charAt(0) == 'M')
-    			return sales.get(0).getSaleUrl();
+    		if( plat.getStore().charAt(4) == '3')
+    			return plat.getSaleUrl();
     	return null;
     }
      
