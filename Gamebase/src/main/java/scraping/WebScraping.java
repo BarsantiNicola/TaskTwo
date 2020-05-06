@@ -22,15 +22,15 @@ import logic.mongoConnection.MongoConnection;
 import logic.mongoConnection.*;
 import logic.graphConnector.*;
 
-//----------------------------------------------------------------------------------------------------
-//The class is used to contain all the methods used to perform dynamic web scraping by the application
-//A CloseableHttpClient instance is used for all methods in order to perform a GET request
-//----------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------
+//The class is used to contain all the methods used to perform dynamic web scraping by the application.
+//A CloseableHttpClient instance is used for all methods in order to perform a GET request.
+//-----------------------------------------------------------------------------------------------------
 
 public class WebScraping {
 
-	
-	//Update database using dynamic scraping (NEED TEST)
+	//Scrape 10 new games from rawg, starting from the id subsequent the max game id in the database. 
+	//Games are scraped in json form and need to be converted into Game class.
 	public static List<Game> scrapeNewGames(int MaxGameID) { 
 		System.out.println("--->[WebScraping] Starting...");
 		if (MaxGameID == 0) {
@@ -39,7 +39,7 @@ public class WebScraping {
 			return null;
 		}
 		System.out.println("--->[WebScraping][scrapeNewGames] Search for new games");
-		List<JSONObject> newGames = new ArrayList<JSONObject>();
+		List<JSONObject> newGames = new ArrayList<JSONObject>(); 
 		List<Game> gamesToAdd = new ArrayList<Game>();
 		
 		int i = 0;
@@ -70,12 +70,8 @@ public class WebScraping {
 		}
 		
 		System.out.println("--->[WebScraping][scrapeNewGames] New games list:"+ newGames.size());
-		/* DEBUG
-		for(int j =0; j < newGames.size(); j++) {
-			System.out.println(newGames.get(j));
-			
-		}*/
 		
+		//The empty list case is handled in the calling function
 		if (newGames.isEmpty()) {
 			return gamesToAdd;
 		}
@@ -94,9 +90,8 @@ public class WebScraping {
 	
 	
 	
-	
-	
-	//Search new game
+
+	//Scrape new game using id
 	public static JSONObject searchNewGame(int ID_GAME) {
 		
 		//Create http object for request
@@ -119,12 +114,13 @@ public class WebScraping {
 				}
 	        }
 		
-		System.out.println("--->[WebScraping][searchNewGame] New game obtained:" + newGame);
+		System.out.println("--->[WebScraping][searchNewGame] New game obtained:" + newGame); //Debug
 		
 		return newGame;
 	}
 	
 	
+
 	//Get URL of the Twitch channel currently having the higher number of views for a game
 	public static String getTwitchURLChannel( String GAME ) { 
 		System.out.println("--->[WebScraping][getTwitchURLChannel] Getting Twitch channel for game " + GAME);
@@ -153,11 +149,11 @@ public class WebScraping {
 				}
 	        }
 		
-		System.out.println("--->[WebScraping][getTwitchURLChannel] Twitch channel obtained. Returning URL: " + twitchChannel);
+		System.out.println("--->[WebScraping][getTwitchURLChannel] Twitch channel obtained. Returning URL: " + twitchChannel); //Debug
 		return twitchChannel; 
 	}
 	
-	
+
 	//Get description of a given Game (Needs Game_id)
 	public static String getGameDescription(int GAME_ID ) { 
 		System.out.println("--->[WebScraping][getGameDescription] Getting Description for game_id = " + GAME_ID);

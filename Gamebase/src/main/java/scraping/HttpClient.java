@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 
 //-----------------------------------------------------------------------------------
-//The class is used for all the different GET request implemented by WebScraping
+//The class is used for all the different GET request implemented by WebScraping. 
 //-----------------------------------------------------------------------------------
 
 public class HttpClient {
@@ -67,7 +67,6 @@ public class HttpClient {
 		return null;
     }
 
-    
     //Get twitch channel for a game
     public String sendGetTwitch(String GAME) throws Exception {
     	System.out.println("-->[HttpClient][sendGetTwitch] Preparing request for twitch channel");
@@ -122,7 +121,6 @@ public class HttpClient {
        }
 		return "No streaming available!";
     }
-    
     
     //Get game description
     public String sendGetGameDescription(int GAME_ID) throws Exception {
