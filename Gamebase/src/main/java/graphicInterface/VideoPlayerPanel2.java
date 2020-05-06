@@ -17,6 +17,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Screen;
 import javafx.scene.control.Button;
+import javafx.scene.image.*;
+import javafx.util.Duration;
 
 @SuppressWarnings("restriction")
 public class VideoPlayerPanel2 extends JFXPanel{
@@ -67,7 +69,7 @@ public class VideoPlayerPanel2 extends JFXPanel{
 		
 		currentIndex = 0;
 		
-		next = new Button("NEXT");
+		next = new Button("", new ImageView(new Image(getClass().getResourceAsStream("/resources/next.png"),30,30,false,false)));
 		next.setOnAction(actionEvent->{
 			
 			if( currentIndex == size-1 ) {
@@ -91,7 +93,7 @@ public class VideoPlayerPanel2 extends JFXPanel{
 			
 		});
 		
-		prev = new Button("PREV");
+		prev = new Button("", new ImageView(new Image(getClass().getResourceAsStream("/resources/back.png"),30,30,false,false)));
 		prev.setOnAction(actionEvent->{
 			
 			if( currentIndex == 0 ) {
@@ -127,11 +129,12 @@ public class VideoPlayerPanel2 extends JFXPanel{
 	public void playVideo() {
 		
 		MediaPlayer player = playerList.get(currentIndex);
-		
+	    
 		viewer = new MediaView(player);
 		
 		AnchorPane root = new AnchorPane();
 	    Scene scene = new Scene(root);
+	    
 	    /*
 	    // center video position
 	    javafx.geometry.Rectangle2D screen = Screen.getPrimary().getVisualBounds();
@@ -151,8 +154,9 @@ public class VideoPlayerPanel2 extends JFXPanel{
 	    height.bind(Bindings.selectDouble(viewer.sceneProperty(), "height"));
 	    viewer.setPreserveRatio(true);
 		
-	
 	    this.setScene(scene);
+	   // player.seek(player.getStartTime());
+	    
 	    player.play();
 	}
 	
