@@ -11,7 +11,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -19,9 +19,8 @@ import javafx.stage.Screen;
 import javafx.scene.control.Button;
 
 @SuppressWarnings("restriction")
-public class VideoPlayerPanel2 extends JPanel{
+public class VideoPlayerPanel2 extends JFXPanel{
 	
-	private JFXPanel VFXPanel;
 	private List<Media> mediaList;
 	private List<MediaPlayer> playerList;
 	private MediaView viewer;
@@ -39,40 +38,57 @@ public class VideoPlayerPanel2 extends JPanel{
 		mediaList = new ArrayList<Media>();
 		playerList = new ArrayList<MediaPlayer>();
 		
-		for( int i=0; i < videoUrls.size(); i++ ) {
+		if( videoUrls == null ) {
 			
-			Media media;
+			File video_source = new File("src/main/java/resources/notAvailable.mp4");
+			Media media = new Media(video_source.toURI().toString());
+	    	mediaList.add(media);
+	    	playerList.add(new MediaPlayer(media));
+	    	size = 1;
+		} else {
 			
-			try {
-				media = new Media(videoUrls.get(i));
-			} catch (Exception e) {
-				File video_source = new File("src/main/java/resources/notAvailable.mp4");
-		    	media = new Media(video_source.toURI().toString());
-			}
+			for( int i=0; i < videoUrls.size(); i++ ) {
 			
-			mediaList.add(media);
-			playerList.add(new MediaPlayer(media));
+				Media media;
+				
+				try {
+					media = new Media(videoUrls.get(i));
+				} catch (Exception e) {
+					File video_source = new File("src/main/java/resources/notAvailable.mp4");
+			    	media = new Media(video_source.toURI().toString());
+				}
+				
+				mediaList.add(media);
+				playerList.add(new MediaPlayer(media));
+		   }
+			
+		   size = videoUrls.size();
 		}
 		
 		currentIndex = 0;
-		size = videoUrls.size();
 		
 		next = new Button("NEXT");
 		next.setOnAction(actionEvent->{
 			
-			if( currentIndex == size ) {
+			if( currentIndex == size-1 ) {
 				
 				return;
 			}
 			
 			currentIndex++;
 			
+			playVideo();
+			
 			if( currentIndex == 1 ) {
 				
 				prev.setDisable(false);
 			}
 			
-			playVideo();
+			if( currentIndex == size-1 ) {
+				
+				next.setDisable(true);
+			}
+			
 		});
 		
 		prev = new Button("PREV");
@@ -85,15 +101,27 @@ public class VideoPlayerPanel2 extends JPanel{
 			
 			currentIndex--;
 			
-			if( currentIndex == size-1 ) {
+			playVideo();
+			
+			if( currentIndex == size-2 ) {
 				
 				next.setDisable(false);
 			}
 			
-			playVideo();
+			if( currentIndex == 0 ) {
+				
+				prev.setDisable(true);
+			}
+			
 		});
 		
 		prev.setDisable(true);
+		
+		if( size == 1 ) {
+			
+			next.setDisable(true);
+		}
+		
 	}
 	
 	public void playVideo() {
@@ -102,15 +130,20 @@ public class VideoPlayerPanel2 extends JPanel{
 		
 		viewer = new MediaView(player);
 		
-		StackPane root = new StackPane();
+		AnchorPane root = new AnchorPane();
 	    Scene scene = new Scene(root);
-	    
+	    /*
 	    // center video position
 	    javafx.geometry.Rectangle2D screen = Screen.getPrimary().getVisualBounds();
 	    viewer.setX((screen.getWidth() - this.getWidth()) / 2);
-	    viewer.setY((screen.getHeight() - this.getHeight()) / 2);
+	    viewer.setY((screen.getHeight() - this.getHeight()) / 2);*/
 	    
-	    root.getChildren().add(viewer);
+	    root.getChildren().addAll(viewer,next,prev);
+	    AnchorPane.setLeftAnchor(prev, 0.0);
+	    AnchorPane.setBottomAnchor(prev,0.0);
+	    AnchorPane.setRightAnchor(next, 0.0);
+	    AnchorPane.setBottomAnchor(next,0.0);
+	    
 	    // resize video based on screen size
 	    DoubleProperty width = viewer.fitWidthProperty();
 	    DoubleProperty height = viewer.fitHeightProperty();
@@ -118,12 +151,13 @@ public class VideoPlayerPanel2 extends JPanel{
 	    height.bind(Bindings.selectDouble(viewer.sceneProperty(), "height"));
 	    viewer.setPreserveRatio(true);
 		
-	    root.getChildren().add(next);
-	    root.getChildren().add(prev);
 	
-	    VFXPanel.setScene(scene);
-	    this.setLayout(new BorderLayout());
-	    this.add(VFXPanel, BorderLayout.CENTER);
+	    this.setScene(scene);
 	    player.play();
+	}
+	
+	public void cleanVideoPlayer() {
+		mediaList.clear();
+		playerList.clear();		
 	}
 }

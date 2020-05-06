@@ -951,12 +951,14 @@ public class GraphicInterface {
 			
 			previousVideoButton.setEnabled(false);*/
 			videoPlayer.initializeVideoPlayerPanel(videoURLs);
+			videoPlayer.playVideo();
 		} else {
 			
 			System.out.println("->[GraphicInterface] no videos available for " + game.getTitle() +".");
 			nextVideoButton.setEnabled(false);
 			previousVideoButton.setEnabled(false);
-			//videoPlayer.playVideo(null);
+			videoPlayer.initializeVideoPlayerPanel(null);
+			videoPlayer.playVideo();
 		}
 		
 		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
@@ -997,6 +999,7 @@ public class GraphicInterface {
 		previewImageLabel.setIcon(null);
 		
 		//videoPlayer.stopVideo();
+		videoPlayer.cleanVideoPlayer();
 		
 		currentVideosURLlist = null;
 		currentVideoIndex = 0;
