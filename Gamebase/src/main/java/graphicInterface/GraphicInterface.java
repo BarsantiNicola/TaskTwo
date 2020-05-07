@@ -618,9 +618,12 @@ public class GraphicInterface {
 				
 			}
 			mostViewedGamesLabel.setIcon(icon);
+			mostViewedGamesLabel.setEnabled(true);
 		} else {
 			
 			System.out.println("->[GraphicInterface] impossible to retrieve most viewed game.");
+			mostViewedGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(238, 155, Image.SCALE_FAST)));
+			mostViewedGamesLabel.setEnabled(false);
 		}
 		
 		StatusObject<PreviewGame> mostPopularStatus = logicHandler.getMostPopularPreview();
@@ -658,9 +661,12 @@ public class GraphicInterface {
 				
 			}
 			mostPopularGamesLabel.setIcon(icon);
+			mostPopularGamesLabel.setEnabled(true);
 		} else {
 			
 			System.out.println("->[GraphicInterface] impossible to retrieve most popular game.");
+			mostPopularGamesLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(238, 155, Image.SCALE_FAST)));
+			mostPopularGamesLabel.setEnabled(false);
 		}
 	
 		StatusObject<List<User>> friendListStatus = logicHandler.getFollowedUsersList();
@@ -4331,7 +4337,10 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.rateGame(currentGame.getTitle(), 1);
+				if( logicHandler.rateGame(currentGame.getTitle(), 1) == StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] vote 1 correctly assigned to " + currentGame.getTitle() + ".");
+				}
 					
 			}
 		});
@@ -4343,7 +4352,10 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.rateGame(currentGame.getTitle(), 2);
+				if( logicHandler.rateGame(currentGame.getTitle(), 2) == StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] vote 2 correctly assigned to " + currentGame.getTitle() + ".");
+				}
 			}
 		});
 		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4354,7 +4366,10 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.rateGame(currentGame.getTitle(), 3);
+				if( logicHandler.rateGame(currentGame.getTitle(), 3) == StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] vote 3 correctly assigned to " + currentGame.getTitle() + ".");
+				}
 			}
 		});
 		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4365,7 +4380,10 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.rateGame(currentGame.getTitle(), 4);
+				if( logicHandler.rateGame(currentGame.getTitle(), 4) == StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] vote 4 correctly assigned to " + currentGame.getTitle() + ".");
+				}
 			}
 		});
 		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4376,7 +4394,10 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				logicHandler.rateGame(currentGame.getTitle(), 5);
+				if( logicHandler.rateGame(currentGame.getTitle(), 5) == StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] vote 5 correctly assigned to " + currentGame.getTitle() + ".");
+				}
 			}
 		});
 		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));
