@@ -4405,7 +4405,7 @@ public class GraphicInterface {
 		nextVideoButton = new JButton("");
 		nextVideoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*
+				
 				if( currentVideoIndex == lastVideoIndex ) {
 					return;
 				}
@@ -4414,7 +4414,7 @@ public class GraphicInterface {
 				
 				videoPlayer.stopVideo();
 				
-				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
+				//videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
 				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
 				
@@ -4427,7 +4427,7 @@ public class GraphicInterface {
 				if( currentVideoIndex == lastVideoIndex ) {
 					
 					nextVideoButton.setEnabled(false);
-				}*/
+				}
 			}
 		});
 		nextVideoButton.setToolTipText("Next Video");
@@ -4437,12 +4437,13 @@ public class GraphicInterface {
 		nextVideoButton.setOpaque(true);
 		nextVideoButton.setBounds(804, 351, 73, 43);
 		nextVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/next.png")).getImage().getScaledInstance(40, 40, Image.SCALE_FAST)));
+		nextVideoButton.setEnabled(false);
 		gamePanel.add(nextVideoButton);
 		
 		previousVideoButton = new JButton("");
 		previousVideoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				/*
+				
 				if( currentVideoIndex == 0 ) {
 					
 					return;
@@ -4452,7 +4453,7 @@ public class GraphicInterface {
 				
 				videoPlayer.stopVideo();
 				
-				videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
+				//videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
 				
 				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
 				
@@ -4464,7 +4465,7 @@ public class GraphicInterface {
 				if( currentVideoIndex == 0 ) {
 					
 					previousVideoButton.setEnabled(false);
-				}*/
+				}
 			}
 		});
 		previousVideoButton.setToolTipText("Previous Video");
@@ -4474,6 +4475,7 @@ public class GraphicInterface {
 		previousVideoButton.setOpaque(true);
 		previousVideoButton.setBounds(804, 469, 73, 45);
 		previousVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/back.png")).getImage().getScaledInstance(40, 40, Image.SCALE_FAST)));
+		previousVideoButton.setEnabled(false);
 		gamePanel.add(previousVideoButton);
 		
 		

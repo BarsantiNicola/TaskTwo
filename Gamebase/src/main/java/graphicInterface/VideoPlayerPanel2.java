@@ -1,11 +1,8 @@
 package graphicInterface;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JPanel;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -15,10 +12,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.stage.Screen;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.*;
-import javafx.util.Duration;
 
 @SuppressWarnings("restriction")
 public class VideoPlayerPanel2 extends JFXPanel{
@@ -70,12 +66,15 @@ public class VideoPlayerPanel2 extends JFXPanel{
 		currentIndex = 0;
 		
 		next = new Button("", new ImageView(new Image(getClass().getResourceAsStream("/resources/next.png"),30,30,false,false)));
+		next.setTooltip(new Tooltip("Next Video"));
 		next.setOnAction(actionEvent->{
 			
 			if( currentIndex == size-1 ) {
 				
 				return;
 			}
+			
+			stopVideo();
 			
 			currentIndex++;
 			
@@ -94,12 +93,15 @@ public class VideoPlayerPanel2 extends JFXPanel{
 		});
 		
 		prev = new Button("", new ImageView(new Image(getClass().getResourceAsStream("/resources/back.png"),30,30,false,false)));
+		prev.setTooltip(new Tooltip("Previous Video"));
 		prev.setOnAction(actionEvent->{
 			
 			if( currentIndex == 0 ) {
 				
 				return;
 			}
+			
+			stopVideo();
 			
 			currentIndex--;
 			
@@ -155,12 +157,24 @@ public class VideoPlayerPanel2 extends JFXPanel{
 	    viewer.setPreserveRatio(true);
 		
 	    this.setScene(scene);
-	   // player.seek(player.getStartTime());
 	    
 	    player.play();
 	}
 	
+	public void stopVideo() {
+		
+		MediaPlayer player = playerList.get(currentIndex);
+		
+		player.stop();
+	}
+	
 	public void cleanVideoPlayer() {
+		
+		for( int i = 0; i < size; i++ ) {
+			
+			playerList.get(i).stop();
+		}
+		
 		mediaList.clear();
 		playerList.clear();		
 	}
