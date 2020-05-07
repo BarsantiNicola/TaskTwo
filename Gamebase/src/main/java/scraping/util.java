@@ -30,19 +30,20 @@ public class util {
 	public static Game initializeGameToAdd(JSONObject newGame) {
 		System.out.println("-->[util][initializeGameToAdd] Initializing new game. ID:" + newGame.getInt("id"));
 		Game gameToAdd = new Game();
-		try {
-			//Id
-			gameToAdd.setId(newGame.getInt("id")); 
-			//FavoriteCount
-			gameToAdd.setFavouritesCount(0);
-			//Title
-			if(newGame.has("name")) {
-				if(newGame.get("name") instanceof String && !newGame.get("name").equals(null)) {
-					gameToAdd.setTitle(newGame.getString("name"));
-				}
+		gameToAdd.setBackground_image(null);
+		//Id
+		gameToAdd.setId(newGame.getInt("id")); 
+		//FavoriteCount
+		gameToAdd.setFavouritesCount(0);
+		//Title
+		if(newGame.has("name")) {
+			if(newGame.get("name") instanceof String && !newGame.get("name").equals(null)) {
+				gameToAdd.setTitle(newGame.getString("name"));
 			}
-			//Background_image
-			gameToAdd.setBackground_image(null);
+		}
+		//Background_image
+		gameToAdd.setBackground_image(null);
+		try {
 			if(newGame.has("background_image")) {
 				if(newGame.get("background_image") instanceof String && !newGame.get("background_image").equals(null)) {
 					gameToAdd.setBackground_image(newGame.getString("background_image"));
