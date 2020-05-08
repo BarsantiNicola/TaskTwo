@@ -1,5 +1,63 @@
 
+
+Dato che la nostra applicazione ha poche operazioni di scrittura rispetto a quelle di lettura e sopratutto sono operazioni di scrittura molto semplici e che non permettono il generarsi
+di tempi di attesa invalidanti. 
+
+ -- OPERAZIONI DI SCRITTURA
+	aggiornare viewscount(frequente: 1gioco)
+	aggiungere gioco(raro: 1 gioco),
+	aggiungere descrizione(una tantum: 10 giochi)[PIÙ LENTO SCRAPING, E' GIÀ IN UN CONTESTO(AGGIORNAMENTO DEL DATABASE) DOVE SI PRESUME SI DEVE ASPETTARE],
+	aggiornare ratingcount/rating(raro: 1 gioco),
+	cancellare un gioco(raro: 1 gioco)
+
+Mentre al contrario le operazioni di lettura sono abbastanza pesanti e possono essere suddivise in letture ACID(eseguite tramite find semplice nel database) e aggreganti(richiedono l'utilizzo dell'operatore di aggregazione tramite pipeline[vengono utilizzati da un minimo di 2 a un massimo di 4 step in una pipeline])
+
+
+  --OPERAZIONI DI LETTURA
+	
+	-- ACID
+	  leggere Game(frequente: 1gioco: LEGGERA)
+	  trovare maxId(una tantum: 1volta: LEGGERA)
+	  trovare numero di giochi disponibili(una tantum: 1volta: LEGGERA)
+	  leggere lista di previews[ordinati per viewsCount, ordinati per ratingCount, ordinati per anno](frequente: 25 giochi: MEDIA) 
+		[ utilizzato PreviewGame per rendere più efficienti le letture sequenziali, per realizzare le liste dei giochi invece che scaricare n giochi scarichi se ne scarica solo una versione 			  ridotta, solo quando apri un gioco scarichi l'oggetto completo e solo uno alla volta)
+		[ ISODate.$Year lo ho inserito perchè è un operatore per estrarre solo l'anno dalla ISODate e non è leggero da applicare su un intero database per poi poterlo ordinare]
+
+	-- STATISTICHE
+	  aggregazione maxGamesCount(PESANTE)[per releaseDate, per genere, per anno e genere]
+	  aggregazione getViewsCount(PESANTE)[per releaseDate, per genere, per anno e genere]
+	  aggregazione getRatingsCount(PESANTE)[per anno,per genere, per anno e genere]
+	  aggregazione maxViewedGame(MOLTO PESANTE)[per releaseDate, per genere]
+	  aggregazione maxRatedGame(MOLTO PESANTE)[per releaseDate, per genere]
+
+	  
+Il database è stato impostato col terminare ogni operazione di scrittura dopo l'aggiornamento di tutte e tre le repliche mentre per le operazioni di lettura basta ricevere i dati da 1 sola.
+
+Per velocizzare ulteriormente le letture sono stati inseriti 4 indici all'interno del database per velocizzare le ricerche le aggregazioni:
+	hashed index: _id(è id obbligatorio, viene utilizzato anche per sharding)
+	simple index:releaseDate
+	simple index: genre
+	composed index: releaseDate,genre
+
+Per accellerare le aggregazioni che facevano uso del campo genres ho suddiviso la lista in un genere principale che viene utilizzato per le aggregazioni e una di generi secondari per mantenere l'informazioni del gioco. In questo modo evito uno step del pipelining che consisteva nel separare l'array e creare un insieme di documenti tutti uguali ognuno contente un unico elemento dell'array originario(operatore "unwind") e risultava molto pesante.
+
+Per accellerare le aggregazioni che facevano uso del campo releaseDate ne ho modificato la precedente struttura
+
+[
+	{ nome=xboxinfo...info...releaseDate=}
+	{nome=ps4...info...releaseDate=}
+]
+
+come segue 
+
+[ "xbox","ps4"... ]  //  piattaforme su cui il gioco è disponibile[non da alcuna informazione sulla presenza del link dello store, dice solo se il gioco è disponibile per la piattaforma]
+releaseDate:         //  data minima di uscita del precedente array delle piattaforme => data di uscita
+
+I motivi come sopra
+
+
 SHARD-KEY
+
 I possibili candidati per una shard key sono
 	_id
 	genres
