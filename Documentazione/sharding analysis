@@ -19,16 +19,16 @@ Mentre al contrario le operazioni di lettura sono abbastanza pesanti e possono e
 	  leggere Game(frequente: 1gioco: LEGGERA)
 	  trovare maxId(una tantum: 1volta: LEGGERA)
 	  trovare numero di giochi disponibili(una tantum: 1volta: LEGGERA)
-	  leggere lista di previews[ordinati per viewsCount, ordinati per ratingCount, ordinati per anno](frequente: 25 giochi: MEDIA) 
+	  leggere lista di previews[ordinati per viewsCount, ordinati per rating, ordinati per anno](frequente: 25 giochi: MEDIA) 
 		[ utilizzato PreviewGame per rendere più efficienti le letture sequenziali, per realizzare le liste dei giochi invece che scaricare n giochi scarichi se ne scarica solo una versione 			  ridotta, solo quando apri un gioco scarichi l'oggetto completo e solo uno alla volta)
 		[ ISODate.$Year lo ho inserito perchè è un operatore per estrarre solo l'anno dalla ISODate e non è leggero da applicare su un intero database per poi poterlo ordinare]
 
 	-- STATISTICHE
-	  aggregazione maxGamesCount(PESANTE)[per releaseDate, per genere, per anno e genere]
-	  aggregazione getViewsCount(PESANTE)[per releaseDate, per genere, per anno e genere]
-	  aggregazione getRatingsCount(PESANTE)[per anno,per genere, per anno e genere]
-	  aggregazione maxViewedGame(MOLTO PESANTE)[per releaseDate, per genere]
-	  aggregazione maxRatedGame(MOLTO PESANTE)[per releaseDate, per genere]
+	  aggregazione maxGamesCount(PESANTE)[per releaseDate, per genere, per anno e genere]: rilascia il numero di giochi per anno, per genere, e per i generi ma suddividendoli di anno in anno
+	  aggregazione getViewsCount(PESANTE)[per releaseDate, per genere, per anno e genere]: rilascia il numero di visualizzazioni ""
+	  aggregazione getRatingsCount(PESANTE)[per anno,per genere, per anno e genere]: rilascia il numero di voti ""
+	  aggregazione maxViewedGame(MOLTO PESANTE)[per releaseDate, per genere]: rilascia il gioco più visualizzato per ogni anno o per ogni genere
+	  aggregazione maxRatedGame(MOLTO PESANTE)[per releaseDate, per genere]: rilascia il gioco col voto più alto per ogni anno o per ogni genere
 
 	  
 Il database è stato impostato col terminare ogni operazione di scrittura dopo l'aggiornamento di tutte e tre le repliche mentre per le operazioni di lettura basta ricevere i dati da 1 sola.
@@ -37,6 +37,8 @@ Per velocizzare ulteriormente le letture sono stati inseriti 4 indici all'intern
 	hashed index: _id(è id obbligatorio, viene utilizzato anche per sharding)
 	simple index:releaseDate
 	simple index: genre
+	simple index: viewsCount
+	simple index: rating
 	composed index: releaseDate,genre
 
 Per accellerare le aggregazioni che facevano uso del campo genres ho suddiviso la lista in un genere principale che viene utilizzato per le aggregazioni e una di generi secondari per mantenere le informazioni per l'interfaccia. In questo modo evito uno step del pipelining che consisteva nel separare l'array e creare un insieme di documenti tutti uguali ognuno contente un unico elemento dell'array originario(operatore "unwind") che era un'operazione molto pesante.
