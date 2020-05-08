@@ -154,6 +154,7 @@ public class GraphicInterface {
 	private JButton playStationButton;
 	private JButton nintendoButton;
 	private JButton steamButton;
+	private JButton XBoxButton;
 	private JLabel previewImageLabel;
 	private JLabel gameTitleLabel;
 	private ActionListener steamButtonListener;
@@ -174,11 +175,7 @@ public class GraphicInterface {
 	private JLabel metacriticScoreLabel;
 	private JButton actionButton;
 	private JLabel releaseDateLabel;
-	//private VideoPlayerPanel videoPlayer;
-	private VideoPlayerPanel2 videoPlayer;
-	private JButton previousVideoButton;
-	private JButton nextVideoButton;
-	private JButton XBoxButton;
+	private VideoPlayerPanel videoPlayer;
 	
 	////////USER PANEL
 	
@@ -230,9 +227,6 @@ public class GraphicInterface {
 	private Game currentGame;
 	private Font titleFont;
 	private List<BufferedGame> supportGamesList;
-	private List<String> currentVideosURLlist;
-	private int currentVideoIndex;
-	private int lastVideoIndex;
 	private Boolean isGameFavourite;
 	private DefaultTableCellRenderer centerRenderer;
 	private int searchedGamesPerPage;
@@ -939,30 +933,14 @@ public class GraphicInterface {
 		
 		List<String> videoURLs = game.getVideoURLs();
 		
-		if( videoURLs != null && videoURLs.size()!=0 ) {
-			/*
-			System.out.println("->[GraphicInterface] " + videoURLs.size() + " video(s) found for " + game.getTitle() + ".");
-			System.out.println("->[GraphicInterface] currently displayed video 1.");
+		if( videoURLs != null && videoURLs.size() != 0 ) {
 			
-			currentVideosURLlist = videoURLs;
-			currentVideoIndex = 0;
-			lastVideoIndex = videoURLs.size()-1;
-
-			videoPlayer.playVideo(videoURLs.get(0));
-			
-			if( videoURLs.size() > 1 ) {
-				
-				nextVideoButton.setEnabled(true);
-			}
-			
-			previousVideoButton.setEnabled(false);*/
+			System.out.println("->[GraphicInterface] videos available for " + game.getTitle() +".");
 			videoPlayer.initializeVideoPlayerPanel(videoURLs);
 			videoPlayer.playVideo();
 		} else {
 			
 			System.out.println("->[GraphicInterface] no videos available for " + game.getTitle() +".");
-			nextVideoButton.setEnabled(false);
-			previousVideoButton.setEnabled(false);
 			videoPlayer.initializeVideoPlayerPanel(null);
 			videoPlayer.playVideo();
 		}
@@ -1004,15 +982,7 @@ public class GraphicInterface {
 		
 		previewImageLabel.setIcon(null);
 		
-		//videoPlayer.stopVideo();
 		videoPlayer.cleanVideoPlayer();
-		
-		currentVideosURLlist = null;
-		currentVideoIndex = 0;
-		lastVideoIndex = 0;
-		
-		nextVideoButton.setEnabled(true);
-		previousVideoButton.setEnabled(true);
 		
 		isGameFavourite = null;
 	}
@@ -1441,11 +1411,8 @@ public class GraphicInterface {
 		currentUser = null;
 		currentGame = null;
 		isGameFavourite =  null;
-		lastVideoIndex = 0;
-		currentVideoIndex = 0;
 		titleFont = new Font("Corbel", Font.BOLD, 20);
 		supportGamesList = null;
-		currentVideosURLlist = null;
 		searchedGamesPerPage = 12;
 		
 		userGamesListModel = new DefaultListModel<BufferedGame>();
@@ -4417,87 +4384,10 @@ public class GraphicInterface {
 		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/star.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(metacriticScoreLabel);
 		
-		//videoPlayer = new VideoPlayerPanel();
-		videoPlayer = new VideoPlayerPanel2();
+		videoPlayer = new VideoPlayerPanel();
 		videoPlayer.setSize(342, 210);
 		videoPlayer.setLocation(426, 332);
 		gamePanel.add(videoPlayer);
-		
-		nextVideoButton = new JButton("");
-		nextVideoButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				if( currentVideoIndex == lastVideoIndex ) {
-					return;
-				}
-				
-				currentVideoIndex++;
-				
-				videoPlayer.stopVideo();
-				
-				//videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
-				
-				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
-				
-				if( currentVideoIndex == 1 ) {
-					
-					previousVideoButton.setEnabled(true);
-				}
-				
-				
-				if( currentVideoIndex == lastVideoIndex ) {
-					
-					nextVideoButton.setEnabled(false);
-				}
-			}
-		});
-		nextVideoButton.setToolTipText("Next Video");
-		nextVideoButton.setName("nextVideoButton");
-		nextVideoButton.setBackground(SystemColor.controlDkShadow);
-		nextVideoButton.setContentAreaFilled(false);
-		nextVideoButton.setOpaque(true);
-		nextVideoButton.setBounds(804, 351, 73, 43);
-		nextVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/next.png")).getImage().getScaledInstance(40, 40, Image.SCALE_FAST)));
-		nextVideoButton.setEnabled(false);
-		gamePanel.add(nextVideoButton);
-		
-		previousVideoButton = new JButton("");
-		previousVideoButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				if( currentVideoIndex == 0 ) {
-					
-					return;
-				}
-				
-				currentVideoIndex--;
-				
-				videoPlayer.stopVideo();
-				
-				//videoPlayer.playVideo(currentVideosURLlist.get(currentVideoIndex));
-				
-				System.out.println("->[GraphicInterface] currently displayed video " + (currentVideoIndex+1) + ".");
-				
-				if( currentVideoIndex == lastVideoIndex-1 ) {
-					
-					nextVideoButton.setEnabled(true);
-				}
-				
-				if( currentVideoIndex == 0 ) {
-					
-					previousVideoButton.setEnabled(false);
-				}
-			}
-		});
-		previousVideoButton.setToolTipText("Previous Video");
-		previousVideoButton.setName("previousVideoButton");
-		previousVideoButton.setBackground(SystemColor.controlDkShadow);
-		previousVideoButton.setContentAreaFilled(false);
-		previousVideoButton.setOpaque(true);
-		previousVideoButton.setBounds(804, 469, 73, 45);
-		previousVideoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/back.png")).getImage().getScaledInstance(40, 40, Image.SCALE_FAST)));
-		previousVideoButton.setEnabled(false);
-		gamePanel.add(previousVideoButton);
 		
 		
 		
