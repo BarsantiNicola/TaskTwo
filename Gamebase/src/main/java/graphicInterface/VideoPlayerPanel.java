@@ -139,19 +139,12 @@ public class VideoPlayerPanel extends JFXPanel{
 		AnchorPane root = new AnchorPane();
 	    Scene scene = new Scene(root);
 	    
-	    /*
-	    // center video position
-	    javafx.geometry.Rectangle2D screen = Screen.getPrimary().getVisualBounds();
-	    viewer.setX((screen.getWidth() - this.getWidth()) / 2);
-	    viewer.setY((screen.getHeight() - this.getHeight()) / 2);*/
-	    
 	    root.getChildren().addAll(viewer,next,prev);
 	    AnchorPane.setLeftAnchor(prev, 0.0);
 	    AnchorPane.setBottomAnchor(prev,0.0);
 	    AnchorPane.setRightAnchor(next, 0.0);
 	    AnchorPane.setBottomAnchor(next,0.0);
 	    
-	    // resize video based on screen size
 	    DoubleProperty width = viewer.fitWidthProperty();
 	    DoubleProperty height = viewer.fitHeightProperty();
 	    width.bind(Bindings.selectDouble(viewer.sceneProperty(), "width"));

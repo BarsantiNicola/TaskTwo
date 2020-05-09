@@ -227,7 +227,7 @@ public class GraphicInterface {
 	private Game currentGame;
 	private Font titleFont;
 	private List<BufferedGame> supportGamesList;
-	private Boolean isGameFavourite;
+	//private Boolean isGameFavourite;
 	private DefaultTableCellRenderer centerRenderer;
 	private int searchedGamesPerPage;
 	
@@ -903,11 +903,9 @@ public class GraphicInterface {
 			if( isFavourite.element ) {
 				
 				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
-				isGameFavourite = true;
 			} else {
 				
 				actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
-				isGameFavourite = false;
 			}
 			
 		} else {
@@ -984,7 +982,6 @@ public class GraphicInterface {
 		
 		videoPlayer.cleanVideoPlayer();
 		
-		isGameFavourite = null;
 	}
 	
 	private void initializeUserPage( String searchedUser ) {
@@ -1410,7 +1407,6 @@ public class GraphicInterface {
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
 		currentUser = null;
 		currentGame = null;
-		isGameFavourite =  null;
 		titleFont = new Font("Corbel", Font.BOLD, 20);
 		supportGamesList = null;
 		searchedGamesPerPage = 12;
@@ -4234,38 +4230,36 @@ public class GraphicInterface {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				if( isGameFavourite == null ) {
-					return;
-				}
+				StatusObject<Boolean> doIFavouriteStatusObject = logicHandler.doIFavourite(currentGame.getId().toString());
 				
-				if( isGameFavourite ) {
+				if( doIFavouriteStatusObject.statusCode == StatusCode.OK ) {
 					
-					if( logicHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+					if( doIFavouriteStatusObject.element ) {
 						
-						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
-						isGameFavourite = false;
-						
-						System.out.println("->[GraphicInterface] game correctly remove from favourites.");
-					}else {
-						
-						System.out.println("->[GraphicInterface] impossbile to remove game from favourites.");
-						isGameFavourite = (Boolean) null;
-					}
-				} else if( !isGameFavourite ){
-					
-					if( logicHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
-						
-						actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
-						isGameFavourite = false;
-						
-						System.out.println("->[GraphicInterface] game correctly added to favourites.");
+						if( logicHandler.removeFromFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+							
+							actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
+							System.out.println("->[GraphicInterface] game correctly remove from favourites.");
+						}else {
+							
+							System.out.println("->[GraphicInterface] impossbile to remove game from favourites.");
+						}
 					} else {
 						
-						System.out.println("->[GraphicInterface] impossible to add game to favourites.");
-						isGameFavourite = (Boolean) null;
+						if( logicHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
+							
+							actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
+							System.out.println("->[GraphicInterface] game correctly added to favourites.");
+						} else {
+							
+							System.out.println("->[GraphicInterface] impossible to add game to favourites.");
+						}
 					}
-				} 
-				
+					
+				} else {
+					
+					System.out.println("->[GraphicInterface] impossible to determine if game is favourite or not.");
+				}				
 			}
 		});
 		gamePanel.add(actionButton);
@@ -4307,6 +4301,9 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getTitle(), 1) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 1 correctly assigned to " + currentGame.getTitle() + ".");
+				} else {
+					
+					System.out.println("->[GraphicInterface] failed to assign vote 1 to " + currentGame.getTitle() + ".");
 				}
 					
 			}
@@ -4322,6 +4319,9 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getTitle(), 2) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 2 correctly assigned to " + currentGame.getTitle() + ".");
+				}else {
+					
+					System.out.println("->[GraphicInterface] failed to assign vote 2 to " + currentGame.getTitle() + ".");
 				}
 			}
 		});
@@ -4336,6 +4336,9 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getTitle(), 3) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 3 correctly assigned to " + currentGame.getTitle() + ".");
+				} else {
+					
+					System.out.println("->[GraphicInterface] failed to assign vote 3 to " + currentGame.getTitle() + ".");
 				}
 			}
 		});
@@ -4350,6 +4353,9 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getTitle(), 4) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 4 correctly assigned to " + currentGame.getTitle() + ".");
+				} else {
+					
+					System.out.println("->[GraphicInterface] failed to assign vote 4 to " + currentGame.getTitle() + ".");
 				}
 			}
 		});
@@ -4364,6 +4370,9 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getTitle(), 5) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 5 correctly assigned to " + currentGame.getTitle() + ".");
+				} else {
+					
+					System.out.println("->[GraphicInterface] failed to assign vote 5 to " + currentGame.getTitle() + ".");
 				}
 			}
 		});
