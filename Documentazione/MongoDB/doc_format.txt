@@ -4,6 +4,7 @@
 "viewsCount":
 "rating":
 "ratingCount":
+"metacritic":
 "description":
 "releaseDate":{"$date":}
 "background_image":
