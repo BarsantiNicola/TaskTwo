@@ -482,25 +482,14 @@ public class MongoConnection {
     public static void main(String[] args) throws InterruptedException {
 
     	try {
-
+    		System.out.println("PROVA");
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
-    		Game game;
-    		for(int a = 0; a<10;a++) {
-    			game = client.getGame(a).element;
-    			if(game != null){
-    				System.out.println("ps: " + game.getPlaystationURL());
-    				System.out.println("xbox: " + game.getXboxURL());
-    				System.out.println("nintendo: " + game.getNintendoURL());
-    				System.out.println("steam: " + game.getSteamURL());
-    			}
-    		}
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    		Game game = client.getGame(3328).element;
+    		System.out.println("PROVA");
+    		if(game != null)
+    			System.out.println(gson.toJson(game));
     			
-    		//System.out.println("testing");
-    	//	HashMap<String,Statistics> res = client.statistics.getMaxRatedGameByGen().element;
-    	//	for( String a:res.keySet())
-    	//		System.out.println(a +" : "+res.get(a).getGames());
-    		//client.statistics.statsTest();
-    		//client.statistics.doTimeAnalysis("C:\\Users\\Nicola\\Desktop\\timeShard3.txt",100);
     		client.closeConnection();
     		
     	}catch(Exception e) {
