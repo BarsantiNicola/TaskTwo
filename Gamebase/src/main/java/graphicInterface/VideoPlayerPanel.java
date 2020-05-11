@@ -155,12 +155,12 @@ public class VideoPlayerPanel extends JFXPanel{
 	    
 	    player.play();
 	    
-	    System.out.println("->[VideoPlayer] currently playing video " + (currentIndex+1));
+	    System.out.println("->[VideoPlayerPanel] currently playing video " + (currentIndex+1));
 	}
 	
 	public void stopVideo() {
 		
-		System.out.println("->[VideoPlayerPanel] stopping video " + currentIndex);
+		System.out.println("->[VideoPlayerPanel] stopping video " + (currentIndex+1));
 		
 		MediaPlayer player = playerList.get(currentIndex);
 		
