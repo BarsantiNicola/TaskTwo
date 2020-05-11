@@ -482,11 +482,11 @@ public class MongoConnection {
     public static void main(String[] args) throws InterruptedException {
 
     	try {
-    		System.out.println("PROVA");
-    		MongoConnection client = new MongoConnection("127.0.0.1",27017);
+
+    		MongoConnection client = new MongoConnection("172.16.0.80",27018);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
     		Game game = client.getGame(58175).element;
-    		System.out.println("PROVA");
+
     		if(game != null)
     			System.out.println(gson.toJson(game));
     			

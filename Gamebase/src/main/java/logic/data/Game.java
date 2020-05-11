@@ -141,11 +141,7 @@ public class Game implements Serializable{
     	if( multimedia == null ) {
     		return new ArrayList<>();
     	}
-    	ArrayList<Video> videos = multimedia.getVideos();
-    	List<String> URLs = new ArrayList<>();
-    	for(Video v:videos)
-    		URLs.add(v.getMediaUrl());
-    	return URLs;
+    	return  multimedia.getVideos();
     }
 
     public List<String> getImagesURLs(){
