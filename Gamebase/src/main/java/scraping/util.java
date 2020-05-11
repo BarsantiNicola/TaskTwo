@@ -29,18 +29,16 @@ public class util {
 	public static Game initializeGameToAdd(JSONObject newGame) {
 		System.out.println("-->[util][initializeGameToAdd] Initializing new game. ID:" + newGame.getInt("id"));
 		Game gameToAdd = new Game();
-		gameToAdd.setBackground_image(null);
 		//Id
 		gameToAdd.setId(newGame.getInt("id")); 
+		
 		//FavoriteCount
 		gameToAdd.setFavouritesCount(0);
+		
 		//Title
-		if(newGame.has("name")) {
-			if(newGame.get("name") instanceof String && !newGame.get("name").equals(null)) {
-				gameToAdd.setTitle(newGame.getString("name"));
-			}
-		}
-		//Background_image
+		gameToAdd.setTitle(newGame.getString("name"));
+
+		//Background_image		
 		gameToAdd.setBackground_image(null);
 		try {
 			if(newGame.has("background_image")) {
@@ -48,24 +46,30 @@ public class util {
 					gameToAdd.setBackground_image(newGame.getString("background_image"));
 				}
 			}	
+			
 			//Rating
 			gameToAdd.setRating(0.0);
+			
 			//Rating Count
 			gameToAdd.setRatingCount(0);
+			
 			//Metacritic
 			if(newGame.has("metacritic")) {
 				if(newGame.get("metacritic") instanceof Integer && !newGame.get("metacritic").equals(null)) {
 					gameToAdd.setMetacritic(newGame.getInt("metacritic"));
 				}
 			}
+			
 			//ViewsCount
 			gameToAdd.setViewsCount(0);
+			
 			//Description
 			if(newGame.has("description_raw")) {
 				if(newGame.get("description_raw") instanceof String && !newGame.get("description_raw").equals(null)) {
 				gameToAdd.setDescription(newGame.getString("description_raw"));;
 				}
 			}
+			
 			//Released
 			if(newGame.has("released")) {
 				if(newGame.get("released") instanceof String && !newGame.get("released").equals(null)) {
@@ -84,6 +88,7 @@ public class util {
 					gameToAdd.setReleaseDate(releaseDate); 
 				}
 			}
+			
 			//Genres and subgenres
 			if(newGame.has("genres")) {
 				if(newGame.get("genres") instanceof JSONArray && !newGame.get("genres").equals(null) ) {
@@ -104,6 +109,7 @@ public class util {
 					}
 				}
 			}
+			
 			//Releases
 			if(newGame.has("platforms")) {
 				if(newGame.get("platforms") instanceof JSONArray && !newGame.get("platforms").equals(null)) {
@@ -123,6 +129,7 @@ public class util {
 					}
 				}
 			}
+			
 			//Sales
 			if(newGame.has("stores")) {
 				if(newGame.get("stores") instanceof JSONArray && !newGame.get("stores").equals(null)) {
@@ -152,6 +159,7 @@ public class util {
 					}
 				}
 			}
+			
 			// multimedia: images;
 			Multimedia multimedia = new Multimedia();
 			ArrayList<String> images = new ArrayList<String>();
@@ -166,6 +174,7 @@ public class util {
 					}
 				}
 			}
+			
 			//multimedia: video
 			if(newGame.has("clip")) {
 				if(newGame.get("clip") instanceof JSONObject && !newGame.get("clip").equals(null)) {
@@ -200,7 +209,7 @@ public class util {
 		System.out.println("-->[util][initializeGameToAdd] Created new game");
 		return gameToAdd;
 	}
-	
+
 	
 	//Create GraphGame consistent with the new game just scraped
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
