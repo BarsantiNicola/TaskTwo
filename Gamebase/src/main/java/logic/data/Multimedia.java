@@ -9,7 +9,7 @@ public class Multimedia implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private ArrayList<String> images;
-    private ArrayList<Video> videos;
+    private ArrayList<String> videos;
 
     public Multimedia(){}
 
@@ -30,15 +30,15 @@ public class Multimedia implements Serializable {
             videos = videos.get("clips",Document.class);
         if( videos != null ) {
             try {
-                this.videos.add(new Video("320p", videos.getString("320")));
+                this.videos.add(videos.getString("320"));
             } catch (Exception e) {
             }
             try {
-                this.videos.add(new Video("640p", videos.getString("640")));
+                this.videos.add(videos.getString("640"));
             } catch (Exception e) {
             }
             try {
-                this.videos.add(new Video("1080p", videos.getString("full")));
+                this.videos.add(videos.getString("full"));
             } catch (Exception e) {
             }
         }
@@ -51,7 +51,7 @@ public class Multimedia implements Serializable {
 
     public ArrayList<String> getImages() { return images; }
 
-    public ArrayList<Video> getVideos(){ return videos; }
+    public ArrayList<String> getVideos(){ return videos; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                               SETTER                                                           //
@@ -59,6 +59,6 @@ public class Multimedia implements Serializable {
 
     public void setImages( ArrayList<String> images ){ this.images = images; }
 
-    public void setVideos( ArrayList<Video> videos ){ this.videos = videos; }
+    public void setVideos( ArrayList<String> videos ){ this.videos = videos; }
 
 }
