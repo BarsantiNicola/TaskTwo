@@ -22,7 +22,6 @@ import logic.data.Game;
 import logic.data.GraphGame;
 import logic.data.Multimedia;
 import logic.data.PlatformInfo;
-import logic.data.Video;
 
 public class util {
 	
@@ -156,7 +155,7 @@ public class util {
 			// multimedia: images;
 			Multimedia multimedia = new Multimedia();
 			ArrayList<String> images = new ArrayList<String>();
-			ArrayList<Video> videos = new ArrayList<Video>();
+			ArrayList<String> videos = new ArrayList<String>();
 			if(newGame.has("short_screenshots")) {
 				if(newGame.get("short_screenshots") instanceof JSONArray && !newGame.get("short_screenshots").equals(null)) {
 					JSONArray short_screenshots = newGame.getJSONArray("short_screenshots");
@@ -174,22 +173,13 @@ public class util {
 					if(clip.has("clips")) {
 						JSONObject clips = newGame.getJSONObject("clip").getJSONObject("clips");
 						if(clips.has("320")) {
-							Video videoToAdd = new Video();
-							videoToAdd.setResolution("320");
-							videoToAdd.setMediaUrl(clips.getString("320"));
-							videos.add(videoToAdd);
+							videos.add(clips.getString("320"));
 						}
 						if(clips.has("640")) {
-							Video videoToAdd = new Video();
-							videoToAdd.setResolution("640");
-							videoToAdd.setMediaUrl(clips.getString("640"));
-							videos.add(videoToAdd);
+							videos.add(clips.getString("640"));
 						}
-						if(clips.has("full")) {
-							Video videoToAdd = new Video();
-							videoToAdd.setResolution("full");
-							videoToAdd.setMediaUrl(clips.getString("full"));
-							videos.add(videoToAdd);
+						if(clips.has("full")) {;
+							videos.add(clips.getString("full"));
 						}
 					}
 				}
