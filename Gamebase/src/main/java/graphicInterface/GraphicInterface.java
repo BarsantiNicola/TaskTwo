@@ -804,7 +804,7 @@ public class GraphicInterface {
 		
 		previewImageLabel.setIcon(background_image_icon);
 		
-		final String steamURL = game.getSteamURL();
+		final String steamURL = game.giveSteamURL();
 		
 		if( steamURL != null ) {
 			
@@ -827,7 +827,7 @@ public class GraphicInterface {
 			steamButton.setEnabled(false);
 		}
 		
-		final String nintendoURL = game.getNintendoURL();
+		final String nintendoURL = game.giveNintendoURL();
 		
 		if( nintendoURL != null ) {
 			
@@ -850,7 +850,7 @@ public class GraphicInterface {
 			nintendoButton.setEnabled(false);
 		}
 		
-		final String playstationURL = game.getPlaystationURL();
+		final String playstationURL = game.givePlaystationURL();
 		
 		if( playstationURL != null ) {
 			
@@ -873,7 +873,7 @@ public class GraphicInterface {
 			playStationButton.setEnabled(false);
 		}
 		
-		final String xboxURL = game.getXboxURL();
+		final String xboxURL = game.giveXboxURL();
 		
 		if( xboxURL != null ) {
 			
@@ -913,7 +913,7 @@ public class GraphicInterface {
 			System.out.println("->[GraphicInterface] impossible to determine if game is favourite.");
 		}
 			
-		List<String> imagesURL = game.getImagesURLs();
+		List<String> imagesURL = game.giveImageURLs();
 		
 		while( imagesURL.remove(background_image_url) ) {
 			
@@ -929,7 +929,7 @@ public class GraphicInterface {
 			metacriticScoreLabel.setText(Integer.toString(score));
 		}
 		
-		List<String> videoURLs = game.getVideoURLs();
+		List<String> videoURLs = game.giveVideoURLs();
 		
 		if( videoURLs != null && videoURLs.size() != 0 ) {
 			

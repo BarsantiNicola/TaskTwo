@@ -105,14 +105,14 @@ public class Game implements Serializable{
         return multimedia;
     }
     
-    public String getNintendoURL() {
+    public String giveNintendoURL() {
     	for( PlatformInfo plat : sales )
     		if( plat.getStore().charAt(4) == 'e')
     			return plat.getSaleUrl();
     	return null;
     }
     
-    public String getSteamURL() {
+    public String giveSteamURL() {
 
     	for( PlatformInfo plat : sales )
     		if( plat.getStore().charAt(4) == 'm')
@@ -120,7 +120,7 @@ public class Game implements Serializable{
     	return null;
     }
     
-    public String getPlaystationURL() {
+    public String givePlaystationURL() {
 
     	for( PlatformInfo plat : sales )
     		if( plat.getStore().charAt(4) == 's')
@@ -128,7 +128,7 @@ public class Game implements Serializable{
     	return null;
     }
     
-    public String getXboxURL() {
+    public String giveXboxURL() {
 
     	for( PlatformInfo plat : sales )
     		if( plat.getStore().charAt(4) == 'O'|| plat.getStore().charAt(4) == '3')
@@ -137,14 +137,14 @@ public class Game implements Serializable{
     	return null;
     }
      
-    public List<String> getVideoURLs(){
+    public List<String> giveVideoURLs(){
     	if( multimedia == null ) {
     		return new ArrayList<>();
     	}
     	return  multimedia.getVideos();
     }
 
-    public List<String> getImagesURLs(){
+    public List<String> giveImageURLs(){
     	if( multimedia == null ) {
     		return new ArrayList<>();
     	}
