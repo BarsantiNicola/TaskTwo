@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 
@@ -153,8 +154,6 @@ public class LogicBridge {
 	return true;
 	}
 	
-	public static String getTwitchURLChannel( String GAME ) { return WebScraping.getTwitchURLChannel(GAME); }
-	
 	public String getGameDescription( int GAME_ID) { return WebScraping.getGameDescription(GAME_ID); }
 	
 	///////////////  GRAPH FUNCTIONS
@@ -275,5 +274,27 @@ public class LogicBridge {
 		GRAPH.close();
 	}
 	
+	
+	/*
+	//Funzione per Riccardo
+	public void addDescriptionToAllGames() {
+		int MaxGameId= MONGO.getMaxGameId().element;
+		for (int i = 1; i < MaxGameId; i++ ) {
+
+		try {
+			TimeUnit.MILLISECONDS.sleep(100);
+			} catch (InterruptedException e) {
+				System.out.println("--->[WebScraping][scrapeNewGames] Error: sleep() function failed");
+			}
+			
+			String description = getGameDescription(i);
+			System.out.println("Adding description for game: " + i);
+			StatusCode addDescriptionStatus = addGameDescription(i, description ); 
+			if(addDescriptionStatus == StatusCode.ERR_NETWORK_UNREACHABLE) {
+				System.out.println("Network Unreachable. Exit after game: " + i);
+				break;
+			}	
+		}
+	}*/
 	
 }

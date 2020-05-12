@@ -64,60 +64,7 @@ public class HttpClient {
         }
 		return null;
     }
-
-    //Get twitch channel for a game
-    public String sendGetTwitch(String GAME) throws Exception {
-    	System.out.println("-->[HttpClient][sendGetTwitch] Preparing request for twitch channel");
-
-        HttpGet request = new HttpGet("https://api.twitch.tv/kraken/streams/?game=" + GAME);
-
-        // Add request headers
-        request.addHeader("Accept", "application/vnd.twitchtv.v5+json");
-        request.addHeader("Client-ID", "ndtm4x05vr0kvymsiv0s3hgwtgbrjy");
-        
-       // request.getParams().setIntParameter("http.connection.timeout", 1);
-
-        CloseableHttpResponse response = httpClient.execute(request);
-        	
-        try {
-    	    System.out.println("-->[HttpClient][sendGetTwitch] Request sent");
-            // Get HttpResponse Status
-            System.out.println(response.getStatusLine().toString());
-
-            HttpEntity entity = response.getEntity();
-
-            //Get result to string->JSONObject->JSONArray
-            String result = EntityUtils.toString(entity);
-            JSONObject jsonObject = new JSONObject(result);
-            JSONArray jsonArray = new JSONArray();
-            if (jsonObject.has("streams")) {
-            	String streams = jsonObject.get("streams").toString();
-            	jsonArray = new JSONArray(streams);
-            	if (jsonArray.length() == 0) {
-            		return "No streaming available!";
-            	}
-            }
-            else {
-            	return "No streaming available!";
-            }
-            //Return the first element in the Twitch channels array
-            JSONObject jsonobject = jsonArray.getJSONObject(0);
-            if (jsonobject.has("channel")) {
-            	JSONObject channel = jsonobject.getJSONObject("channel");
-            	String url = channel.getString("url");
-            	return url;
-            }
-            else {
-            	return "No streaming available!";
-            }
-       } catch (Exception e){
-    	   System.out.println("-->[HttpClient][sendGetTwitch] Error: something went wrong. Please check your connection");
-       }
-        finally {
-    	   response.close();
-       }
-		return "No streaming available!";
-    }
+    
     
     //Get game description
     public String sendGetGameDescription(int GAME_ID) throws Exception {
