@@ -279,12 +279,13 @@ public class LogicBridge {
 	//Funzione per Riccardo
 	public void addDescriptionToAllGames() {
 		int MaxGameId= MONGO.getMaxGameId().element;
-		for (int i = 1; i < MaxGameId; i++ ) {
-
-		try {
-			TimeUnit.MILLISECONDS.sleep(100);
-			} catch (InterruptedException e) {
-				System.out.println("--->[WebScraping][scrapeNewGames] Error: sleep() function failed");
+		int i = 0;
+		while (i < MaxGameId {
+			i++
+			try {
+				TimeUnit.MILLISECONDS.sleep(10);
+				} catch (InterruptedException e) {
+					System.out.println("--->[WebScraping][scrapeNewGames] Error: sleep() function failed");
 			}
 			
 			String description = getGameDescription(i);
@@ -293,7 +294,7 @@ public class LogicBridge {
 			if(addDescriptionStatus == StatusCode.ERR_NETWORK_UNREACHABLE) {
 				System.out.println("Network Unreachable. Exit after game: " + i);
 				break;
-			}	
+			}
 		}
 	}*/
 	
