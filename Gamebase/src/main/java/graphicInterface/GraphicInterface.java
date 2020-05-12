@@ -422,6 +422,8 @@ public class GraphicInterface {
 						System.out.println("->[GraphicInterface] unfollow procedure terminated correctly.");
 						usersTableModel.setValueAt("x", modelRow, 1);
 				    	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+				    	userGamesListModel.removeAllElements();
+				    	displayedUserLabel.setText("Currently Displayed: no games");
 					} else { //I don't follow the user so I may follow him/her
 					
 						if( logicHandler.followUser(selectedUsername) != StatusCode.OK ) {
@@ -943,11 +945,13 @@ public class GraphicInterface {
 			videoPlayer.playVideo();
 		}
 		
+		System.out.println(game.getId());
 		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
 			System.out.println("->[GraphicInterface] error while incrementing view count.");
 		} else {
 			System.out.println("->[GraphicInterface] increment view count performed.");
 		}
+		System.out.println("A");
 	}
 	
 	private void cleanGamePage() {
@@ -2230,7 +2234,7 @@ public class GraphicInterface {
 						usersNumber = "N/A";
 					}
 					
-					gameCountLabel.setText("Game Count: " + usersNumber);
+					userCountLabel.setText("User Count: " + usersNumber);
 					
 				} else {
 					deleteUserResultLabel.setText("Failure!");
@@ -4298,7 +4302,7 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getTitle(), 1) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 1) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 1 correctly assigned to " + currentGame.getTitle() + ".");
 				} else {
@@ -4316,7 +4320,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getTitle(), 2) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 2) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 2 correctly assigned to " + currentGame.getTitle() + ".");
 				}else {
@@ -4333,7 +4337,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getTitle(), 3) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 3) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 3 correctly assigned to " + currentGame.getTitle() + ".");
 				} else {
@@ -4350,7 +4354,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getTitle(), 4) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 4) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 4 correctly assigned to " + currentGame.getTitle() + ".");
 				} else {
@@ -4367,7 +4371,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getTitle(), 5) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 5) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 5 correctly assigned to " + currentGame.getTitle() + ".");
 				} else {
