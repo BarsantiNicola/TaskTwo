@@ -1,26 +1,18 @@
 package scraping;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import logic.LogicBridge;
+
 import logic.data.Game;
-import logic.data.GraphGame;
-import logic.mongoConnection.MongoConnection;
-import logic.mongoConnection.*;
-import logic.graphConnector.*;
+
+
 
 //-----------------------------------------------------------------------------------------------------
 //The class is used to contain all the methods used to perform dynamic web scraping by the application.
@@ -45,7 +37,7 @@ public class WebScraping {
 		int i = 0;
 		int failed=0;
 		while (i < 10) {
-			//Wait for polite scraping
+			//Wait 3 seconds after each request, for polite scraping
 			try {
 			TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
@@ -187,7 +179,7 @@ public class WebScraping {
 	/*
 	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
-		 scrapeNewGames(4200);
+		 scrapeNewGames(99999999);
 	 }
 	 */
 }

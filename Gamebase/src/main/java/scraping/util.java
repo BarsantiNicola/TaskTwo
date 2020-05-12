@@ -2,15 +2,10 @@ package scraping;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -40,37 +35,88 @@ public class util {
 
 		//Background_image		
 		gameToAdd.setBackground_image(null);
+		extractBackgroundImage(newGame, gameToAdd);
+		
+		//Rating
+		gameToAdd.setRating(0.0);
+				
+		//Rating Count
+		gameToAdd.setRatingCount(0);
+				
+		//Metacritic
+		extractMetacritic(newGame, gameToAdd);
+	
+		//ViewsCount
+		gameToAdd.setViewsCount(0);
+			
+		//Description
+		extractDescription(newGame, gameToAdd);
+
+		//Released
+		extractReleaseDate(newGame, gameToAdd);
+			
+		//Genres and subgenres
+		extractGenres(newGame, gameToAdd);
+			
+		//Releases
+		extractPlatforms(newGame, gameToAdd);
+
+		//Sales
+		extractStores(newGame, gameToAdd);
+			
+		//Multimedia
+		extractMultimedia(newGame, gameToAdd);
+
+		System.out.println("-->[util][initializeGameToAdd] Created new game");
+		return gameToAdd;
+	}
+
+
+	//Extract background image from a json and puts it in a object Game
+	public static void extractBackgroundImage(JSONObject newGame, Game gameToAdd){
 		try {
 			if(newGame.has("background_image")) {
 				if(newGame.get("background_image") instanceof String && !newGame.get("background_image").equals(null)) {
 					gameToAdd.setBackground_image(newGame.getString("background_image"));
 				}
-			}	
-			
-			//Rating
-			gameToAdd.setRating(0.0);
-			
-			//Rating Count
-			gameToAdd.setRatingCount(0);
-			
-			//Metacritic
+			}
+		} catch (Exception e) {
+			System.out.println("-->[util][extractBackgroundImage] No background_image in suitable format available");
+		}
+	}
+	
+	
+	//Extract metacritic from a json and puts it in a object Game
+	public static void extractMetacritic(JSONObject newGame, Game gameToAdd) {
+		try {
 			if(newGame.has("metacritic")) {
 				if(newGame.get("metacritic") instanceof Integer && !newGame.get("metacritic").equals(null)) {
 					gameToAdd.setMetacritic(newGame.getInt("metacritic"));
 				}
-			}
-			
-			//ViewsCount
-			gameToAdd.setViewsCount(0);
-			
-			//Description
+			}	
+		} catch (Exception e) {
+			System.out.println("-->[util][extractMetacritic] No metacritic in suitable format  available");
+		}
+	}
+	
+	
+	//Extract description from a json and puts it in a object Game
+	public static void extractDescription(JSONObject newGame, Game gameToAdd) {
+		try {
 			if(newGame.has("description_raw")) {
 				if(newGame.get("description_raw") instanceof String && !newGame.get("description_raw").equals(null)) {
 				gameToAdd.setDescription(newGame.getString("description_raw"));;
 				}
-			}
-			
-			//Released
+			}	
+		} catch (Exception e) {
+			System.out.println("-->[util][extractDescription] No description in suitable format available");
+		}
+	}
+		
+	
+	//Extract release date from a json and puts it in a object Game
+	public static void extractReleaseDate(JSONObject newGame, Game gameToAdd) {
+		try {
 			if(newGame.has("released")) {
 				if(newGame.get("released") instanceof String && !newGame.get("released").equals(null)) {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -78,18 +124,23 @@ public class util {
 					try {
 						releaseDate = sdf.parse(newGame.getString("released"));
 					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("-->[util][extractReleaseDate] No release date in suitable format available");
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("-->[util][extractReleaseDate] No release date in suitable format available");
 					}
 				
 					gameToAdd.setReleaseDate(releaseDate); 
 				}
-			}
-			
-			//Genres and subgenres
+			}	
+		} catch (Exception e) {
+			System.out.println("-->[util][extractReleaseDate] No release date available");
+		}
+	}
+	
+	
+	//Extract genres from a json and puts it in a object Game
+	public static void extractGenres(JSONObject newGame, Game gameToAdd) {
+		try {
 			if(newGame.has("genres")) {
 				if(newGame.get("genres") instanceof JSONArray && !newGame.get("genres").equals(null) ) {
 					JSONArray genres = newGame.getJSONArray("genres");
@@ -109,8 +160,15 @@ public class util {
 					}
 				}
 			}
-			
-			//Releases
+		} catch (Exception e) {
+			System.out.println("-->[util][extractGenres] No genres in suitable format available");
+		}
+	}
+	
+	
+	//Extract platforms from a json and puts it in a object Game
+	public static void extractPlatforms(JSONObject newGame, Game gameToAdd) {
+		try {
 			if(newGame.has("platforms")) {
 				if(newGame.get("platforms") instanceof JSONArray && !newGame.get("platforms").equals(null)) {
 					JSONArray platforms = newGame.getJSONArray("platforms");
@@ -128,9 +186,16 @@ public class util {
 						}
 					}
 				}
-			}
-			
-			//Sales
+			}	
+		} catch (Exception e) {
+			System.out.println("-->[util][extractPlatforms] No genres in suitable format available");
+		}
+	}
+	
+
+	//Extract stores from a json and puts it in a object Game
+	public static void extractStores(JSONObject newGame, Game gameToAdd) {
+		try {
 			if(newGame.has("stores")) {
 				if(newGame.get("stores") instanceof JSONArray && !newGame.get("stores").equals(null)) {
 					ArrayList<PlatformInfo> sales = new ArrayList<PlatformInfo>();
@@ -158,9 +223,17 @@ public class util {
 						}
 					}
 				}
-			}
-			
-			// multimedia: images;
+			}	
+		} catch (Exception e) {
+			System.out.println("-->[util][extractStores] No stores in suitable format  available");
+		}
+	}
+	
+	
+	//Extract multimedia from a json and puts it in a object Game
+	public static void extractMultimedia(JSONObject newGame, Game gameToAdd) {
+		try {
+			//multimedia: images;
 			Multimedia multimedia = new Multimedia();
 			ArrayList<String> images = new ArrayList<String>();
 			ArrayList<String> videos = new ArrayList<String>();
@@ -202,14 +275,13 @@ public class util {
 			if(images.size() > 0 || videos.size() > 0) {
 					gameToAdd.setMultimedia(multimedia);
 			}
+			
 		} catch (Exception e) {
-			System.out.println("-->[util][initializeGameToAdd] Created new game");
-			return gameToAdd;
+			System.out.println("-->[util][extractMultimedia] No multimedia in suitable format available");
 		}
-		System.out.println("-->[util][initializeGameToAdd] Created new game");
-		return gameToAdd;
 	}
-
+		
+	
 	
 	//Create GraphGame consistent with the new game just scraped
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
