@@ -280,8 +280,8 @@ public class LogicBridge {
 	public void addDescriptionToAllGames() {
 		int MaxGameId= MONGO.getMaxGameId().element;
 		int i = 0;
-		while (i < MaxGameId {
-			i++
+		while (i < MaxGameId) {
+			i++;
 			try {
 				TimeUnit.MILLISECONDS.sleep(10);
 				} catch (InterruptedException e) {
@@ -290,7 +290,8 @@ public class LogicBridge {
 			
 			String description = getGameDescription(i);
 			System.out.println("Adding description for game: " + i);
-			StatusCode addDescriptionStatus = addGameDescription(i, description ); 
+			StatusCode addDescriptionStatus = addGameDescription(i, description); 
+			
 			if(addDescriptionStatus == StatusCode.ERR_NETWORK_UNREACHABLE) {
 				System.out.println("Network Unreachable. Exit after game: " + i);
 				break;
