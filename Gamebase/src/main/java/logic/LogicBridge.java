@@ -190,8 +190,6 @@ public class LogicBridge {
 	
 	public StatusObject<List<User>> getFollowedUsersList(){ return GRAPH.getFollowedUsersList(); }
 	
-	//delete game
-	
 	public StatusCode addToFavourites(String _id) { return GRAPH.addToFavourites(_id); }
 	
 	public StatusCode removeFromFavourites(String _id) { return GRAPH.removeFromFavourites(_id); }
