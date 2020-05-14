@@ -932,6 +932,7 @@ public class GraphicInterface {
 		}
 		
 		List<String> videoURLs = game.giveVideoURLs();
+		System.out.println(videoURLs);
 		
 		if( videoURLs != null && videoURLs.size() != 0 ) {
 			
@@ -4027,8 +4028,11 @@ public class GraphicInterface {
 			    		  
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
-			    		  bar.setValue(1);
-			    	  }  else {
+			    		  searchGameScrollPane.getVerticalScrollBar().setValue(1);
+			    	  }  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
+			    		  
+			    		  System.out.println("->[GraphicInterface] there are no previous games.");
+			    	  } else {
 			    		  
 			    		  System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
 			    	  }
@@ -4085,7 +4089,7 @@ public class GraphicInterface {
 			    		  
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
-			    		  bar.setValue(1);
+			    		  searchGameScrollPane.getVerticalScrollBar().setValue(1);
 			    	  } else{
 			    		  
 			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
