@@ -283,7 +283,7 @@ public class LogicBridge {
 			try {
 				TimeUnit.MILLISECONDS.sleep(10);
 				} catch (InterruptedException e) {
-					System.out.println("--->[WebScraping][scrapeNewGames] Error: sleep() function failed");
+					System.out.println("--->[] Error: sleep() function failed");
 			}
 			
 			String description = getGameDescription(i);
@@ -291,10 +291,18 @@ public class LogicBridge {
 			StatusCode addDescriptionStatus = addGameDescription(i, description); 
 			
 			if(addDescriptionStatus == StatusCode.ERR_NETWORK_UNREACHABLE) {
-				System.out.println("Network Unreachable. Exit after game: " + i);
+				System.out.println("-->[] Network Unreachable. Exit after game: " + i);
 				break;
 			}
 		}
-	}*/
+		MONGO.closeConnection();
+	}
 	
+	 public static void main(String[] args) throws Exception {
+		LogicBridge logicBridge = new LogicBridge();
+		System.out.println(logicBridge.MONGO.getMaxGameId().element);
+		logicBridge.addDescriptionToAllGames();
+		logicBridge.closeConnection();
+	 }
+	 */
 }
