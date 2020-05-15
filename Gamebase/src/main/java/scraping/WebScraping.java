@@ -134,7 +134,7 @@ public class WebScraping {
 				}
 	        }
 		
-		 System.out.println("--->[WebScraping][getGameDescription] Returning Description: " + gameDescription);
+		 System.out.println("--->[WebScraping][getGameDescription] Returning Description");
 		return gameDescription; 
 	}
 	

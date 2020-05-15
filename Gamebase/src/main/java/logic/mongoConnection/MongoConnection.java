@@ -63,7 +63,7 @@ public class MongoConnection {
     		
         	ServerAddress server = new ServerAddress( ipAddr , port );
     		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-    		mongoClient = new MongoClient( server , MongoClientOptions.builder().readConcern(ReadConcern.LOCAL).readPreference(ReadPreference.nearest()).writeConcern(WriteConcern.W3).codecRegistry(pojoCodecRegistry).build());
+    		mongoClient = new MongoClient( server , MongoClientOptions.builder().readConcern(ReadConcern.LOCAL).readPreference(ReadPreference.nearest()).writeConcern(WriteConcern.W1).codecRegistry(pojoCodecRegistry).build());
     		
     		gamesCollection = mongoClient.getDatabase("myDb").getCollection("games",Game.class); 
     		

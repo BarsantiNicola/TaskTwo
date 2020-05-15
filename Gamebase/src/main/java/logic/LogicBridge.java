@@ -273,7 +273,7 @@ public class LogicBridge {
 	}
 	
 	
-	/*
+	/* COMMENTA CACHE
 	//Funzione per Riccardo
 	public void addDescriptionToAllGames() {
 		int MaxGameId= MONGO.getMaxGameId().element;
@@ -301,8 +301,11 @@ public class LogicBridge {
 	 public static void main(String[] args) throws Exception {
 		LogicBridge logicBridge = new LogicBridge();
 		System.out.println(logicBridge.MONGO.getMaxGameId().element);
-		logicBridge.addDescriptionToAllGames();
-		logicBridge.closeConnection();
+		try {
+			logicBridge.addDescriptionToAllGames();
+		} catch (Exception e){
+			logicBridge.closeConnection();
+		}
 	 }
 	 */
 }
