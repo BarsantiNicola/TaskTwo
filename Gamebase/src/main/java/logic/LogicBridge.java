@@ -272,40 +272,9 @@ public class LogicBridge {
 		GRAPH.close();
 	}
 	
-	
-	/* COMMENTA CACHE
-	//Funzione per Riccardo
-	public void addDescriptionToAllGames() {
-		int MaxGameId= MONGO.getMaxGameId().element;
-		int i = 0;
-		while (i < MaxGameId) {
-			i++;
-			try {
-				TimeUnit.MILLISECONDS.sleep(10);
-				} catch (InterruptedException e) {
-					System.out.println("--->[] Error: sleep() function failed");
-			}
-			
-			String description = getGameDescription(i);
-			System.out.println("Adding description for game: " + i);
-			StatusCode addDescriptionStatus = addGameDescription(i, description); 
-			
-			if(addDescriptionStatus == StatusCode.ERR_NETWORK_UNREACHABLE) {
-				System.out.println("-->[] Network Unreachable. Exit after game: " + i);
-				break;
-			}
-		}
-		MONGO.closeConnection();
-	}
-	
-	 public static void main(String[] args) throws Exception {
-		LogicBridge logicBridge = new LogicBridge();
-		System.out.println(logicBridge.MONGO.getMaxGameId().element);
-		try {
-			logicBridge.addDescriptionToAllGames();
-		} catch (Exception e){
-			logicBridge.closeConnection();
-		}
-	 }
-	 */
+	//Mongo Getter (for bruteforce description scraping)
+	public MongoConnection getMONGO()
+	 { return MONGO; }
+
+  
 }

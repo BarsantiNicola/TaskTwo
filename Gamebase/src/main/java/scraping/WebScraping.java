@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
-
-
+import logic.LogicBridge;
 import logic.data.Game;
+import logic.mongoConnection.MongoConnection;
 
 //-----------------------------------------------------------------------------------------------------
 //The class is used to contain all the methods used to perform dynamic web scraping by the application.
@@ -123,14 +123,14 @@ public class WebScraping {
 	            try {
 					gameDescription = objRequest.sendGetGameDescription(GAME_ID);
 				} catch (Exception e) {
-					System.out.println("--->[WebScraping][getGameDescription] Something went wrong in sending http request");
+					System.out.println("--->[WebScraping][getGameDescription] Something went wrong in sending http request" +  e.getMessage());
 				}
 
 	        } finally {
 	            try {
 					objRequest.close();
 				} catch (IOException e) {
-					System.out.println("--->[WebScraping][getGameDescription] Something went wrong in closing http request");
+					System.out.println("--->[WebScraping][getGameDescription] Something went wrong in closing http request" +  e.getMessage());
 				}
 	        }
 		
@@ -139,8 +139,77 @@ public class WebScraping {
 	}
 	
 
-	
+
+ //GAME DESCRIPTION SCRAPING BRUTEFORCE
 	/*
+ public static void addDescriptionToAllGames(MongoConnection MONGO) throws Exception
+  {
+   int maxGameID= MONGO.getMaxGameId().element;
+   int maxThreads = 30;                                //Number of threads
+   
+   System.out.println("Attempting to create " + maxThreads + " threads for scraping (maxGameID = " + maxGameID);
+   for(int i=0;i<maxThreads;i++)
+    new ScrapingThread(i,maxGameID,maxThreads,new MongoConnection("172.16.0.80",27018)).start();
+   System.out.println("Threads Successfully created");
+  }
+ 
+ public static void main(String[] args) throws Exception 
+  {
+   LogicBridge logicBridge = new LogicBridge();
+   System.out.println("Maximum gameID = " + logicBridge.getMONGO().getMaxGameId().element);
+   try 
+    { addDescriptionToAllGames(logicBridge.getMONGO()); } 
+   catch (Exception e)
+    { System.out.println("[Logic Bridge Main]: Error in addDescriptionToAllGames(): " + e.getMessage()); }
+   logicBridge.closeConnection();
+  }
+  */
+  
+ //OLD GAME DESCRIPTION SCRAPING (Federico)
+	/*
+ //OLD Scraping (Federico) 
+ public void addDescriptionToAllGames() 
+  {
+   int MaxGameId= MONGO.getMaxGameId().element;
+   int i = 0;
+   while (i < MaxGameId) 
+    {
+     i++;
+     try 
+      { TimeUnit.MILLISECONDS.sleep(10); } 
+     catch (InterruptedException e) 
+      { System.out.println("--->[] Error: sleep() function failed"); }
+   
+   String description = getGameDescription(i);
+   System.out.println("Adding description for game: " + i);
+   StatusCode addDescriptionStatus = addGameDescription(i, description); 
+   
+   if(addDescriptionStatus == StatusCode.ERR_NETWORK_UNREACHABLE) 
+   {
+    System.out.println("-->[] Network Unreachable. Exit after game: " + i);
+    break;
+   }
+  }
+  MONGO.closeConnection();
+ }
+ 
+  public static void main(String[] args) throws Exception 
+   {
+   LogicBridge logicBridge = new LogicBridge();
+   System.out.println(logicBridge.MONGO.getMaxGameId().element);
+   try 
+    { logicBridge.addDescriptionToAllGames(); } 
+   catch (Exception e)
+    { 
+     System.out.println("[Logic Bridge Main]: Error in addDescriptionToAllGames(): " + e.getMessage());
+    }
+   logicBridge.closeConnection();
+   }
+  }
+ */
+	
+ /*
+
 	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
 		 scrapeNewGames(99999999);
