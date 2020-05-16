@@ -754,22 +754,8 @@ public class GraphicInterface {
 		if( gameDescription == null ) {
 			
 			System.out.println("->[GraphicInterface] description for " + game.getTitle() + " not present.");
-			gameDescription = logicHandler.getGameDescription(id);
-			
-			if( !gameDescription.equals("No description available")) {
-				
-				if( logicHandler.addGameDescription(id,gameDescription) == StatusCode.OK ) {
-					
-					System.out.println("->[GraphicInterface] description for " + game.getTitle() + " correctly added.");
-				}
-			} else {
-				
-				gameDescription = "          -- Game Description not Available --";
-			}
-		} else {
-			
-			System.out.println("->[GraphicInterface] description for " + game.getTitle() + " already present.");
-		}
+            gameDescription = "          -- Game Description not Available --";
+		} 
 		
 		gameDescriptionTextArea.setText(gameDescription);
 		gameDescriptionTextArea.setCaretPosition(0);
