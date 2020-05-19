@@ -588,7 +588,7 @@ public class MongoConnection {
     	
     }
     
-    @SuppressWarnings({ "unused" })
+    @SuppressWarnings({ "unused", "deprecation" })
 	private void updateViewsCount() {
     	
     	MongoCursor<Game> games = this.gamesCollection.find().noCursorTimeout(true).iterator();
@@ -662,6 +662,20 @@ public class MongoConnection {
     		e.printStackTrace();
     		return;
     	}
+    }
+    
+    public StatusCode hasDescription( int _id ) {
+    	
+    	StatusObject<Game> game =  getGame( _id );
+    	
+    	if( game.element == null )
+    		return game.statusCode;
+    	
+    	if( game.element.getDescription() == null || game.element.getDescription().length() == 0)
+    		return StatusCode.ERR_DOCUMENT_NO_DESCR;
+    	
+    	return StatusCode.OK;
+
     }
     
 }
