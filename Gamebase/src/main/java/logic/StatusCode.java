@@ -26,6 +26,7 @@ public enum StatusCode
  ERR_DOCUMENT_HAS_PREV,
  ERR_DOCUMENT_NO_PREV,
  ERR_DOCUMENT_BAD_GAME_ID,
+ ERR_DOCUMENT_NO_DESCR,
  
 //--------------------------------------------------------
 //                 Caching Error Codes
