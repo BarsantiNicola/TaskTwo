@@ -918,7 +918,6 @@ public class GraphicInterface {
 		}
 		
 		List<String> videoURLs = game.giveVideoURLs();
-		System.out.println(videoURLs);
 		
 		if( videoURLs != null && videoURLs.size() != 0 ) {
 			
@@ -932,13 +931,11 @@ public class GraphicInterface {
 			videoPlayer.playVideo();
 		}
 		
-		System.out.println(game.getId());
 		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
 			System.out.println("->[GraphicInterface] error while incrementing view count.");
 		} else {
 			System.out.println("->[GraphicInterface] increment view count performed.");
 		}
-		System.out.println("A");
 	}
 	
 	private void cleanGamePage() {
@@ -1728,12 +1725,7 @@ public class GraphicInterface {
 		homePagePanel.setName("homePagePanel");
 		homePagePanel.setBackground(new Color(87, 86, 82));
 		panel.add(homePagePanel, "homePagePanel");
-		homePagePanel.setLayout(null);
-		
-		
-  //myGamesScrollPane.setBounds(27, 348, 356, 174);
-  //becomeAnalystButton.setBounds(374, 13, 81, 69);
-  
+		homePagePanel.setLayout(null);  
   
 		//New Gamebase logo
   JLabel gamebaseLogo = new JLabel("");
@@ -1842,7 +1834,7 @@ public class GraphicInterface {
 		gamesNumberHPLabel.setFont(new Font("Corbel", Font.BOLD, 20));
 		gamesNumberHPLabel.setToolTipText("Number of Games You Like");
 		gamesNumberHPLabel.setName("gamesNumberHPLabel");
-		gamesNumberHPLabel.setBounds(653, 13, 128, 69);
+		gamesNumberHPLabel.setBounds(660, 13, 128, 69);
 		gamesNumberHPLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/controller.png")).getImage().getScaledInstance(69, 50, Image.SCALE_FAST)));
 		homePagePanel.add(gamesNumberHPLabel);
 		
@@ -1877,7 +1869,7 @@ public class GraphicInterface {
 		});
 		adminHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		adminHPButton.setFont(new Font("Corbel", Font.PLAIN, 13));
-		adminHPButton.setBounds(281, 13, 81, 69);
+		adminHPButton.setBounds(316, 13, 81, 69);
 		adminHPButton.setToolTipText("Click Here To Enter into Admin Section");
 		adminHPButton.setBackground(SystemColor.controlDkShadow);
 		adminHPButton.setBorder(null);
@@ -1901,7 +1893,7 @@ public class GraphicInterface {
 			}
 		});
 		becomeAnalystButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		becomeAnalystButton.setBounds(374, 13, 81, 69);
+		becomeAnalystButton.setBounds(402, 13, 81, 69);
 		becomeAnalystButton.setToolTipText("Click Here To Become an Analyst");
 		becomeAnalystButton.setBackground(SystemColor.controlDkShadow);
 		becomeAnalystButton.setContentAreaFilled(false);
@@ -1925,7 +1917,7 @@ public class GraphicInterface {
 			}
 		});
 		analystHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		analystHPButton.setBounds(374, 13, 81, 69);
+		analystHPButton.setBounds(402, 13, 81, 69);
 		analystHPButton.setToolTipText("Click Here To Enter into Analyst Section");
 		analystHPButton.setBackground(SystemColor.controlDkShadow);
 		analystHPButton.setBorder(null);
@@ -2123,7 +2115,7 @@ public class GraphicInterface {
 		userButton = new JButton("");
 		userButton.setBackground(SystemColor.controlDkShadow);
 		userButton.setName("userButton");
-		userButton.setBounds(560, 13, 81, 69);
+		userButton.setBounds(574, 13, 81, 69);
 		userButton.setContentAreaFilled(false);
 		userButton.setOpaque(true);
 		userButton.setName("userButton");
@@ -2167,7 +2159,7 @@ public class GraphicInterface {
 		userInfoButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		userInfoButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		userInfoButton.setBorder(null);
-		userInfoButton.setBounds(467, 13, 81, 69);
+		userInfoButton.setBounds(488, 13, 81, 69);
 		userInfoButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/info.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		homePagePanel.add(userInfoButton);
 		
@@ -4304,13 +4296,13 @@ public class GraphicInterface {
 							System.out.println("->[GraphicInterface] game correctly remove from favourites.");
 						}else {
 							
-							System.out.println("->[GraphicInterface] impossbile to remove game from favourites.");
+							System.out.println("->[GraphicInterface] impossible to remove game from favourites.");
 						}
 					} else {
 						
 						if( logicHandler.addToFavourites(currentGame.getId().toString()) == StatusCode.OK ) {
 							
-							actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/add.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
+							actionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/minus.png")).getImage().getScaledInstance(30, 30, Image.SCALE_FAST)));
 							System.out.println("->[GraphicInterface] game correctly added to favourites.");
 						} else {
 							
