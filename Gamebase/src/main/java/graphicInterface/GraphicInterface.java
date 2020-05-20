@@ -2804,7 +2804,7 @@ public class GraphicInterface {
 								maxRatedGameByGenreStatus.element.get(key).getRating());
 					}
 					
-					maxRatedGameByGenrePanel = new PieChartPanel("Most Viewed Games by Genre", "Genre - Game", "Rate", maxRatedGenreHashMap, "V", false, false, false);
+					maxRatedGameByGenrePanel = new PieChartPanel("Most Rated Games by Genre", "Genre - Game", "Rate", maxRatedGenreHashMap, "V", false, false, false);
 					maxRatedGameByGenrePanel.setName("maxRatedGameByGenrePanel");
 					
 					maxRatedGameByGenreButton.setEnabled(true);
@@ -3384,7 +3384,7 @@ public class GraphicInterface {
 				}
 			}
 		});
-		viewsCountByYearGenButton.setToolTipText("Click Here to See rate count for each year");
+		viewsCountByYearGenButton.setToolTipText("Click Here to See view count for each year");
 		viewsCountByYearGenButton.setName("viewCountByYearGenButton");
 		viewsCountByYearGenButton.setMargin(new Insets(2, 2, 2, 2));
 		viewsCountByYearGenButton.setFont(new Font("Corbel", Font.PLAIN, 11));
