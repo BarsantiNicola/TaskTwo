@@ -1,0 +1,4 @@
+2020-05-20 13:32:00.994:Failing in adding game397500 : Ultimate RED Collection to Graph database. Interrupting update.
+2020-05-20 13:33:42.958:Failing in adding game397501 : Spellbreak - Sorcerer Founder Pack to Graph database. Interrupting update.
+2020-05-20 13:37:51.638:Failing in adding game397500 : Ultimate RED Collection to Graph database. Interrupting update.
+2020-05-20 13:45:07.869:Failing in adding game397500 : Ultimate RED Collection to Graph database. Interrupting update.
