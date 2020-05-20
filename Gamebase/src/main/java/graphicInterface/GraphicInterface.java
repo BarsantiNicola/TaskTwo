@@ -1703,10 +1703,19 @@ public class GraphicInterface {
 		errorMessageLabel.setBounds(269, 418, 387, 31);
 		loginPanel.add(errorMessageLabel);
 		
+		/* old logo
+  myGamesLabel = new JLabel("");
+  myGamesLabel.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/mygames.png")));
+  myGamesLabel.setName("myGamesLabel");
+  myGamesLabel.setBounds(304, 51, 318, 170);
+  loginPanel.add(myGamesLabel);
+  */
+		
+		//New Logo
 		myGamesLabel = new JLabel("");
-		myGamesLabel.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/mygames.png")));
+		myGamesLabel.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/gamebase.png")));
 		myGamesLabel.setName("myGamesLabel");
-		myGamesLabel.setBounds(304, 51, 318, 170);
+		myGamesLabel.setBounds(260, 55, 450, 170);
 		loginPanel.add(myGamesLabel);
 		
 		
@@ -1721,6 +1730,64 @@ public class GraphicInterface {
 		panel.add(homePagePanel, "homePagePanel");
 		homePagePanel.setLayout(null);
 		
+		
+  //myGamesScrollPane.setBounds(27, 348, 356, 174);
+  //becomeAnalystButton.setBounds(374, 13, 81, 69);
+  
+  
+		//New Gamebase logo
+  JLabel gamebaseLogo = new JLabel("");
+  gamebaseLogo.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/gamebase_small.png")));
+  gamebaseLogo.setName("myGamesLabel");
+  gamebaseLogo.setBounds(24, 13, 300, 56);
+  homePagePanel.add(gamebaseLogo);
+  
+  //New Welcome and Logout
+  welcomeHPLabel = new JLabel("Welcome,");
+  welcomeHPLabel.setForeground(Color.WHITE);
+  welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 22));
+  welcomeHPLabel.setName("usertypeHPLabel");
+  welcomeHPLabel.setBounds(26, 73, 100, 23);
+  homePagePanel.add(welcomeHPLabel);
+  
+  usernameHPLabel = new JLabel("username");
+  usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 22));
+  usernameHPLabel.setForeground(Color.WHITE);
+  usernameHPLabel.setName("usernameHPLabel");
+  usernameHPLabel.setBounds(123, 73, 100, 23);
+  homePagePanel.add(usernameHPLabel);
+  
+  logoutHPButton = new JButton("Logout");
+  logoutHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+  logoutHPButton.setMargin(new Insets(2, 2, 2, 2));
+  logoutHPButton.addActionListener(new ActionListener() {
+   public void actionPerformed(ActionEvent arg0) {
+    
+    CardLayout cl = (CardLayout)(panel.getLayout());
+    
+    if( logicHandler.logout() == StatusCode.OK ) {
+     
+     currentUser = null;
+     cleanHomePage();
+     cl.show(panel, "loginPanel");
+    }
+
+   }
+  });
+  logoutHPButton.setToolTipText("Click Here To Logout");
+  logoutHPButton.setName("logoutHPButton");
+  logoutHPButton.setBounds(237, 73, 80, 23);
+  logoutHPButton.setBorderPainted(false);
+  logoutHPButton.setBackground(new Color(0, 128, 128));
+  logoutHPButton.setOpaque(false);
+  logoutHPButton.setContentAreaFilled(false);
+  logoutHPButton.setBorder(null);
+  logoutHPButton.setForeground(new Color(128, 0, 0));
+  logoutHPButton.setFont(new Font("Corbel", Font.BOLD, 22));
+  homePagePanel.add(logoutHPButton);
+  
+  
+	 /* Old Welcome and Logout
 		welcomeHPLabel = new JLabel("Welcome,");
 		welcomeHPLabel.setForeground(Color.WHITE);
 		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 20));
@@ -1763,6 +1830,7 @@ public class GraphicInterface {
 		logoutHPButton.setForeground(new Color(128, 0, 0));
 		logoutHPButton.setFont(new Font("Corbel", Font.BOLD, 21));
 		homePagePanel.add(logoutHPButton);
+		*/
 		
 		gamesNumberHPLabel = new JLabel("999");
 		gamesNumberHPLabel.setIconTextGap(10);
@@ -2075,7 +2143,7 @@ public class GraphicInterface {
 		userButton.setFont(new Font("Corbel", Font.PLAIN, 13));
 		userButton.setToolTipText("Click Here To Search for Other Users");
 		userButton.setBorder(null);
-		userButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/addFriend.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
+		userButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/addFriend.png")).getImage().getScaledInstance(63, 63, Image.SCALE_FAST)));
 		homePagePanel.add(userButton);
 		
 		userInfoButton = new JButton("");
