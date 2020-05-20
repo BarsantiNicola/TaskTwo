@@ -133,7 +133,9 @@ public class LogicBridge {
 		}
 		for(int i= 0; i < gamesToAdd.size(); i++) {
 			GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gamesToAdd.get(i));
-			if(GRAPH.addGame(graphGameToAdd)!=StatusCode.OK) {
+			StatusCode graphAddGameStatus = GRAPH.addGame(graphGameToAdd);
+			System.out.println(graphAddGameStatus.toString());
+			if(graphAddGameStatus!=StatusCode.OK) {
 				System.out.println("-->[LogicBridge][updateDatabase] Failing in adding game" + graphGameToAdd._id + " : " + graphGameToAdd.title + " to Graph database. Interrupting update");
 				util.recapUpdate(gamesToAdd, i);
 				util.writeErrorLog("Failing in adding game" + graphGameToAdd._id + " : " + graphGameToAdd.title + " to Graph database. Interrupting update.");
