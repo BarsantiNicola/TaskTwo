@@ -41,9 +41,9 @@ public class ScrapingThread extends Thread
       {
        //System.out.println("[Thread " + (IDThread+1) + "]: Attempting to add description for game "+ i);
        description = WebScraping.getGameDescription(i);
-       if(description.equalsIgnoreCase("No description available"))
+       if((description == null) || description.equalsIgnoreCase("No description available"))
         {
-         System.out.println("[Thread " + (IDThread+1) + "]: ERROR in adding description for game "+ i + "(RAWG has no description)");
+         System.out.println("[Thread " + (IDThread+1) + "]: ERROR in adding description for game "+ i + " (RAWG has no description)");
          noDescriptionAvailable++;
         }
        else     
@@ -67,9 +67,9 @@ public class ScrapingThread extends Thread
       }
     }
    System.out.println("\n=====================================================================================================");
-   System.out.println("[Thread " + (IDThread+1) + "]: Summary:)");
-   System.out.println("Already have description: " + alreadyHaveDescription + "Successfully Added: " + successfullyAdded);
-   System.out.println("No Description Available: " + noDescriptionAvailable + "Failed: " + failed);
+   System.out.println("[Thread " + (IDThread+1) + "]: Summary:");
+   System.out.println("Already have description: " + alreadyHaveDescription + " Successfully Added: " + successfullyAdded);
+   System.out.println("No Description Available: " + noDescriptionAvailable + " Failed: " + failed);
    System.out.println("=====================================================================================================\n");
    mongo.closeConnection();
   }

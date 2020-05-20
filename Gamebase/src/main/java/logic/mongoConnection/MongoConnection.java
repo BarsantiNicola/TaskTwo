@@ -93,7 +93,7 @@ public class MongoConnection {
 			
     		if( game == null ) {
     			
-    			System.out.println( "---> [MongoConnector][GetGame] Error, game not found" );
+    			//System.out.println( "---> [MongoConnector][GetGame] Error, game not found" );
     			return new StatusObject<Game>( StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND, null );
     			
     		}
@@ -671,7 +671,7 @@ public class MongoConnection {
     	if( game.element == null )
     		return game.statusCode;
     	
-    	if( game.element.getDescription() == null || game.element.getDescription().length() == 0)
+    	if( (game.element.getDescription() == null))
     		return StatusCode.ERR_DOCUMENT_NO_DESCR;
     	
     	return StatusCode.OK;

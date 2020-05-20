@@ -119,7 +119,7 @@ public class WebScraping {
 		HttpClient objRequest = new HttpClient();
 		
 		 try {
-	            System.out.println("--->[WebScraping][getGameDescription] Sending Http GET request for GameDescription");
+	            //System.out.println("--->[WebScraping][getGameDescription] Sending Http GET request for GameDescription");
 	            try {
 					gameDescription = objRequest.sendGetGameDescription(GAME_ID);
 				} catch (Exception e) {
@@ -134,7 +134,7 @@ public class WebScraping {
 				}
 	        }
 		
-		 System.out.println("--->[WebScraping][getGameDescription] Returning Description");
+		 //System.out.println("--->[WebScraping][getGameDescription] Returning Description");
 		return gameDescription; 
 	}
 	
@@ -147,7 +147,7 @@ public class WebScraping {
    int maxGameID= MONGO.getMaxGameId().element;
    int maxThreads = 30;                                //Number of threads
    
-   System.out.println("Attempting to create " + maxThreads + " threads for scraping (maxGameID = " + maxGameID);
+   System.out.println("Attempting to create " + maxThreads + " threads for scraping (maxGameID = " + maxGameID + ")");
    for(int i=0;i<maxThreads;i++)
     new ScrapingThread(i,maxGameID,maxThreads,new MongoConnection("172.16.0.80",27018)).start();
    System.out.println("Threads Successfully created");

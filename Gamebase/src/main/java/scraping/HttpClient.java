@@ -21,7 +21,7 @@ import org.json.JSONObject;
 public class HttpClient {
 
 	//Configuration for httpClient
-	int timeout = 5;
+	int timeout = 20;
 	RequestConfig config = RequestConfig.custom()
 	  .setConnectTimeout(timeout * 1000)
 	  .setConnectionRequestTimeout(timeout * 1000)
