@@ -141,7 +141,7 @@ public class WebScraping {
 
 
  //GAME DESCRIPTION SCRAPING BRUTEFORCE
-	/*
+	///*
  public static void addDescriptionToAllGames(MongoConnection MONGO) throws Exception
   {
    int maxGameID= MONGO.getMaxGameId().element;
@@ -163,7 +163,7 @@ public class WebScraping {
     { System.out.println("[Logic Bridge Main]: Error in addDescriptionToAllGames(): " + e.getMessage()); }
    logicBridge.closeConnection();
   }
-  */
+ //*/
   
  //OLD GAME DESCRIPTION SCRAPING (Federico)
 	/*
