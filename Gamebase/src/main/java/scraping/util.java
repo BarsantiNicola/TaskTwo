@@ -50,6 +50,7 @@ public class util {
 		gameToAdd.setViewsCount(0);
 			
 		//Description
+		gameToAdd.setDescription("Game description not available");
 		extractDescription(newGame, gameToAdd);
 
 		//Released
@@ -105,7 +106,9 @@ public class util {
 		try {
 			if(newGame.has("description_raw")) {
 				if(newGame.get("description_raw") instanceof String && !newGame.get("description_raw").equals(null)) {
-				gameToAdd.setDescription(newGame.getString("description_raw"));;
+					if(newGame.getString("description_raw").length()!=0) {
+						gameToAdd.setDescription(newGame.getString("description_raw"));;
+					}
 				}
 			}	
 		} catch (Exception e) {
