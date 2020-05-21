@@ -176,6 +176,8 @@ public class GraphicInterface {
 	private JButton actionButton;
 	private JLabel releaseDateLabel;
 	private VideoPlayerPanel videoPlayer;
+	private JLabel viewsCountLabel;
+	private JLabel userRatingLabel;
 	
 	////////USER PANEL
 	
@@ -227,7 +229,6 @@ public class GraphicInterface {
 	private Game currentGame;
 	private Font titleFont;
 	private List<BufferedGame> supportGamesList;
-	//private Boolean isGameFavourite;
 	private DefaultTableCellRenderer centerRenderer;
 	private int searchedGamesPerPage;
 	
@@ -770,6 +771,26 @@ public class GraphicInterface {
 		} else {
 			
 			releaseDateLabel.setText("Release Date: " + Integer.toString(releaseDate.getDate())+"/"+Integer.toString(releaseDate.getMonth()) +"/"+Integer.toString(releaseDate.getYear()));
+		}
+		
+		Integer viewsCount = game.getViewsCount();
+		
+		if( viewsCount == null ) {
+			
+			viewsCountLabel.setText("Views Count not Available");			
+		} else {
+			
+			viewsCountLabel.setText("Views Count: " + Integer.toString(viewsCount));
+		}
+		
+		Double userRating = game.getRating();
+		
+		if( userRating == null ) {
+			
+			userRatingLabel.setText("User Rating not Available");			
+		} else {
+			
+			userRatingLabel.setText("User Rating: " + Double.toString(userRating));
 		}
 		
 		String background_image_url = game.getBackground_image();
@@ -3500,6 +3521,8 @@ public class GraphicInterface {
 				
 				System.out.println("->[GraphicInterface] searched string: " + searchedString + "." );
 				
+				searchGameScrollPane.getVerticalScrollBar().setValue(1);
+				
 				StatusObject<DataNavigator> searchStatusObject  = logicHandler.searchGamesPreviews(searchedString);
 				
 				if( searchStatusObject.statusCode == StatusCode.OK ) {
@@ -3603,8 +3626,10 @@ public class GraphicInterface {
 				mostLikedButton.setBackground(Color.LIGHT_GRAY);
 				mostRecentButton.setForeground(Color.BLACK);
 				mostRecentButton.setBackground(Color.LIGHT_GRAY);
-				
+			
 				searchTextField.setText("Search");
+				
+				searchGameScrollPane.getVerticalScrollBar().setValue(1);
 				
 				StatusObject<DataNavigator> viewedStatusObject  = logicHandler.getMostViewedPreviews();
 				
@@ -3615,7 +3640,7 @@ public class GraphicInterface {
 						System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
 						return;
 					}
-
+					
 					StatusObject<List <PreviewGame>> listStatusObject = viewedStatusObject.element.getNextData();
 					
 					if( listStatusObject.statusCode == StatusCode.OK ) {
@@ -3701,7 +3726,9 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				StatusObject<DataNavigator> likedStatusObject  = logicHandler.getMostViewedPreviews();
+				searchGameScrollPane.getVerticalScrollBar().setValue(1);
+				
+				StatusObject<DataNavigator> likedStatusObject  = logicHandler.getMostLikedPreviews();
 				
 				if( likedStatusObject.statusCode == StatusCode.OK ) {
 					
@@ -3796,7 +3823,9 @@ public class GraphicInterface {
 				
 				searchTextField.setText("Search");
 				
-				StatusObject<DataNavigator> recentStatusObject  = logicHandler.getMostViewedPreviews();
+				searchGameScrollPane.getVerticalScrollBar().setValue(1);
+				
+				StatusObject<DataNavigator> recentStatusObject  = logicHandler.getMostRecentPreviews();
 				
 				if( recentStatusObject.statusCode == StatusCode.OK ) {
 					
@@ -4023,8 +4052,10 @@ public class GraphicInterface {
 			    	  return;
 			      }
 			      
+			      
 			      if( value == 0 ) {
 			    	  
+			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
 			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getPrevData();
 			    	  
 			    	  if( status.statusCode == StatusCode.OK ) {
@@ -4074,7 +4105,7 @@ public class GraphicInterface {
 			    		  
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
-			    		  searchGameScrollPane.getVerticalScrollBar().setValue(1);
+			    		  
 			    	  }  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
 			    		  
 			    		  System.out.println("->[GraphicInterface] there are no previous games.");
@@ -4086,12 +4117,15 @@ public class GraphicInterface {
 			      
 			      if( value+extent == max  ) {
 			    	  
+			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
+			    	  
 			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
 			    	  
 			    	  if( status.statusCode == StatusCode.OK ) {
 			    		  
 			    		  if( status.element == null || status.element.size() == 0) {
 			    			  
+			    			  searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
 			    			  System.out.println("->[GraphicInterface] no more games.");
 			    			  return;
 			    		  }
@@ -4135,9 +4169,9 @@ public class GraphicInterface {
 			    		  
 			    		  fillSearchedGamesList(gamesList);
 			    		  supportGamesList = gamesList;
-			    		  searchGameScrollPane.getVerticalScrollBar().setValue(1);
-			    	  } else{
 			    		  
+			    	  } else{
+			    		  searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
 			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
 			    	  }
 			      }
@@ -4322,7 +4356,7 @@ public class GraphicInterface {
 		releaseDateLabel.setForeground(Color.WHITE);
 		releaseDateLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
 		releaseDateLabel.setName("releaseDateLabel");
-		releaseDateLabel.setBounds(579, 257, 189, 62);
+		releaseDateLabel.setBounds(579, 257, 211, 22);
 		gamePanel.add(releaseDateLabel);
 		
 		gameImagesScrollPane = new JScrollPane();
@@ -4451,6 +4485,21 @@ public class GraphicInterface {
 		videoPlayer.setSize(342, 210);
 		videoPlayer.setLocation(426, 332);
 		gamePanel.add(videoPlayer);
+		
+		viewsCountLabel = new JLabel("Views Count: 15000");
+		viewsCountLabel.setAutoscrolls(true);
+		viewsCountLabel.setName("releaseDateLabel");
+		viewsCountLabel.setForeground(Color.WHITE);
+		viewsCountLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
+		viewsCountLabel.setBounds(579, 297, 211, 22);
+		gamePanel.add(viewsCountLabel);
+		
+		userRatingLabel = new JLabel("User Ratings: 5.000");
+		userRatingLabel.setName("releaseDateLabel");
+		userRatingLabel.setForeground(Color.WHITE);
+		userRatingLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
+		userRatingLabel.setBounds(579, 276, 211, 22);
+		gamePanel.add(userRatingLabel);
 		
 		
 		
