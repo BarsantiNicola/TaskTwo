@@ -45,6 +45,7 @@ public class GraphicInterface {
 	//////////HOME PANEL 
 	
 	private JPanel homePagePanel;
+	private JLabel gamebaseLogo;
 	private JLabel gamesNumberHPLabel;
 	private JLabel followerNumberHPLabel;
 	private JLabel welcomeHPLabel;
@@ -263,14 +264,15 @@ public class GraphicInterface {
 			
 			String username = friend.getUsername();
 			
-			Object[] object = new Object[2];
+			Object[] object = new Object[3];
 			object[0] = username;
 			object[1] = "SEE GAMES";
+			object[2] = "UNFOLLOW";
 			followedTableModel.addRow(object);
 		}
 		
 		@SuppressWarnings({ "unused", "serial" })
-		ButtonColumn buttonColumn = new ButtonColumn(followedTable, new AbstractAction() {
+		ButtonColumn buttonColumnUser = new ButtonColumn(followedTable, new AbstractAction() {
 			
 			public void actionPerformed(ActionEvent e) {
 				
@@ -286,6 +288,29 @@ public class GraphicInterface {
 				initializeUserPage(followerUsername);
 			}
 		},1);
+		
+		@SuppressWarnings({ "unused", "serial" })
+		ButtonColumn buttonColumnUnfollow = new ButtonColumn(followedTable, new AbstractAction() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				JTable table = (JTable)e.getSource();
+				int modelRow = Integer.valueOf(e.getActionCommand());
+				
+				String followedUsername = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+				
+				StatusCode unfollowStatus =  logicHandler.unFollowUser(followedUsername);
+				
+				if( unfollowStatus == StatusCode.OK ) {
+					
+					System.out.println("->[GraphicInterface] user " + followedUsername + " correctly unfollowed");
+					followedTableModel.removeRow(modelRow);
+				} else {
+					
+					System.out.println("->[[GraphicInterface] impossible to unfollow user " + followedUsername);
+				}
+			}
+		},2);
 	}
 	
 	private void fillSearchedGamesList(List<BufferedGame> games) {
@@ -309,22 +334,35 @@ public class GraphicInterface {
 		
 		usersTableModel.setRowCount(0);
 		
-		for( User friend: usersList ) {
+		for( User user: usersList ) {
 			
-			StatusObject<Boolean> followStatus = logicHandler.doIFollow(friend.getUsername());
+			StatusObject<Boolean> followStatus = logicHandler.doIFollow(user.getUsername());
 			
 			if( followStatus.statusCode != StatusCode.OK ) {
-				System.out.println("->[GraphicInterface] impossible to determine if user " + friend.getUsername() + 
+				System.out.println("->[GraphicInterface] impossible to determine if user " + user.getUsername() + 
 						" is followed. User not inserted into the list.");
 				continue;
 			}
 			
 			boolean followed = followStatus.element;
+			String username = user.getUsername();
+			String name = user.getFirstName();
+			String surname = user.getLastName();
+			Long age = user.getAge();
+			String country = user.getCountry();
+			String genre = user.getFavouriteGenre();
+			Long followerNumber = user.getFollowedCount();
 			
-			Object[] object = new Object[3];
-			object[0] = friend.getUsername();
-			object[1] = followed?"SEE GAMES":"x";
-			object[2] = followed?"UNFOLLOW":"FOLLOW";
+			Object[] object = new Object[9];
+			object[0] = username;
+			object[1] = (name == null || name == "null")?"N/A":name;
+			object[2] = (surname == null || surname == "null")?"N/A":surname;
+			object[3] = age == null?"N/A":age;
+			object[4] = (country == null || country == "null")?"N/A":country;
+			object[5] = (genre == null || genre == "null")?"N/A":genre;
+			object[6] = followerNumber==null?"N/A":followerNumber;
+			object[7] = followed?"SEE GAMES":"x";
+			object[8] = followed?"UNFOLLOW":"FOLLOW";
 			
 			usersTableModel.addRow(object);
 		}
@@ -397,7 +435,7 @@ public class GraphicInterface {
 					displayedUserLabel.setText("Currently Displayed: " + selectedUsername + "'s Games.");
 				}	
 			}
-		},1);
+		},7);
 		
 		@SuppressWarnings({ "unused", "serial" })
 		ButtonColumn buttonColumnAction = new ButtonColumn(usersTable, new AbstractAction() {
@@ -442,7 +480,7 @@ public class GraphicInterface {
 					usersTableModel.setValueAt("N/A", modelRow, 2);
 				}
 			}
-		},2);
+		},8);
 	}
 	
 	private void fillUserGamesList(List<BufferedGame> gamesList) {
@@ -1034,7 +1072,7 @@ public class GraphicInterface {
 							
 							croppedUrl = url.replaceFirst("media/games", replacement);
 							Image image = ImageIO.read(new URL(croppedUrl));
-							icon = new ImageIcon(image.getScaledInstance(80, 100, Image.SCALE_FAST));
+							icon = new ImageIcon(image.getScaledInstance(86, 100, Image.SCALE_FAST));
 							
 							if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 								
@@ -1042,13 +1080,13 @@ public class GraphicInterface {
 					     	}
 							
 						} catch(Exception e) {
-							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+							icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(86, 100, Image.SCALE_FAST));
 						}
 					} else {
 						
 						System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 						
-						icon = new ImageIcon(icon.getImage().getScaledInstance(80, 100, Image.SCALE_FAST));
+						icon = new ImageIcon(icon.getImage().getScaledInstance(86, 100, Image.SCALE_FAST));
 						
 					}
 					friendGamesList.add(new BufferedGame(Integer.parseInt(gm._id),gm.title,icon));
@@ -1429,7 +1467,7 @@ public class GraphicInterface {
 				new Object[][] {
 				},
 				new String[] {
-					"Username", "Games", 
+					"Username", "Games", "Unfollow"
 				}
 			) {
 				/**
@@ -1438,7 +1476,7 @@ public class GraphicInterface {
 				private static final long serialVersionUID = 1L;
 				@SuppressWarnings("rawtypes")
 				Class[] columnTypes = new Class[] {
-					String.class, String.class
+					String.class, String.class, String.class
 				};
 				@SuppressWarnings({ "unchecked", "rawtypes" })
 				public Class getColumnClass(int columnIndex) {
@@ -1450,7 +1488,7 @@ public class GraphicInterface {
 					new Object[][] {
 					},
 					new String[] {
-						"Username", "Games", "Action"
+						"Username", "Name", "Surname", "Age", "Country", "Fav.Genre", "Followers", "Games", "Action"
 					}
 				) {
 					/**
@@ -1459,7 +1497,7 @@ public class GraphicInterface {
 					private static final long serialVersionUID = 1L;
 					@SuppressWarnings("rawtypes")
 					Class[] columnTypes = new Class[] {
-						String.class, String.class, String.class
+						String.class, String.class, String.class, Long.class, String.class, String.class, Long.class, String.class, String.class
 					};
 					@SuppressWarnings({ "unchecked", "rawtypes" })
 					public Class getColumnClass(int columnIndex) {
@@ -1721,15 +1759,6 @@ public class GraphicInterface {
 		errorMessageLabel.setBounds(269, 418, 387, 31);
 		loginPanel.add(errorMessageLabel);
 		
-		/* old logo
-  myGamesLabel = new JLabel("");
-  myGamesLabel.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/mygames.png")));
-  myGamesLabel.setName("myGamesLabel");
-  myGamesLabel.setBounds(304, 51, 318, 170);
-  loginPanel.add(myGamesLabel);
-  */
-		
-		//New Logo
 		myGamesLabel = new JLabel("");
 		myGamesLabel.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/gamebase.png")));
 		myGamesLabel.setName("myGamesLabel");
@@ -1747,84 +1776,38 @@ public class GraphicInterface {
 		homePagePanel.setBackground(new Color(87, 86, 82));
 		panel.add(homePagePanel, "homePagePanel");
 		homePagePanel.setLayout(null);  
-  
-		//New Gamebase logo
-  JLabel gamebaseLogo = new JLabel("");
-  gamebaseLogo.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/gamebase_small.png")));
-  gamebaseLogo.setName("myGamesLabel");
-  gamebaseLogo.setBounds(24, 13, 300, 56);
-  homePagePanel.add(gamebaseLogo);
-  
-  //New Welcome and Logout
-  welcomeHPLabel = new JLabel("Welcome,");
-  welcomeHPLabel.setForeground(Color.WHITE);
-  welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 22));
-  welcomeHPLabel.setName("usertypeHPLabel");
-  welcomeHPLabel.setBounds(26, 73, 100, 23);
-  homePagePanel.add(welcomeHPLabel);
-  
-  usernameHPLabel = new JLabel("username");
-  usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 22));
-  usernameHPLabel.setForeground(Color.WHITE);
-  usernameHPLabel.setName("usernameHPLabel");
-  usernameHPLabel.setBounds(123, 73, 100, 23);
-  homePagePanel.add(usernameHPLabel);
-  
-  logoutHPButton = new JButton("Logout");
-  logoutHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-  logoutHPButton.setMargin(new Insets(2, 2, 2, 2));
-  logoutHPButton.addActionListener(new ActionListener() {
-   public void actionPerformed(ActionEvent arg0) {
-    
-    CardLayout cl = (CardLayout)(panel.getLayout());
-    
-    if( logicHandler.logout() == StatusCode.OK ) {
-     
-     currentUser = null;
-     cleanHomePage();
-     cl.show(panel, "loginPanel");
-    }
 
-   }
-  });
-  logoutHPButton.setToolTipText("Click Here To Logout");
-  logoutHPButton.setName("logoutHPButton");
-  logoutHPButton.setBounds(237, 73, 80, 23);
-  logoutHPButton.setBorderPainted(false);
-  logoutHPButton.setBackground(new Color(0, 128, 128));
-  logoutHPButton.setOpaque(false);
-  logoutHPButton.setContentAreaFilled(false);
-  logoutHPButton.setBorder(null);
-  logoutHPButton.setForeground(new Color(128, 0, 0));
-  logoutHPButton.setFont(new Font("Corbel", Font.BOLD, 22));
-  homePagePanel.add(logoutHPButton);
+		gamebaseLogo = new JLabel("");
+		gamebaseLogo.setIcon(new ImageIcon(GraphicInterface.class.getResource("/resources/gamebase_small.png")));
+		gamebaseLogo.setName("myGamesLabel");
+		gamebaseLogo.setBounds(24, 13, 300, 56);
+		homePagePanel.add(gamebaseLogo);
   
   
-	 /* Old Welcome and Logout
 		welcomeHPLabel = new JLabel("Welcome,");
 		welcomeHPLabel.setForeground(Color.WHITE);
-		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 20));
-		welcomeHPLabel.setName("usertypeHPLabel");
-		welcomeHPLabel.setBounds(26, 25, 89, 23);
+		welcomeHPLabel.setFont(new Font("Corbel", Font.PLAIN, 22));
+		welcomeHPLabel.setName("welcomeHPLabel");
+		welcomeHPLabel.setBounds(26, 73, 100, 23);
 		homePagePanel.add(welcomeHPLabel);
-		
+  
 		usernameHPLabel = new JLabel("username");
-		usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 21));
+		usernameHPLabel.setFont(new Font("Corbel", Font.BOLD, 22));
 		usernameHPLabel.setForeground(Color.WHITE);
 		usernameHPLabel.setName("usernameHPLabel");
-		usernameHPLabel.setBounds(117, 28, 100, 16);
+		usernameHPLabel.setBounds(123, 73, 100, 23);
 		homePagePanel.add(usernameHPLabel);
-		
+  
 		logoutHPButton = new JButton("Logout");
 		logoutHPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		logoutHPButton.setMargin(new Insets(2, 2, 2, 2));
 		logoutHPButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+    
 				CardLayout cl = (CardLayout)(panel.getLayout());
-				
+    
 				if( logicHandler.logout() == StatusCode.OK ) {
-					
+     
 					currentUser = null;
 					cleanHomePage();
 					cl.show(panel, "loginPanel");
@@ -1834,16 +1817,15 @@ public class GraphicInterface {
 		});
 		logoutHPButton.setToolTipText("Click Here To Logout");
 		logoutHPButton.setName("logoutHPButton");
-		logoutHPButton.setBounds(27, 61, 67, 21);
-		logoutHPButton.setBorderPainted(false);
-		logoutHPButton.setBackground(new Color(0, 128, 128));
-		logoutHPButton.setOpaque(false);
-		logoutHPButton.setContentAreaFilled(false);
+  		logoutHPButton.setBounds(237, 73, 80, 23);
+  		logoutHPButton.setBorderPainted(false);
+  		logoutHPButton.setBackground(new Color(0, 128, 128));
+  		logoutHPButton.setOpaque(false);
+  		logoutHPButton.setContentAreaFilled(false);
 		logoutHPButton.setBorder(null);
 		logoutHPButton.setForeground(new Color(128, 0, 0));
-		logoutHPButton.setFont(new Font("Corbel", Font.BOLD, 21));
-		homePagePanel.add(logoutHPButton);
-		*/
+  		logoutHPButton.setFont(new Font("Corbel", Font.BOLD, 22));
+  		homePagePanel.add(logoutHPButton);
 		
 		gamesNumberHPLabel = new JLabel("999");
 		gamesNumberHPLabel.setIconTextGap(10);
@@ -1969,7 +1951,7 @@ public class GraphicInterface {
 			}
 			
 			public void updateCursor(MouseEvent e) {
-				if( followedTable.columnAtPoint(e.getPoint()) == 1) {
+				if( followedTable.columnAtPoint(e.getPoint()) == 1 || followedTable.columnAtPoint(e.getPoint()) == 2) {
 					followedTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				} else {
 					followedTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -4556,13 +4538,13 @@ public class GraphicInterface {
 		searchUserTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
 		searchUserTextField.setText("Search User");
 		searchUserTextField.setName("searchUserTextField");
-		searchUserTextField.setBounds(611, 74, 189, 31);
+		searchUserTextField.setBounds(639, 74, 189, 31);
 		userPanel.add(searchUserTextField);
 		searchUserTextField.setColumns(10);
 		
 		searchUserButton = new JButton("");
 		searchUserButton.setName("searchUserButton");
-		searchUserButton.setBounds(798, 73, 52, 32);
+		searchUserButton.setBounds(830, 73, 52, 32);
 		searchUserButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -4627,7 +4609,7 @@ public class GraphicInterface {
 		
 		userGamesScrollPane = new JScrollPane();
 		userGamesScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		userGamesScrollPane.setBounds(57, 146, 355, 336);
+		userGamesScrollPane.setBounds(57, 324, 830, 158);
 		userPanel.add(userGamesScrollPane);
 		
 		userGamesList = new JList<BufferedGame>(userGamesListModel);
@@ -4678,7 +4660,7 @@ public class GraphicInterface {
 		userGamesScrollPane.setViewportView(userGamesList);
 		
 		usersScrollPane = new JScrollPane();
-		usersScrollPane.setBounds(502, 146, 348, 336);
+		usersScrollPane.setBounds(57, 146, 825, 149);
 		userPanel.add(usersScrollPane);
 		
 		usersTable = new JTable();
@@ -4697,7 +4679,7 @@ public class GraphicInterface {
 			}
 			
 			public void updateCursor(MouseEvent e) {
-				if( usersTable.columnAtPoint(e.getPoint()) == 1 || usersTable.columnAtPoint(e.getPoint()) == 2) {
+				if( usersTable.columnAtPoint(e.getPoint()) == 7 || usersTable.columnAtPoint(e.getPoint()) == 8) {
 					usersTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				} else {
 					usersTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -4709,6 +4691,7 @@ public class GraphicInterface {
 		usersTable.setFont(new Font("Corbel",Font.PLAIN,16));
 		usersTable.setRowHeight(30);
 		usersTable.setDefaultRenderer(String.class, centerRenderer);
+		usersTable.setDefaultRenderer(Long.class, centerRenderer);
 		usersTableHeader = usersTable.getTableHeader();
 		usersTableHeader.setFont(titleFont);
 		usersTableHeader.setForeground(Color.WHITE);
@@ -4720,7 +4703,7 @@ public class GraphicInterface {
 		displayedUserLabel.setFont(new Font("Corbel", Font.BOLD, 15));
 		displayedUserLabel.setName("displayedUserLabel");
 		displayedUserLabel.setAutoscrolls(true);
-		displayedUserLabel.setBounds(57, 128, 363, 16);
+		displayedUserLabel.setBounds(57, 308, 363, 16);
 		userPanel.add(displayedUserLabel);
 		
 		searchUserWelcomeLabel = new JLabel("Hi User!");
