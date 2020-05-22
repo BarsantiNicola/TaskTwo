@@ -790,7 +790,7 @@ public class GraphicInterface {
 			userRatingLabel.setText("User Rating not Available");			
 		} else {
 			
-			userRatingLabel.setText("User Rating: " + Double.toString(userRating));
+			userRatingLabel.setText("User Rating: " + Double.toString(userRating) + "/5");
 		}
 		
 		String background_image_url = game.getBackground_image();
@@ -4356,7 +4356,7 @@ public class GraphicInterface {
 		releaseDateLabel.setForeground(Color.WHITE);
 		releaseDateLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
 		releaseDateLabel.setName("releaseDateLabel");
-		releaseDateLabel.setBounds(579, 257, 211, 22);
+		releaseDateLabel.setBounds(581, 256, 211, 22);
 		gamePanel.add(releaseDateLabel);
 		
 		gameImagesScrollPane = new JScrollPane();
@@ -4478,7 +4478,7 @@ public class GraphicInterface {
 		metacriticScoreLabel.setBounds(789, 182, 98, 62);
 		metacriticScoreLabel.setOpaque(true);
 		metacriticScoreLabel.setText("4.7");
-		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/star.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
+		metacriticScoreLabel.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/metacritic.png")).getImage().getScaledInstance(60, 60, Image.SCALE_FAST)));
 		gamePanel.add(metacriticScoreLabel);
 		
 		videoPlayer = new VideoPlayerPanel();
@@ -4491,14 +4491,14 @@ public class GraphicInterface {
 		viewsCountLabel.setName("releaseDateLabel");
 		viewsCountLabel.setForeground(Color.WHITE);
 		viewsCountLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
-		viewsCountLabel.setBounds(579, 297, 211, 22);
+		viewsCountLabel.setBounds(581, 300, 211, 22);
 		gamePanel.add(viewsCountLabel);
 		
 		userRatingLabel = new JLabel("User Ratings: 5.000");
 		userRatingLabel.setName("releaseDateLabel");
 		userRatingLabel.setForeground(Color.WHITE);
 		userRatingLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
-		userRatingLabel.setBounds(579, 276, 211, 22);
+		userRatingLabel.setBounds(581, 278, 211, 22);
 		gamePanel.add(userRatingLabel);
 		
 		
