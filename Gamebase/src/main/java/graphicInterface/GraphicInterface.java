@@ -232,7 +232,9 @@ public class GraphicInterface {
 	private List<BufferedGame> supportGamesList;
 	private DefaultTableCellRenderer centerRenderer;
 	private int searchedGamesPerPage;
-	
+	//
+	private int scrollBarValue=-1;
+	//
 	
 	/////// SUPPORT FUNCTIONS
 	
@@ -4024,16 +4026,17 @@ public class GraphicInterface {
 		
 		searchGamesVerticalScrollBarListener =  new AdjustmentListener() {
 		      public void adjustmentValueChanged(AdjustmentEvent e) {
+		    	  
 		    	  JScrollBar bar = (JScrollBar)e.getAdjustable();
 			      int extent = bar.getModel().getExtent();
 			      int value = bar.getValue();
 			      int max = bar.getMaximum();
 			      
-			      if( searchGamesDataNavigator == null ) {
+			      if( searchGamesDataNavigator == null  ) {
 			    	  
+			    	  System.out.println("No Maria io esco");
 			    	  return;
-			      }
-			      
+			      }			      
 			      
 			      if( value == 0 ) {
 			    	  
@@ -4157,6 +4160,7 @@ public class GraphicInterface {
 			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
 			    	  }
 			      }
+			      
 		      }
 		};
 		searchGamesVerticalScrollBar = searchGameScrollPane.getVerticalScrollBar();
