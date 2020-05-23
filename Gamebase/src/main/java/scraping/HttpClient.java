@@ -86,7 +86,7 @@ public class HttpClient {
             if(jsonObject.has("description_raw")){
             	return jsonObject.getString("description_raw");
             }
-            return "No description available";
+            return "Game description not available";
        } catch (Exception e){
     	   System.out.println("-->[HttpClient][sendGetGameDescription] Error: something went wrong. Please check your connection");
        }
