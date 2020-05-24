@@ -102,9 +102,7 @@ public class WebScraping {
 				} catch (IOException e) {
 					System.out.println("--->[WebScraping][searchNewGamel] Something went wrong in closing http request");
 				}
-	        }
-		
-		System.out.println("--->[WebScraping][searchNewGame] New game obtained:" + newGame); //Debug
+	        }	
 		
 		return newGame;
 	}
