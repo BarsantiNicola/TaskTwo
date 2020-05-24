@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 
@@ -66,7 +65,7 @@ public class LogicBridge {
 	
 	public StatusCode incrementGameViews( int gameId ){return MONGO.incrementGameViews(gameId);}
 	
-	public StatusCode voteGame( int gameId , int vote ) { return MONGO.voteGame( gameId, vote );}
+	public StatusCode voteGame( int gameId , int previousVote , int vote ) { return MONGO.voteGame( gameId, previousVote, vote );}
 	
 	public StatusObject<Long> getGameCount() { return MONGO.getTotalGamesCount(); }
 	

@@ -250,7 +250,7 @@ public class MongoConnection {
     	}
     }
     
-    public StatusCode voteGame( int gameId , int vote ) {
+    public StatusCode voteGame( int gameId , int previousVote,  int vote ) {
     	
 		if( gameId < 0 ){
 			
@@ -259,7 +259,7 @@ public class MongoConnection {
 			
 		}
 		
-   		if( vote < 0 || vote > 5 ) {
+   		if(( vote < 0 || vote > 5 ) || ( previousVote <-1 || previousVote > 5 )){
 			
 			System.out.println( "---> [MongoConnector][VoteGame] Error, the vote must be in [0,5]" );
 			return StatusCode.ERR_DOCUMENT_INVALID_VOTE;
@@ -279,9 +279,18 @@ public class MongoConnection {
     		
     		Bson filter = eq( "_id" , gameId );  		
     		List<Bson> updates = new ArrayList<Bson>();
-    		updates.add(Updates.inc( "ratingCount" , 1 ));
-    		updates.add(Updates.set( "rating" , Double.parseDouble( new DecimalFormat( "0.0000" ).format(( game.getRating()*game.getRatingCount() + vote )/( game.getRatingCount()+1 )).replace( "," , "." ))));
-
+    		Double setVote;
+    		
+    		if( previousVote == -1 ){
+    			
+    			setVote = Double.parseDouble( new DecimalFormat( "0.0000" ).format(( game.getRating()*game.getRatingCount() + vote )/( game.getRatingCount()+1 )).replace( "," , "." ));
+    			updates.add(Updates.inc( "ratingCount" , 1 ));
+    			
+    		}else 
+    			setVote = Double.parseDouble( new DecimalFormat( "0.0000" ).format(( game.getRating()*game.getRatingCount() -previousVote+ vote )/( game.getRatingCount())).replace( "," , "." ));
+    		
+    		updates.add(Updates.set( "rating" , setVote));
+    		
     		UpdateResult res = gamesCollection.updateOne( filter , updates );
     	
     		if( res.getMatchedCount() == 0 ){
