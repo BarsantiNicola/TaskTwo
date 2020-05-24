@@ -124,6 +124,7 @@ public class LogicBridge {
 	///////////////  DATASCRAPER FUNCTIONS
 	
 	public boolean updateDatabase() { 
+		System.out.println("-->[LogicBridge][updateDatabase] Called");
 		int MaxGameId= MONGO.getMaxGameId().element;
 		List<Game> gamesToAdd = WebScraping.scrapeNewGames(MaxGameId + 1); 
 		
