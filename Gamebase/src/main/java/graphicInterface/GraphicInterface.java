@@ -85,7 +85,6 @@ public class GraphicInterface {
 	private JLabel deleteUserResultLabel;
 	private JLabel deleteGameResultLabel;
 	private JLabel updateDatabaseResultLabel;
-	private SwingWorker<Boolean,Void> updateDatabaseSwingWorker;
 	
 	///////// ANALYST PANEL
 	
@@ -179,6 +178,7 @@ public class GraphicInterface {
 	private VideoPlayerPanel videoPlayer;
 	private JLabel viewsCountLabel;
 	private JLabel userRatingLabel;
+	private JLabel assignedVoteLabel;
 	
 	////////USER PANEL
 	
@@ -232,9 +232,7 @@ public class GraphicInterface {
 	private List<BufferedGame> supportGamesList;
 	private DefaultTableCellRenderer centerRenderer;
 	private int searchedGamesPerPage;
-	//
-	private int scrollBarValue=-1;
-	//
+	
 	
 	/////// SUPPORT FUNCTIONS
 	
@@ -833,6 +831,8 @@ public class GraphicInterface {
 			userRatingLabel.setText("User Rating: " + Double.toString(userRating) + "/5");
 		}
 		
+		assignedVoteLabel.setVisible(false);
+		
 		String background_image_url = game.getBackground_image();
 		
 		ImageIcon background_image_icon = null;
@@ -1294,6 +1294,15 @@ public class GraphicInterface {
 		
 		searchGamesDataNavigator = null;
 		
+		mostLikedButton.setForeground(Color.BLACK);
+		mostLikedButton.setBackground(Color.LIGHT_GRAY);
+		featuredButton.setForeground(Color.BLACK);
+		featuredButton.setBackground(Color.LIGHT_GRAY);
+		mostViewedButton.setForeground(Color.BLACK);
+		mostViewedButton.setBackground(Color.LIGHT_GRAY);
+		mostRecentButton.setForeground(Color.BLACK);
+		mostRecentButton.setBackground(Color.LIGHT_GRAY);
+		
 	}
 	
 	private void initializeUserInformationPage() {
@@ -1506,69 +1515,6 @@ public class GraphicInterface {
 						return columnTypes[columnIndex];
 					}
 			};
-			
-		updateDatabaseSwingWorker = new SwingWorker<Boolean,Void>() {
-			
-			@Override
-			protected Boolean doInBackground() {
-				
-				updateDatabaseButton.setEnabled(false);
-				
-				return logicHandler.updateDatabase();
-			}
-			
-			@Override
-			protected void done() {
-				
-				updateDatabaseButton.setEnabled(true);
-				
-				boolean result;
-				
-				try{
-					
-					result = get();
-					
-				} catch( Exception e ) {
-					
-					result = false;
-				}
-				
-				if( result ) {
-					
-					updateDatabaseResultLabel.setText("Success!");
-				} else {
-					
-					updateDatabaseResultLabel.setText("Failure!");
-				}
-				
-				updateDatabaseResultLabel.setVisible(true);
-				
-				ActionListener taskPerformerDB = new ActionListener() {
-				      public void actionPerformed(ActionEvent evt) {
-				          updateDatabaseResultLabel.setVisible(false);
-				      }
-				};
-				
-				Timer returnToDefaultUpdateTimer = new Timer(4000,taskPerformerDB);
-				
-				returnToDefaultUpdateTimer.setRepeats(false);
-				
-				returnToDefaultUpdateTimer.start();
-				
-			    StatusObject<Long> gamesCountStatusObject = logicHandler.getGameCount();
-			    String gamesCount = null;
-			    
-			    if( gamesCountStatusObject.statusCode == StatusCode.OK ) {
-			    	
-			    	gamesCount = Long.toString(gamesCountStatusObject.element);
-				} else {
-					
-					gamesCount = "N/A";
-				}
-				
-				gameCountLabel.setText("Game Count: " + gamesCount);
-			}
-		};
 		
 		initialize();
 	}
@@ -1940,6 +1886,7 @@ public class GraphicInterface {
 		followedTable = new JTable();
 		followedTable.setFocusable(false);
 		followedTable.setRowSelectionAllowed(false);
+		followedTable.setDefaultEditor(Object.class, null);
 		followedTable.addMouseMotionListener(new MouseMotionListener() {
 			
 			public void mouseDragged(MouseEvent e) {
@@ -2402,6 +2349,69 @@ public class GraphicInterface {
 		updateDatabaseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				SwingWorker<Boolean,Void> updateDatabaseSwingWorker = new SwingWorker<Boolean,Void>() {
+					
+					@Override
+					protected Boolean doInBackground() {
+						
+						updateDatabaseButton.setEnabled(false);
+						
+						return logicHandler.updateDatabase();
+					}
+					
+					@Override
+					protected void done() {
+						
+						updateDatabaseButton.setEnabled(true);
+						
+						boolean result;
+						
+						try{
+							
+							result = get();
+							
+						} catch( Exception e ) {
+							
+							result = false;
+						}
+						
+						if( result ) {
+							
+							updateDatabaseResultLabel.setText("Success!");
+						} else {
+							
+							updateDatabaseResultLabel.setText("Failure!");
+						}
+						
+						updateDatabaseResultLabel.setVisible(true);
+						
+						ActionListener taskPerformerDB = new ActionListener() {
+						      public void actionPerformed(ActionEvent evt) {
+						          updateDatabaseResultLabel.setVisible(false);
+						      }
+						};
+						
+						Timer returnToDefaultUpdateTimer = new Timer(4000,taskPerformerDB);
+						
+						returnToDefaultUpdateTimer.setRepeats(false);
+						
+						returnToDefaultUpdateTimer.start();
+						
+					    StatusObject<Long> gamesCountStatusObject = logicHandler.getGameCount();
+					    String gamesCount = null;
+					    
+					    if( gamesCountStatusObject.statusCode == StatusCode.OK ) {
+					    	
+					    	gamesCount = Long.toString(gamesCountStatusObject.element);
+						} else {
+							
+							gamesCount = "N/A";
+						}
+						
+						gameCountLabel.setText("Game Count: " + gamesCount);
+					}
+				};
+				
 				updateDatabaseSwingWorker.execute();
 				
 			}
@@ -2533,7 +2543,7 @@ public class GraphicInterface {
 		topGamesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				StatusObject<List<GraphGame>> topGamesStatus = logicHandler.getMostFavouriteGames(6);
+				StatusObject<List<GraphGame>> topGamesStatus = logicHandler.getMostFavouriteGames(5);
 				
 				if( topGamesStatus.statusCode == StatusCode.OK ) {
 					
@@ -4034,9 +4044,29 @@ public class GraphicInterface {
 			      
 			      if( searchGamesDataNavigator == null  ) {
 			    	  
-			    	  System.out.println("No Maria io esco");
 			    	  return;
-			      }			      
+			      }			
+			      
+			      ///////////////////////////////////////////////////////
+			      /*
+			      SwingWorker<Void,Void> loadGamesPageSwingWorker = new SwingWorker<Void,Void>() {
+						
+						@Override
+						protected void doInBackground() {
+							
+							///carica la pagina
+						}
+						
+						@Override
+						protected void done() {
+							
+							riattiva la scrollbar
+						}
+					};
+					
+					updateDatabaseSwingWorker.execute();
+			      */
+			      ///////////////////////////////////////////////////////
 			      
 			      if( value == 0 ) {
 			    	  
@@ -4295,7 +4325,7 @@ public class GraphicInterface {
 		actionButton = new JButton("");
 		actionButton.setToolTipText("Click Here to Add/Remove to/from Your Favourite Games");
 		actionButton.setName("actionButton");
-		actionButton.setBounds(494, 257, 73, 62);
+		actionButton.setBounds(426, 257, 73, 62);
 		actionButton.setBackground(SystemColor.controlDkShadow);
 		actionButton.setContentAreaFilled(false);
 		actionButton.setOpaque(true);
@@ -4342,7 +4372,7 @@ public class GraphicInterface {
 		releaseDateLabel.setForeground(Color.WHITE);
 		releaseDateLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
 		releaseDateLabel.setName("releaseDateLabel");
-		releaseDateLabel.setBounds(581, 256, 211, 22);
+		releaseDateLabel.setBounds(511, 257, 211, 22);
 		gamePanel.add(releaseDateLabel);
 		
 		gameImagesScrollPane = new JScrollPane();
@@ -4360,7 +4390,7 @@ public class GraphicInterface {
 		
 		voteMenuBar = new JMenuBar();
 		voteMenuBar.setName("voteMenuBar");
-		voteMenuBar.setBounds(426, 257, 52, 62);
+		voteMenuBar.setBounds(710, 257, 52, 62);
 		gamePanel.add(voteMenuBar);
 		
 		voteMenu = new JMenu("Vote");
@@ -4375,11 +4405,30 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getId().toString(), 1) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 1 correctly assigned to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Voted: 1");
+					assignedVoteLabel.setVisible(true);
+					
+					
 				} else {
 					
 					System.out.println("->[GraphicInterface] failed to assign vote 1 to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Vote Failed");
+					assignedVoteLabel.setVisible(true);
 				}
 					
+				ActionListener taskVisualizeVoteLabel = new ActionListener() {
+					      public void actionPerformed(ActionEvent evt) {
+					          assignedVoteLabel.setVisible(false);
+					      }
+				};
+					
+				Timer returnToDefaultVote1Timer = new Timer(2000,taskVisualizeVoteLabel);
+					
+				returnToDefaultVote1Timer.setRepeats(false);
+					
+				returnToDefaultVote1Timer.start();
 			}
 		});
 		vote1.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4393,10 +4442,29 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getId().toString(), 2) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 2 correctly assigned to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Voted: 2");
+					assignedVoteLabel.setVisible(true);
+					
 				}else {
 					
 					System.out.println("->[GraphicInterface] failed to assign vote 2 to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Vote Failed");
+					assignedVoteLabel.setVisible(true);
 				}
+				
+				ActionListener taskVisualizeVoteLabel = new ActionListener() {
+					      public void actionPerformed(ActionEvent evt) {
+					          assignedVoteLabel.setVisible(false);
+					      }
+				};
+					
+				Timer returnToDefaultVote2Timer = new Timer(2000,taskVisualizeVoteLabel);
+					
+				returnToDefaultVote2Timer.setRepeats(false);
+					
+				returnToDefaultVote2Timer.start();
 			}
 		});
 		vote2.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4410,10 +4478,31 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getId().toString(), 3) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 3 correctly assigned to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Voted: 3");
+					assignedVoteLabel.setVisible(true);
+					
+					
 				} else {
 					
 					System.out.println("->[GraphicInterface] failed to assign vote 3 to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Vote Failed");
+					assignedVoteLabel.setVisible(true);
 				}
+				
+				ActionListener taskVisualizeVoteLabel = new ActionListener() {
+					      public void actionPerformed(ActionEvent evt) {
+					          assignedVoteLabel.setVisible(false);
+					      }
+				};
+					
+				Timer returnToDefaultVote3Timer = new Timer(2000,taskVisualizeVoteLabel);
+					
+				returnToDefaultVote3Timer.setRepeats(false);
+					
+				returnToDefaultVote3Timer.start();
+				
 			}
 		});
 		vote3.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4427,10 +4516,29 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getId().toString(), 4) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 4 correctly assigned to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Voted: 4");
+					assignedVoteLabel.setVisible(true);	
+					
 				} else {
 					
 					System.out.println("->[GraphicInterface] failed to assign vote 4 to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Vote Failed");
+					assignedVoteLabel.setVisible(true);
 				}
+				
+				ActionListener taskVisualizeVoteLabel = new ActionListener() {
+					      public void actionPerformed(ActionEvent evt) {
+					          assignedVoteLabel.setVisible(false);
+					      }
+				};
+				
+				Timer returnToDefaultVote4Timer = new Timer(2000,taskVisualizeVoteLabel);
+				
+				returnToDefaultVote4Timer.setRepeats(false);
+				
+				returnToDefaultVote4Timer.start();
 			}
 		});
 		vote4.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4444,10 +4552,29 @@ public class GraphicInterface {
 				if( logicHandler.rateGame(currentGame.getId().toString(), 5) == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 5 correctly assigned to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Voted: 5");
+					assignedVoteLabel.setVisible(true);
+					
 				} else {
 					
 					System.out.println("->[GraphicInterface] failed to assign vote 5 to " + currentGame.getTitle() + ".");
+					
+					assignedVoteLabel.setText("Vote Failed");
+					assignedVoteLabel.setVisible(true);
 				}
+				
+				ActionListener taskVisualizeVoteLabel = new ActionListener() {
+				      public void actionPerformed(ActionEvent evt) {
+				          assignedVoteLabel.setVisible(false);
+				      }
+				};
+				
+				Timer returnToDefaultVote5Timer = new Timer(2000,taskVisualizeVoteLabel);
+				
+				returnToDefaultVote5Timer.setRepeats(false);
+				
+				returnToDefaultVote5Timer.start();
 			}
 		});
 		vote5.setFont(new Font("Corbel", Font.PLAIN, 15));
@@ -4477,15 +4604,23 @@ public class GraphicInterface {
 		viewsCountLabel.setName("releaseDateLabel");
 		viewsCountLabel.setForeground(Color.WHITE);
 		viewsCountLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
-		viewsCountLabel.setBounds(581, 300, 211, 22);
+		viewsCountLabel.setBounds(511, 297, 211, 22);
 		gamePanel.add(viewsCountLabel);
 		
 		userRatingLabel = new JLabel("User Ratings: 5.000");
 		userRatingLabel.setName("releaseDateLabel");
 		userRatingLabel.setForeground(Color.WHITE);
 		userRatingLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
-		userRatingLabel.setBounds(581, 278, 211, 22);
+		userRatingLabel.setBounds(511, 277, 211, 22);
 		gamePanel.add(userRatingLabel);
+		
+		assignedVoteLabel = new JLabel("Voted: 5");
+		assignedVoteLabel.setName("releaseDateLabel");
+		assignedVoteLabel.setForeground(Color.WHITE);
+		assignedVoteLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
+		assignedVoteLabel.setAutoscrolls(true);
+		assignedVoteLabel.setBounds(774, 277, 73, 22);
+		gamePanel.add(assignedVoteLabel);
 		
 		
 		
@@ -4669,6 +4804,7 @@ public class GraphicInterface {
 		
 		usersTable = new JTable();
 		usersTable.setRowSelectionAllowed(false);
+		usersTable.setDefaultEditor(Object.class, null);
 		usersTable.setFocusable(false);
 		usersTable.addMouseMotionListener(new MouseMotionListener() {
 			

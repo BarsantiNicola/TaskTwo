@@ -3,17 +3,13 @@ DEBUG[23/5]
 MAIN FIXES
 
 - [MAIN PAGE] scrollbar Followed Users non centrata
-- [MAIN PAGE] possibile cambiare username in followed users causando errore nella SEE GAMES
-- [GAME PAGE] assenza rating gioco e viewsCount
 - [GAME PAGE] voto non legato a utente, posso votare quante volte mi pare un gioco con un utente e viola quindi consistenza graph/mongo
 - [GAME PAGE] il voto è problema di consistenza tra i database[OPERAZIONE CHE COINVOLGE DUE DATABASE CHE POSSONO FALLIRE NON GESTITA]
-- [GAME PAGE] voto assegnato a un gioco dall'utente non viene visualizzato
-- [SEARCH PAGE] se si clicca un bottone dalla lista in alto diverso dal default e si esce e rientra rimane impostanto insieme al default
 - [SEARCH PAGE] lo scrolling delle pagine è doppio(viene effettuato due volte in sequenza)
 - [SEARCH PAGE] applicare genre su una lista carica i giochi corretti e immediatamente ripristina la lista precedente
 - [USER PAGE] scrollbar degli users non centrata
-- [USER PAGE] possibile cambiare i nomi degli utenti e causare errore nell'eseguire follow/unfollow
-- [STATS PAGE] in Top Games i nomi dei giochi vengono tagliati
+
+- [STATS PAGE] in Top Games i nomi dei giochi vengono tagliati ---> non ci posso fare molto, è una libreria che ho importato e modificato per trasformarla in pannello e adattarla ai dati, modificare il grafico in se richiede molto molto molto molto molto molto tempo. Per ovviare all'inconveniente c'è la legenda sotto
 
 
 OPTIONAL FIXES[se non prendono troppo tempo]
