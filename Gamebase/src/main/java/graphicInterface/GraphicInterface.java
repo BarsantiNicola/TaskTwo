@@ -4888,7 +4888,7 @@ public class GraphicInterface {
 		genreMenuBar.setToolTipText("Click Here to Select your Favorite Genre");
 		genreMenuBar.setFont(new Font("Corbel", Font.BOLD, 15));
 		genreMenuBar.setName("genreMenuBar");
-		genreMenuBar.setBounds(520, 222, 80, 35);
+		genreMenuBar.setBounds(520, 224, 80, 35);
 		userInformationPanel.add(genreMenuBar);
 		
 		genreMenu = new JMenu("Genre");
@@ -4987,11 +4987,11 @@ public class GraphicInterface {
 		genderLabel.setBounds(520, 131, 77, 25);
 		userInformationPanel.add(genderLabel);
 		
-		genreLabel = new JLabel("Genre");
+		genreLabel = new JLabel("Favourite Genre");
 		genreLabel.setName("genreLabel");
 		genreLabel.setForeground(Color.WHITE);
 		genreLabel.setFont(new Font("Corbel", Font.BOLD, 21));
-		genreLabel.setBounds(520, 196, 233, 25);
+		genreLabel.setBounds(520, 198, 233, 25);
 		userInformationPanel.add(genreLabel);
 		
 	}
