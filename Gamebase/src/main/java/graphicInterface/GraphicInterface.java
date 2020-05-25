@@ -145,6 +145,7 @@ public class GraphicInterface {
 	private AdjustmentListener searchGamesVerticalScrollBarListener;
 	private JScrollBar searchGamesVerticalScrollBar;
 	private DataNavigator searchGamesDataNavigator;
+	private JLabel currentGenreLabel;
 	
 	//////////GAME PANEL
 	
@@ -229,7 +230,6 @@ public class GraphicInterface {
 	private User currentUser;
 	private Game currentGame;
 	private Font titleFont;
-	private List<BufferedGame> supportGamesList;
 	private DefaultTableCellRenderer centerRenderer;
 	private int searchedGamesPerPage;
 	
@@ -1196,36 +1196,82 @@ public class GraphicInterface {
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						
-						List<BufferedGame> genreList = new ArrayList<BufferedGame>();
-						BufferedGame game;
+						searchGameScrollPane.getVerticalScrollBar().setValue(1);
 						
-						for( int i=0; i<supportGamesList.size(); i++ ) {
+						StatusObject<DataNavigator> genreStatusObject = logicHandler.getGamesByGenre(genre);
+						
+						if( genreStatusObject.statusCode == StatusCode.OK ) {
 							
-							game = supportGamesList.get(i);
-							
-							StatusObject<Game> gameStatus = logicHandler.getGame(game.getId());
-							
-							if( gameStatus.statusCode == StatusCode.OK ) {
+							if( genreStatusObject.element == null ) {
 								
-								List<String> genres = gameStatus.element.getAllGenres();
-								
-								for( String gen: genres) {
-									if( gen == null ) {
-										continue;
-									}
-									if( gen.compareTo(genre) == 0 ) {
-										genreList.add(game);
-										break;
-								    }
-								}	
-							} else {
-								
-								System.out.println("->[GraphicInterface] impossible to retrieve " + game.getTitle() + " genre.");
+								System.out.println("->[GraphicInterface] impossible to retrieve data navigator object.");
+								return;
 							}
+							
+							StatusObject<List <PreviewGame>> genreListStatusObject = genreStatusObject.element.getNextData();
+							
+							if( genreListStatusObject.statusCode == StatusCode.OK ) {
+								
+								if( genreListStatusObject.element == null || genreListStatusObject.element.size() == 0 ) {
+									return;
+								}
+								
+								List<BufferedGame> genreGamesList = new ArrayList<BufferedGame>();
+								
+								for( int i = 0; i < genreListStatusObject.element.size(); i++  ) {
+									
+									PreviewGame game = genreListStatusObject.element.get(i);
+									String url = game.getPreviewPicURL();
+									ImageIcon icon = logicHandler.getCachedImg(url).element;
+									
+									if( icon == null ) {
+										
+										String replacement = "media/crop/600/400/games"; 
+										String croppedUrl = null;
+										
+										try {
+											croppedUrl = url.replaceFirst("media/games", replacement); 
+											Image image = ImageIO.read(new URL(croppedUrl));
+											icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
+											
+											if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
+												
+												System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+									     	}
+											
+										} catch(Exception ee) {
+											icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+										}
+										
+									} else {
+										
+										System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+										
+										icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+										
+									}
+									
+									genreGamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));
+								}
+							
+							fillSearchedGamesList(genreGamesList);
+							searchGamesDataNavigator = genreStatusObject.element;
+							currentGenreLabel.setText("Visualizing: " + genre);
+							currentGenreLabel.setVisible(true);	
+							mostLikedButton.setForeground(Color.BLACK);
+							mostLikedButton.setBackground(Color.LIGHT_GRAY);
+							featuredButton.setForeground(Color.BLACK);
+							featuredButton.setBackground(Color.LIGHT_GRAY);
+							mostViewedButton.setForeground(Color.BLACK);
+							mostViewedButton.setBackground(Color.LIGHT_GRAY);
+							mostRecentButton.setForeground(Color.BLACK);
+							mostRecentButton.setBackground(Color.LIGHT_GRAY);
+							searchTextField.setText("Search");
+						} else {
+							
+							System.out.println("->[GraphicInterface] impossible to retrieve " + genre + " genre.");
 						}
-						
-						fillSearchedGamesList(genreList);
-						
+					}
 					}
 				});
 				gameGenreMenu.add(item);
@@ -1278,11 +1324,12 @@ public class GraphicInterface {
 			}
 			
 			fillSearchedGamesList(featuredGamesList);
-			supportGamesList = featuredGamesList;
 		} else {
 			
 			System.out.println("->[GraphicInterface] impossible to retrieve featured games list.");
 		}	
+		
+		currentGenreLabel.setVisible(false);
 	}
 	
 	private void cleanSearchGamePage() {
@@ -1302,6 +1349,8 @@ public class GraphicInterface {
 		mostViewedButton.setBackground(Color.LIGHT_GRAY);
 		mostRecentButton.setForeground(Color.BLACK);
 		mostRecentButton.setBackground(Color.LIGHT_GRAY);
+		
+		currentGenreLabel.setVisible(false);
 		
 	}
 	
@@ -1466,7 +1515,6 @@ public class GraphicInterface {
 		currentUser = null;
 		currentGame = null;
 		titleFont = new Font("Corbel", Font.BOLD, 20);
-		supportGamesList = null;
 		searchedGamesPerPage = 12;
 		
 		userGamesListModel = new DefaultListModel<BufferedGame>();
@@ -3497,7 +3545,7 @@ public class GraphicInterface {
 		searchTextField.setText("Search");
 		searchTextField.setFont(new Font("Corbel", Font.ITALIC, 16));
 		searchTextField.setName("searchTextField");
-		searchTextField.setBounds(643, 72, 207, 35);
+		searchTextField.setBounds(399, 72, 207, 35);
 		searchGamePanel.add(searchTextField);
 		searchTextField.setColumns(10);
 		
@@ -3575,8 +3623,7 @@ public class GraphicInterface {
 						
 						searchGamesDataNavigator = searchStatusObject.element;
 						fillSearchedGamesList(searchedGamesList);
-						supportGamesList = searchedGamesList;
-					    
+						currentGenreLabel.setVisible(false);
 					} else {
 						
 						System.out.println("->[GraphicInterface] impossible to retrieve list of preview games.");
@@ -3594,7 +3641,7 @@ public class GraphicInterface {
 			}
 		});
 		searchButton.setName("searchButton");
-		searchButton.setBounds(850, 72, 52, 35);
+		searchButton.setBounds(607, 72, 52, 35);
 		searchButton.setToolTipText("Search for New Games");
 		searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		searchButton.setBackground(SystemColor.controlDkShadow);
@@ -3683,7 +3730,7 @@ public class GraphicInterface {
 						
 						searchGamesDataNavigator = viewedStatusObject.element;
 						fillSearchedGamesList(mostViewedGamesList);
-						supportGamesList = mostViewedGamesList;   
+						currentGenreLabel.setVisible(false);
 					} else {
 						
 						System.out.println("->[GraphicInterface] impossible to retrieve list of preview game (most viewed).");
@@ -3780,7 +3827,7 @@ public class GraphicInterface {
 						
 						searchGamesDataNavigator = likedStatusObject.element;
 						fillSearchedGamesList(mostLikedGamesList);
-						supportGamesList = mostLikedGamesList;   
+						currentGenreLabel.setVisible(false);
 					} else{
 						
 						System.out.println("->[GraphicInterface] impossible to retieve list of preview games (most liked).");
@@ -3875,8 +3922,9 @@ public class GraphicInterface {
 						}
 						
 						searchGamesDataNavigator = recentStatusObject.element;
-						fillSearchedGamesList(mostRecentGamesList);
-						supportGamesList = mostRecentGamesList;   
+						fillSearchedGamesList(mostRecentGamesList);   
+						currentGenreLabel.setVisible(false);
+						
 					} else {
 						
 						System.out.println("->[GraphicInterface] impossible to retrieve list of preview games (most recent).");
@@ -3962,7 +4010,6 @@ public class GraphicInterface {
 					
 					searchGamesDataNavigator = null;
 					fillSearchedGamesList(featuredGamesList);
-					supportGamesList = featuredGamesList;
 				} else {
 					
 					System.out.println("->[GraphicInterface] impossible to retrieve featured games.");
@@ -4042,32 +4089,154 @@ public class GraphicInterface {
 			      int value = bar.getValue();
 			      int max = bar.getMaximum();
 			      
-			      if( searchGamesDataNavigator == null  ) {
+			      if( searchGamesDataNavigator == null || ( value != 0 && value+extent != max ) ) {
 			    	  
 			    	  return;
 			      }			
 			      
-			      ///////////////////////////////////////////////////////
-			      /*
-			      SwingWorker<Void,Void> loadGamesPageSwingWorker = new SwingWorker<Void,Void>() {
+			      searchGameScrollPane.getVerticalScrollBar().setEnabled(false);
+			      
+			      SwingWorker<Boolean,Void> loadGamesPageSwingWorker = new SwingWorker<Boolean,Void>() {
 						
 						@Override
-						protected void doInBackground() {
+						protected Boolean doInBackground() {
 							
-							///carica la pagina
+							if( value == 0 ) {
+			    	  
+			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
+			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getPrevData();
+			    	  
+			    	  if( status.statusCode == StatusCode.OK ) {
+			    		  
+			    		  if( status.element == null || status.element.size() == 0) {
+			    			  
+			    			  System.out.println("->[GraphicInterface] no more games.");
+			    			  return false;
+			    		  }
+			    		  
+			    		  List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
+			    		  
+			    		  for( int i=0; i < status.element.size(); i++ ) {
+			    			  
+			    			  PreviewGame game = status.element.get(i);
+			    			  String url = game.getPreviewPicURL();
+							  ImageIcon icon = logicHandler.getCachedImg(url).element;
+								
+								if( icon == null ) {
+									
+									String replacement = "media/crop/600/400/games"; 
+									String croppedUrl = null;
+									
+									try {
+										croppedUrl = url.replaceFirst("media/games", replacement); 
+										Image image = ImageIO.read(new URL(croppedUrl));
+										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
+										
+										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
+											
+											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+								     	}
+										
+									} catch(Exception ee) {
+										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+									}
+									
+								} else {
+									
+									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+									
+									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+								}
+								
+							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
+			    		  }
+			    		  
+			    		  fillSearchedGamesList(gamesList);
+			    		  
+			    	  }  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
+			    		  
+			    		  System.out.println("->[GraphicInterface] there are no previous games.");
+			    	  } else {
+			    		  
+			    		  System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
+			    	  }
+			      } 
+			      
+			      if( value+extent == max  ) {
+			    	  
+			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
+			    	  
+			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
+			    	  
+			    	  if( status.statusCode == StatusCode.OK ) {
+			    		  
+			    		  if( status.element == null || status.element.size() == 0) {
+			    			  
+			    			  System.out.println("->[GraphicInterface] no more games.");
+			    			  return false;
+			    		  }
+			    		  
+			    		  List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
+			    		  
+			    		  for( int i=0; i < status.element.size(); i++ ) {
+			    			  
+			    			  PreviewGame game = status.element.get(i);
+			    			  String url = game.getPreviewPicURL();
+							  ImageIcon icon = logicHandler.getCachedImg(url).element;
+								
+								if( icon == null ) {
+									
+									String replacement = "media/crop/600/400/games"; 
+									String croppedUrl = null;
+									
+									try {
+										croppedUrl = url.replaceFirst("media/games", replacement); 
+										Image image = ImageIO.read(new URL(croppedUrl));
+										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
+										
+										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
+											
+											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+								     	}
+										
+									} catch(Exception ee) {
+										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+									}
+									
+								} else {
+									
+									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+									
+									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+								}
+								
+							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
+			    		  }
+			    		  
+			    		  fillSearchedGamesList(gamesList);
+			    		  
+			    	  } else{
+			    		  searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
+			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
+			    	  }
+			      }
+			      
+			      
+			      return true;
 						}
 						
 						@Override
 						protected void done() {
 							
-							riattiva la scrollbar
+							searchGameScrollPane.getVerticalScrollBar().setEnabled(true);
+							searchGameScrollPane.getVerticalScrollBar().setValue(1);
 						}
 					};
 					
-					updateDatabaseSwingWorker.execute();
-			      */
-			      ///////////////////////////////////////////////////////
+					loadGamesPageSwingWorker.execute();
 			      
+			      ///////////////////////////////////////////////////////
+			      /*
 			      if( value == 0 ) {
 			    	  
 			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
@@ -4119,7 +4288,6 @@ public class GraphicInterface {
 			    		  }
 			    		  
 			    		  fillSearchedGamesList(gamesList);
-			    		  supportGamesList = gamesList;
 			    		  
 			    	  }  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
 			    		  
@@ -4140,7 +4308,6 @@ public class GraphicInterface {
 			    		  
 			    		  if( status.element == null || status.element.size() == 0) {
 			    			  
-			    			  searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
 			    			  System.out.println("->[GraphicInterface] no more games.");
 			    			  return;
 			    		  }
@@ -4183,14 +4350,13 @@ public class GraphicInterface {
 			    		  }
 			    		  
 			    		  fillSearchedGamesList(gamesList);
-			    		  supportGamesList = gamesList;
 			    		  
 			    	  } else{
 			    		  searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
 			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
 			    	  }
 			      }
-			      
+			      */
 		      }
 		};
 		searchGamesVerticalScrollBar = searchGameScrollPane.getVerticalScrollBar();
@@ -4204,7 +4370,7 @@ public class GraphicInterface {
 		gameGenreMenuBar.setBackground(Color.LIGHT_GRAY);
 		gameGenreMenuBar.setToolTipText("Filter by Game Genre");
 		gameGenreMenuBar.setName("gameGenreMenuBar");
-		gameGenreMenuBar.setBounds(400, 53, 48, 35);
+		gameGenreMenuBar.setBounds(400, 37, 48, 28);
 		searchGamePanel.add(gameGenreMenuBar);
 		
 		gameGenreMenu = new JMenu("Genre");
@@ -4220,6 +4386,14 @@ public class GraphicInterface {
 		gameGenreMenu.setToolTipText("Filter by Game Genre");
 		gameGenreMenu.setName("gameGenreMenu");
 		gameGenreMenuBar.add(gameGenreMenu);
+		
+		currentGenreLabel = new JLabel("Visualizing: ");
+		currentGenreLabel.setName("releaseDateLabel");
+		currentGenreLabel.setForeground(Color.WHITE);
+		currentGenreLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
+		currentGenreLabel.setAutoscrolls(true);
+		currentGenreLabel.setBounds(460, 37, 272, 22);
+		searchGamePanel.add(currentGenreLabel);
 		
 		
 		
@@ -4372,7 +4546,7 @@ public class GraphicInterface {
 		releaseDateLabel.setForeground(Color.WHITE);
 		releaseDateLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
 		releaseDateLabel.setName("releaseDateLabel");
-		releaseDateLabel.setBounds(511, 257, 211, 22);
+		releaseDateLabel.setBounds(511, 257, 187, 22);
 		gamePanel.add(releaseDateLabel);
 		
 		gameImagesScrollPane = new JScrollPane();
@@ -4604,14 +4778,14 @@ public class GraphicInterface {
 		viewsCountLabel.setName("releaseDateLabel");
 		viewsCountLabel.setForeground(Color.WHITE);
 		viewsCountLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
-		viewsCountLabel.setBounds(511, 297, 211, 22);
+		viewsCountLabel.setBounds(511, 297, 187, 22);
 		gamePanel.add(viewsCountLabel);
 		
 		userRatingLabel = new JLabel("User Ratings: 5.000");
 		userRatingLabel.setName("releaseDateLabel");
 		userRatingLabel.setForeground(Color.WHITE);
 		userRatingLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
-		userRatingLabel.setBounds(511, 277, 211, 22);
+		userRatingLabel.setBounds(511, 277, 187, 22);
 		gamePanel.add(userRatingLabel);
 		
 		assignedVoteLabel = new JLabel("Voted: 5");
