@@ -4947,7 +4947,7 @@ public class GraphicInterface {
 			}
 		});
 		saveButton.setName("saveButton");
-		saveButton.setBounds(520, 397, 127, 48);
+		saveButton.setBounds(520, 402, 127, 48);
 		userInformationPanel.add(saveButton);
 		
 		nameTextField = new JTextField();
