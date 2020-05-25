@@ -445,6 +445,12 @@ public class MongoConnection {
     	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , nGames , NavType.PREVIEW_SEARCH , search ));
     	
     }
+    
+    public StatusObject<DataNavigator> getGamesByGenre( int nGames , String genre ){
+    	
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection, nGames , NavType.PREVIEW_GENRE , genre ));
+    }
+    
    
 	private StatusCode addressVerify( String ipAddr , int port ) {
 		
@@ -493,11 +499,16 @@ public class MongoConnection {
     	try {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    		Game game = client.getGame(58175).element;
+    		DataNavigator games = client.getGamesByGenre(12, "Shooter").element;
 
-    		if(game != null)
-    			System.out.println(gson.toJson(game));
+    		List<PreviewGame> list;
+    		if( games != null ) 
+    			for(int a = 0; a<10;a++) {
+    				list = games.getNextData().element;
+    				if( list != null )
+    					for( PreviewGame game : list )
+    						System.out.println(game.getTitle());
+    			}
     			
     		client.closeConnection();
     		
@@ -597,7 +608,7 @@ public class MongoConnection {
     	
     }
     
-    @SuppressWarnings({ "unused", "deprecation" })
+    @SuppressWarnings({ "unused"})
 	private void updateViewsCount() {
     	
     	MongoCursor<Game> games = this.gamesCollection.find().noCursorTimeout(true).iterator();
