@@ -4103,133 +4103,136 @@ public class GraphicInterface {
 							
 							if( value == 0 ) {
 			    	  
-			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
-			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getPrevData();
+								StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getPrevData();
 			    	  
-			    	  if( status.statusCode == StatusCode.OK ) {
+								if( status.statusCode == StatusCode.OK ) {
 			    		  
-			    		  if( status.element == null || status.element.size() == 0) {
+									if( status.element == null || status.element.size() == 0) {
 			    			  
-			    			  System.out.println("->[GraphicInterface] no more games.");
-			    			  return false;
-			    		  }
-			    		  
-			    		  List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
-			    		  
-			    		  for( int i=0; i < status.element.size(); i++ ) {
-			    			  
-			    			  PreviewGame game = status.element.get(i);
-			    			  String url = game.getPreviewPicURL();
-							  ImageIcon icon = logicHandler.getCachedImg(url).element;
-								
-								if( icon == null ) {
-									
-									String replacement = "media/crop/600/400/games"; 
-									String croppedUrl = null;
-									
-									try {
-										croppedUrl = url.replaceFirst("media/games", replacement); 
-										Image image = ImageIO.read(new URL(croppedUrl));
-										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
-										
-										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
-											
-											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
-								     	}
-										
-									} catch(Exception ee) {
-										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+										System.out.println("->[GraphicInterface] no more games.");
+										return false;
 									}
-									
-								} else {
-									
-									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
-									
-									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
-								}
-								
-							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
-			    		  }
 			    		  
-			    		  fillSearchedGamesList(gamesList);
+									List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
 			    		  
-			    	  }  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
-			    		  
-			    		  System.out.println("->[GraphicInterface] there are no previous games.");
-			    	  } else {
-			    		  
-			    		  System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
-			    	  }
-			      } 
-			      
-			      if( value+extent == max  ) {
-			    	  
-			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
-			    	  
-			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
-			    	  
-			    	  if( status.statusCode == StatusCode.OK ) {
-			    		  
-			    		  if( status.element == null || status.element.size() == 0) {
+									for( int i=0; i < status.element.size(); i++ ) {
 			    			  
-			    			  System.out.println("->[GraphicInterface] no more games.");
-			    			  return false;
-			    		  }
-			    		  
-			    		  List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
-			    		  
-			    		  for( int i=0; i < status.element.size(); i++ ) {
-			    			  
-			    			  PreviewGame game = status.element.get(i);
-			    			  String url = game.getPreviewPicURL();
-							  ImageIcon icon = logicHandler.getCachedImg(url).element;
+										PreviewGame game = status.element.get(i);
+										String url = game.getPreviewPicURL();
+										ImageIcon icon = logicHandler.getCachedImg(url).element;
 								
-								if( icon == null ) {
+										if( icon == null ) {
 									
-									String replacement = "media/crop/600/400/games"; 
-									String croppedUrl = null;
+											String replacement = "media/crop/600/400/games"; 
+											String croppedUrl = null;
 									
-									try {
-										croppedUrl = url.replaceFirst("media/games", replacement); 
-										Image image = ImageIO.read(new URL(croppedUrl));
-										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
+											try {
+												croppedUrl = url.replaceFirst("media/games", replacement); 
+												Image image = ImageIO.read(new URL(croppedUrl));
+												icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
 										
-										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
+												if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
 											
-											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
-								     	}
+													System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+												}
 										
-									} catch(Exception ee) {
-										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
-									}
+											} catch(Exception ee) {
+												icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+											}
 									
-								} else {
+										} else {
 									
-									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+											System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
 									
-									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
-								}
+											icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+										}
 								
-							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
-			    		  }
+										gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
+									}
 			    		  
-			    		  fillSearchedGamesList(gamesList);
+									fillSearchedGamesList(gamesList);
 			    		  
-			    	  } else{
-			    		  searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
-			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
-			    	  }
-			      }
+								}  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
+			    		  
+									System.out.println("->[GraphicInterface] there are no previous games.");
+								} else {
+			    		  
+									System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
+								}
+							} 
+			      
+							if( value+extent == max  ) {
+			    	  
+			    	  
+								StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
+			    	  
+								if( status.statusCode == StatusCode.OK ) {
+			    		  
+									if( status.element == null || status.element.size() == 0) {
+			    			  
+										System.out.println("->[GraphicInterface] no more games.");
+										return false;
+									}
+			    		  
+									List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
+			    		  
+									for( int i=0; i < status.element.size(); i++ ) {
+			    			  
+										PreviewGame game = status.element.get(i);
+										String url = game.getPreviewPicURL();
+										ImageIcon icon = logicHandler.getCachedImg(url).element;
+										
+										if( icon == null ) {
+									
+											String replacement = "media/crop/600/400/games"; 
+											String croppedUrl = null;
+									
+											try {
+												croppedUrl = url.replaceFirst("media/games", replacement); 
+												Image image = ImageIO.read(new URL(croppedUrl));
+												icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
+										
+												if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
+											
+													System.out.println("->[GraphicInterface] image " + url + " stored in cache");
+												}
+										
+											} catch(Exception ee) {
+												icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+											}
+									
+										} else {
+									
+											System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
+									
+											icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
+										}
+								
+										gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
+									}
+			    		  
+									fillSearchedGamesList(gamesList);
+			    		  
+								} else{
+									System.out.println("->[GraphicInterface] impossible to retrieve next games.");
+								}
+							}
 			      
 			      
-			      return true;
+							return true;
 						}
 						
 						@Override
 						protected void done() {
 							
-							searchGameScrollPane.getVerticalScrollBar().setEnabled(true);
+							
 							searchGameScrollPane.getVerticalScrollBar().setValue(1);
+							searchGameScrollPane.getVerticalScrollBar().setEnabled(true);
+							
+							
+							System.out.println(searchGameScrollPane.getVerticalScrollBar().getValue());
+							System.out.println(searchGameScrollPane.getVerticalScrollBar().getMinimum());
+							System.out.println(searchGameScrollPane.getVerticalScrollBar().getMaximum());
 						}
 					};
 					
