@@ -4094,12 +4094,15 @@ public class GraphicInterface {
 			    	  return;
 			      }			
 			      
+			      searchGameScrollPane.getVerticalScrollBar().setValue(1);
 			      searchGameScrollPane.getVerticalScrollBar().setEnabled(false);
 			      
-			      SwingWorker<Boolean,Void> loadGamesPageSwingWorker = new SwingWorker<Boolean,Void>() {
+			      SwingWorker<List<BufferedGame>,Void> loadGamesPageSwingWorker = new SwingWorker<List<BufferedGame>,Void>() {
 						
 						@Override
-						protected Boolean doInBackground() {
+						protected List<BufferedGame> doInBackground() {
+							
+							List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
 							
 							if( value == 0 ) {
 			    	  
@@ -4110,10 +4113,10 @@ public class GraphicInterface {
 									if( status.element == null || status.element.size() == 0) {
 			    			  
 										System.out.println("->[GraphicInterface] no more games.");
-										return false;
+										return null;
 									}
 			    		  
-									List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
+									gamesList = new ArrayList<BufferedGame>();
 			    		  
 									for( int i=0; i < status.element.size(); i++ ) {
 			    			  
@@ -4150,19 +4153,22 @@ public class GraphicInterface {
 										gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
 									}
 			    		  
-									fillSearchedGamesList(gamesList);
-			    		  
 								}  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
 			    		  
 									System.out.println("->[GraphicInterface] there are no previous games.");
+									
+									for(int i = 0; i< searchedGamesJList.getModel().getSize();i++){
+									    gamesList.add(searchedGamesJList.getModel().getElementAt(i));
+									}
+									
 								} else {
 			    		  
 									System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
+									return null;
 								}
 							} 
 			      
 							if( value+extent == max  ) {
-			    	  
 			    	  
 								StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
 			    	  
@@ -4171,10 +4177,10 @@ public class GraphicInterface {
 									if( status.element == null || status.element.size() == 0) {
 			    			  
 										System.out.println("->[GraphicInterface] no more games.");
-										return false;
+										return null;
 									}
 			    		  
-									List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
+									gamesList = new ArrayList<BufferedGame>();
 			    		  
 									for( int i=0; i < status.element.size(); i++ ) {
 			    			  
@@ -4211,28 +4217,33 @@ public class GraphicInterface {
 										gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
 									}
 			    		  
-									fillSearchedGamesList(gamesList);
-			    		  
 								} else{
 									System.out.println("->[GraphicInterface] impossible to retrieve next games.");
+									return null;
 								}
 							}
 			      
-			      
-							return true;
+							return gamesList;
 						}
 						
 						@Override
 						protected void done() {
 							
+							List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
 							
-							searchGameScrollPane.getVerticalScrollBar().setValue(1);
-							searchGameScrollPane.getVerticalScrollBar().setEnabled(true);
+							try {
+								
+								gamesList = get();
+							} catch(Exception e) {
+								
+								gamesList = null;
+							}
 							
+							fillSearchedGamesList(gamesList);
 							
-							System.out.println(searchGameScrollPane.getVerticalScrollBar().getValue());
-							System.out.println(searchGameScrollPane.getVerticalScrollBar().getMinimum());
-							System.out.println(searchGameScrollPane.getVerticalScrollBar().getMaximum());
+
+						    searchGameScrollPane.getVerticalScrollBar().setEnabled(true);
+							
 						}
 					};
 					
