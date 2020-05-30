@@ -4590,7 +4590,7 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 1) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 1).statusCode == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 1 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4600,7 +4600,7 @@ public class GraphicInterface {
 					
 				} else {
 					
-					System.out.println("->[GraphicInterface] failed to assign vote 1 to " + currentGame.getTitle() + ".");
+					System.out.println("->[GraphicInterface] failed to assign vote 1 to " + currentGame.getTitle() + ".");           //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
 					
 					assignedVoteLabel.setText("Vote Failed");
 					assignedVoteLabel.setVisible(true);
@@ -4627,7 +4627,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 2) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 2).statusCode == StatusCode.OK ) {
 					
 					System.out.println("->[GraphicInterface] vote 2 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4636,7 +4636,7 @@ public class GraphicInterface {
 					
 				}else {
 					
-					System.out.println("->[GraphicInterface] failed to assign vote 2 to " + currentGame.getTitle() + ".");
+					System.out.println("->[GraphicInterface] failed to assign vote 2 to " + currentGame.getTitle() + ".");        //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
 					
 					assignedVoteLabel.setText("Vote Failed");
 					assignedVoteLabel.setVisible(true);
@@ -4663,7 +4663,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 3) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 3).statusCode == StatusCode.OK ) {                   //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
 					
 					System.out.println("->[GraphicInterface] vote 3 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4701,7 +4701,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 4) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 4).statusCode == StatusCode.OK ) {               //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
 					
 					System.out.println("->[GraphicInterface] vote 4 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4737,7 +4737,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 5) == StatusCode.OK ) {
+				if( logicHandler.rateGame(currentGame.getId().toString(), 5).statusCode == StatusCode.OK ) {                //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
 					
 					System.out.println("->[GraphicInterface] vote 5 correctly assigned to " + currentGame.getTitle() + ".");
 					

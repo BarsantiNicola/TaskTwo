@@ -202,7 +202,7 @@ public class LogicBridge {
 	
 	public StatusObject<Long> getGameFavouriteCount(String _id){ return GRAPH.getGameFavouriteCount(_id); }
 	
-	public StatusCode rateGame(String _id, int vote) { return GRAPH.rateGame(_id, vote); }
+	public StatusObject<Long> rateGame(String _id, int vote) { return GRAPH.rateGame(_id, vote); }
 	
 	public StatusObject<List<GraphGame>> getFeaturedGamesList(int max){ return GRAPH.getFeaturedGamesList(max); }
 	

@@ -860,7 +860,7 @@ public interface GraphInterface
      *              - ERR_GRAPH_USER_NOTEXISTS:    The user doesn't exist within the database (it was removed while it was logged in)
      *              - ERR_GRAPH_GAME_NOTEXISTS:    The game doesn't exist within the database
      */   
-    public StatusCode rateGame(String _id, int vote);
+    public StatusObject<Long> rateGame(String _id, int vote);
     
     
     /* DESCRIPTION: Returns a list of up to "max" featured games representing favourite suggestions for the current user, which are selected by retrieving on the 
