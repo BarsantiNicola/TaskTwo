@@ -4094,8 +4094,7 @@ public class GraphicInterface {
 			    	  return;
 			      }			
 			      
-			      searchGameScrollPane.getVerticalScrollBar().setValue(1);
-			      searchGameScrollPane.getVerticalScrollBar().setEnabled(false);
+			      searchGamesVerticalScrollBar.removeAdjustmentListener(searchGamesVerticalScrollBarListener);
 			      
 			      SwingWorker<List<BufferedGame>,Void> loadGamesPageSwingWorker = new SwingWorker<List<BufferedGame>,Void>() {
 						
@@ -4242,135 +4241,14 @@ public class GraphicInterface {
 							fillSearchedGamesList(gamesList);
 							
 
-						    searchGameScrollPane.getVerticalScrollBar().setEnabled(true);
-							
+							searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
+						    searchGamesVerticalScrollBar.setValue(1);
+						    
 						}
 					};
 					
 					loadGamesPageSwingWorker.execute();
 			      
-			      ///////////////////////////////////////////////////////
-			      /*
-			      if( value == 0 ) {
-			    	  
-			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
-			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getPrevData();
-			    	  
-			    	  if( status.statusCode == StatusCode.OK ) {
-			    		  
-			    		  if( status.element == null || status.element.size() == 0) {
-			    			  
-			    			  System.out.println("->[GraphicInterface] no more games.");
-			    			  return;
-			    		  }
-			    		  
-			    		  List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
-			    		  
-			    		  for( int i=0; i < status.element.size(); i++ ) {
-			    			  
-			    			  PreviewGame game = status.element.get(i);
-			    			  String url = game.getPreviewPicURL();
-							  ImageIcon icon = logicHandler.getCachedImg(url).element;
-								
-								if( icon == null ) {
-									
-									String replacement = "media/crop/600/400/games"; 
-									String croppedUrl = null;
-									
-									try {
-										croppedUrl = url.replaceFirst("media/games", replacement); 
-										Image image = ImageIO.read(new URL(croppedUrl));
-										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
-										
-										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
-											
-											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
-								     	}
-										
-									} catch(Exception ee) {
-										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
-									}
-									
-								} else {
-									
-									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
-									
-									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
-								}
-								
-							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
-			    		  }
-			    		  
-			    		  fillSearchedGamesList(gamesList);
-			    		  
-			    	  }  else if( status.statusCode == StatusCode.ERR_DOCUMENT_MIN_INDEX_REACHED ){
-			    		  
-			    		  System.out.println("->[GraphicInterface] there are no previous games.");
-			    	  } else {
-			    		  
-			    		  System.out.println("->[GraphicInterface] impossible to retrieve prev games.");
-			    	  }
-			      } 
-			      
-			      if( value+extent == max  ) {
-			    	  
-			    	  searchGameScrollPane.getVerticalScrollBar().setValue(1);
-			    	  
-			    	  StatusObject<List<PreviewGame>> status = searchGamesDataNavigator.getNextData();
-			    	  
-			    	  if( status.statusCode == StatusCode.OK ) {
-			    		  
-			    		  if( status.element == null || status.element.size() == 0) {
-			    			  
-			    			  System.out.println("->[GraphicInterface] no more games.");
-			    			  return;
-			    		  }
-			    		  
-			    		  List<BufferedGame> gamesList = new ArrayList<BufferedGame>();
-			    		  
-			    		  for( int i=0; i < status.element.size(); i++ ) {
-			    			  
-			    			  PreviewGame game = status.element.get(i);
-			    			  String url = game.getPreviewPicURL();
-							  ImageIcon icon = logicHandler.getCachedImg(url).element;
-								
-								if( icon == null ) {
-									
-									String replacement = "media/crop/600/400/games"; 
-									String croppedUrl = null;
-									
-									try {
-										croppedUrl = url.replaceFirst("media/games", replacement); 
-										Image image = ImageIO.read(new URL(croppedUrl));
-										icon = new ImageIcon(image.getScaledInstance(209, 300, Image.SCALE_FAST));
-										
-										if(logicHandler.cacheImg(url, new ImageIcon(image)) == StatusCode.OK) {
-											
-											System.out.println("->[GraphicInterface] image " + url + " stored in cache");
-								     	}
-										
-									} catch(Exception ee) {
-										icon = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/defaultGamePicture.png")).getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
-									}
-									
-								} else {
-									
-									System.out.println("->[GraphicInterface] image " + url + " retrieved from cache.");
-									
-									icon = new ImageIcon(icon.getImage().getScaledInstance(209, 300, Image.SCALE_FAST));
-								}
-								
-							  gamesList.add(new BufferedGame(game.getId(),game.getTitle(),icon));  
-			    		  }
-			    		  
-			    		  fillSearchedGamesList(gamesList);
-			    		  
-			    	  } else{
-			    		  searchGamesVerticalScrollBar.addAdjustmentListener(searchGamesVerticalScrollBarListener);
-			    		  System.out.println("->[GraphicInterface] impossible to retrieve next games.");
-			    	  }
-			      }
-			      */
 		      }
 		};
 		searchGamesVerticalScrollBar = searchGameScrollPane.getVerticalScrollBar();
@@ -4590,7 +4468,7 @@ public class GraphicInterface {
 		vote1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 1).statusCode == StatusCode.OK ) {
+				if( logicHandler.vote(currentGame.getId().toString(), 1)) {
 					
 					System.out.println("->[GraphicInterface] vote 1 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4600,7 +4478,7 @@ public class GraphicInterface {
 					
 				} else {
 					
-					System.out.println("->[GraphicInterface] failed to assign vote 1 to " + currentGame.getTitle() + ".");           //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
+					System.out.println("->[GraphicInterface] failed to assign vote 1 to " + currentGame.getTitle() + ".");          
 					
 					assignedVoteLabel.setText("Vote Failed");
 					assignedVoteLabel.setVisible(true);
@@ -4627,7 +4505,7 @@ public class GraphicInterface {
 		vote2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 2).statusCode == StatusCode.OK ) {
+				if( logicHandler.vote(currentGame.getId().toString(), 2) ) {
 					
 					System.out.println("->[GraphicInterface] vote 2 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4636,7 +4514,7 @@ public class GraphicInterface {
 					
 				}else {
 					
-					System.out.println("->[GraphicInterface] failed to assign vote 2 to " + currentGame.getTitle() + ".");        //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
+					System.out.println("->[GraphicInterface] failed to assign vote 2 to " + currentGame.getTitle() + ".");        
 					
 					assignedVoteLabel.setText("Vote Failed");
 					assignedVoteLabel.setVisible(true);
@@ -4663,7 +4541,7 @@ public class GraphicInterface {
 		vote3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 3).statusCode == StatusCode.OK ) {                   //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
+				if( logicHandler.vote(currentGame.getId().toString(), 3) ) {                   
 					
 					System.out.println("->[GraphicInterface] vote 3 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4701,7 +4579,7 @@ public class GraphicInterface {
 		vote4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 4).statusCode == StatusCode.OK ) {               //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
+				if( logicHandler.vote(currentGame.getId().toString(), 4) ) {              
 					
 					System.out.println("->[GraphicInterface] vote 4 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4737,7 +4615,7 @@ public class GraphicInterface {
 		vote5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if( logicHandler.rateGame(currentGame.getId().toString(), 5).statusCode == StatusCode.OK ) {                //Riccardo: updated rateGame in modo da ritornare il vecchio voto come Long
+				if( logicHandler.vote(currentGame.getId().toString(), 5) ) {               
 					
 					System.out.println("->[GraphicInterface] vote 5 correctly assigned to " + currentGame.getTitle() + ".");
 					
@@ -4807,7 +4685,7 @@ public class GraphicInterface {
 		assignedVoteLabel.setForeground(Color.WHITE);
 		assignedVoteLabel.setFont(new Font("Corbel", Font.PLAIN, 17));
 		assignedVoteLabel.setAutoscrolls(true);
-		assignedVoteLabel.setBounds(774, 277, 73, 22);
+		assignedVoteLabel.setBounds(774, 277, 113, 22);
 		gamePanel.add(assignedVoteLabel);
 		
 		

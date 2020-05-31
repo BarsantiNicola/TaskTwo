@@ -1,0 +1,2 @@
+VOTE GAME ERROR: cannot assign vote 4 to game 1030 , error in Mongo db. Vote has already been submitted in Graph db.
+VOTE GAME ERROR: cannot assign vote 4 to game 2454 , error in Mongo db. Vote has already been submitted in Graph db.
