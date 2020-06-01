@@ -83,6 +83,8 @@ public class LogicBridge {
 	
 	public StatusObject<DataNavigator> searchGamesPreviews( String searchedString ){ return MONGO.searchGames( 12,searchedString ); }
 	
+	public StatusObject<DataNavigator> getGamesByGenre(String desiredGenre ){ return MONGO.getGamesByGenre( 12 , desiredGenre ); }
+
 	//////  SCRAPER & ADMIN INTERFACE
 	public StatusCode addGameDescription( int gameId , String description ) { return MONGO.addGameDescription( gameId , description);}
 	
@@ -200,7 +202,7 @@ public class LogicBridge {
 	
 	public StatusObject<Long> getGameFavouriteCount(String _id){ return GRAPH.getGameFavouriteCount(_id); }
 	
-	public StatusCode rateGame(String _id, int vote) { return GRAPH.rateGame(_id, vote); }
+	//public StatusObject<Long> rateGame(String _id, int vote) { return GRAPH.rateGame(_id, vote); }
 	
 	public StatusObject<List<GraphGame>> getFeaturedGamesList(int max){ return GRAPH.getFeaturedGamesList(max); }
 	
@@ -224,7 +226,7 @@ public class LogicBridge {
 		return CACHE.getCachedImg(URL);
 	}
 	
-	////////////// DELETE GAME and CLOSE CONNECTION
+	////////////// DELETE GAME, ADD VOTE and CLOSE CONNECTION
 	
 	public boolean deleteGame( String gameTitle ) {
 		
@@ -265,6 +267,49 @@ public class LogicBridge {
 			
 			return false;
 		}		
+		
+		return true;
+	}
+	
+	public boolean vote(String id, int vote) {
+		
+		StatusObject<Long> graphVoteStatus = GRAPH.rateGame(id, vote);
+		
+		if( graphVoteStatus.statusCode != StatusCode.OK ) {
+			
+			try {
+				FileWriter fw = new FileWriter("logs/errors.txt",true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write("VOTE GAME ERROR: cannot vote game " + id + " , error in Graph db. Vote has not been submitted in Mongo db.");
+				bw.newLine();
+				bw.close();
+			} catch( Exception e) {
+				
+				System.out.println("-->[LogicBridge] cannot vote " + id + " in Graph database. Failed to write into errors.txt file.");
+			}
+
+			return false;
+		}
+		
+		int oldVote = graphVoteStatus.element==null?-1:graphVoteStatus.element.intValue();
+		
+		StatusCode mongoVoteStatus =  MONGO.voteGame(Integer.parseInt(id), oldVote, vote);
+		
+		if( mongoVoteStatus != StatusCode.OK ) {
+			
+			try {
+				FileWriter fw = new FileWriter("logs/errors.txt",true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write("VOTE GAME ERROR: cannot assign vote " + vote + " to game " + id + " , error in Mongo db. Vote has already been submitted in Graph db.");
+				bw.newLine();
+				bw.close();
+			} catch( Exception e) {
+				
+				System.out.println("-->[LogicBridge] cannot vote " + id + " in Mongo database. Failed to write into errors.txt file.");
+			}
+			
+			return false;
+		}else { System.out.println("AAA");};
 		
 		return true;
 	}

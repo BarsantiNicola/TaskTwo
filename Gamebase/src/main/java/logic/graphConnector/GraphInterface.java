@@ -846,21 +846,24 @@ public interface GraphInterface
     public StatusObject<Long> getGameFavouriteCount(String _id);
     
     
-    /* DESCRIPTION: Sets or updates a game user rating
+    /* DESCRIPTION: Sets or updates a game user rating, returning the previous vote if present
      * 
      * ARGUMENTS:   - String _id:                  The "_id" of the game to be rated by the user
-     *              - int vote:                    The user game rating [1,5]
+     *              - int vote:                    The new user game rating [1,5]
      * 
      * CALLABLE BY: ALL connected users logged into the application 
-     *    
-     * RETURNS:     - OK:                          Game user rating correctly set or updated
-     *              - ERR_GRAPH_USER_NOTLOGGED:    The user is not logged into the application
-     *              - ERR_GRAPH_MISSINGARGUMENTS:  Not enough arguments to set/update the game user rating (missing game _id)
-     *              - ERR_GRAPH_GAME_VOTERANGE:    The game user rating is out of bounds [1,5]  
-     *              - ERR_GRAPH_USER_NOTEXISTS:    The user doesn't exist within the database (it was removed while it was logged in)
-     *              - ERR_GRAPH_GAME_NOTEXISTS:    The game doesn't exist within the database
+     *     
+     * RETURNS:     A StatusObject<Long> object composed of:
+     *              1) A StatusCode, representing the result of the operation:
+     *                 - OK:                          Game user rating correctly set or updated and previous vote returned (possibly null)
+     *                 - ERR_GRAPH_USER_NOTLOGGED:    The user is not logged into the application
+     *                 - ERR_GRAPH_MISSINGARGUMENTS:  Not enough arguments to set/update the game user rating (missing game _id)
+     *                 - ERR_GRAPH_GAME_VOTERANGE:    The game user rating is out of bounds [1,5]  
+     *                 - ERR_GRAPH_USER_NOTEXISTS:    The user doesn't exist within the database (it was removed while it was logged in)
+     *                 - ERR_GRAPH_GAME_NOTEXISTS:    The game doesn't exist within the database
+     *              2) A Long object representing the game's previous user vote (possibly null, and null if the operation failed)   
      */   
-    public StatusCode rateGame(String _id, int vote);
+    public StatusObject<Long> rateGame(String _id, int vote);
     
     
     /* DESCRIPTION: Returns a list of up to "max" featured games representing favourite suggestions for the current user, which are selected by retrieving on the 

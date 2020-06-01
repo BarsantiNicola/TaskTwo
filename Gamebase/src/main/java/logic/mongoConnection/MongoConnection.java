@@ -447,6 +447,12 @@ public class MongoConnection {
     	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection , nGames , NavType.PREVIEW_SEARCH , search ));
     	
     }
+    
+    public StatusObject<DataNavigator> getGamesByGenre( int nGames , String genre ){
+    	
+    	return new StatusObject<DataNavigator>( StatusCode.OK, new DataNavigator( gamesCollection, nGames , NavType.PREVIEW_GENRE , genre ));
+    }
+    
    
 	private StatusCode addressVerify( String ipAddr , int port ) {
 		
@@ -495,8 +501,22 @@ public class MongoConnection {
     	try {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
+<<<<<<< HEAD
     		client.incrementGameViews(3328);
     		client.voteGame(3328, 5, 4);
+=======
+    		DataNavigator games = client.getGamesByGenre(12, "Shooter").element;
+
+    		List<PreviewGame> list;
+    		if( games != null ) 
+    			for(int a = 0; a<10;a++) {
+    				list = games.getNextData().element;
+    				if( list != null )
+    					for( PreviewGame game : list )
+    						System.out.println(game.getTitle());
+    			}
+    			
+>>>>>>> adf44c1a316c5ed502b4d9bf82207659e1f573c8
     		client.closeConnection();
     		
     	}catch(Exception e) {
@@ -595,7 +615,7 @@ public class MongoConnection {
     	
     }
     
-    @SuppressWarnings({ "unused", "deprecation" })
+    @SuppressWarnings({ "unused"})
 	private void updateViewsCount() {
     	
     	MongoCursor<Game> games = this.gamesCollection.find().noCursorTimeout(true).iterator();

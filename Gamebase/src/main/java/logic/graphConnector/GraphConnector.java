@@ -1859,33 +1859,36 @@ public class GraphConnector implements GraphInterface,AutoCloseable
    }    
 
   
-  /* DESCRIPTION: Sets or updates a game user rating
+  /* DESCRIPTION: Sets or updates a game user rating, returning the previous vote if present
    * 
    * ARGUMENTS:   - String _id:                  The "_id" of the game to be rated by the user
-   *              - int vote:                    The user game rating [1,5]
+   *              - int vote:                    The new user game rating [1,5]
    * 
    * CALLABLE BY: ALL connected users logged into the application 
-   *    
-   * RETURNS:     - OK:                          Game user rating correctly set or updated
-   *              - ERR_GRAPH_USER_NOTLOGGED:    The user is not logged into the application
-   *              - ERR_GRAPH_MISSINGARGUMENTS:  Not enough arguments to set/update the game user rating (missing game _id)
-   *              - ERR_GRAPH_GAME_VOTERANGE:    The game user rating is out of bounds [1,5]  
-   *              - ERR_GRAPH_USER_NOTEXISTS:    The user doesn't exist within the database (it was removed while it was logged in)
-   *              - ERR_GRAPH_GAME_NOTEXISTS:    The game doesn't exist within the database
+   *     
+   * RETURNS:     A StatusObject<Long> object composed of:
+   *              1) A StatusCode, representing the result of the operation:
+   *                 - OK:                          Game user rating correctly set or updated and previous vote returned (possibly null)
+   *                 - ERR_GRAPH_USER_NOTLOGGED:    The user is not logged into the application
+   *                 - ERR_GRAPH_MISSINGARGUMENTS:  Not enough arguments to set/update the game user rating (missing game _id)
+   *                 - ERR_GRAPH_GAME_VOTERANGE:    The game user rating is out of bounds [1,5]  
+   *                 - ERR_GRAPH_USER_NOTEXISTS:    The user doesn't exist within the database (it was removed while it was logged in)
+   *                 - ERR_GRAPH_GAME_NOTEXISTS:    The game doesn't exist within the database
+   *              2) A Long object representing the game's previous user vote (possibly null, and null if the operation failed)   
    */   
-  public StatusCode rateGame(String _id, int vote)
+  public StatusObject<Long> rateGame(String _id, int vote)
    {
     //Check if the user is logged within the application
     if(_userType == UserType.NO_USER)
-     return StatusCode.ERR_GRAPH_USER_NOTLOGGED;    
+     return new StatusObject<Long>(StatusCode.ERR_GRAPH_USER_NOTLOGGED);    
     
     //Check whether we have enough arguments to set/update the game user rating (the game _id)
     if(_id==null)
-     return StatusCode.ERR_GRAPH_MISSINGARGUMENTS;
+     return new StatusObject<Long>(StatusCode.ERR_GRAPH_MISSINGARGUMENTS);  
     
     //Check the game user rating to be inbounds [1,5]
     if((vote<1)||(vote>5))
-     return StatusCode.ERR_GRAPH_GAME_VOTERANGE;
+     return new StatusObject<Long>(StatusCode.ERR_GRAPH_GAME_VOTERANGE);
     
     //Check if the game is in the local user favourite games list, and set/update its vote if so
     GraphGame favGame = searchGamesList(_id,_favouritesGamesList);
@@ -1904,7 +1907,7 @@ public class GraphConnector implements GraphInterface,AutoCloseable
     
       //Double-check that the user still exists within the database
       if(record.get("n").asObject()==null)
-       return StatusCode.ERR_GRAPH_USER_NOTEXISTS; 
+       return new StatusObject<Long>(StatusCode.ERR_GRAPH_USER_NOTEXISTS);
       
       //Check that the game exists within the database
       if(record.get("g").asObject()==null)
@@ -1912,47 +1915,56 @@ public class GraphConnector implements GraphInterface,AutoCloseable
         //If the game don't exist any longer but is in the user favourite games list, remove it
         if(favGame!=null)
          _favouritesGamesList.remove(favGame);
-        return StatusCode.ERR_GRAPH_GAME_NOTEXISTS;
+        return new StatusObject<Long>(StatusCode.ERR_GRAPH_GAME_NOTEXISTS);
        }
       
-      //If the user never rated such game, create the :RATE relationship with the appropriate vote attribute
+      //If the user never rated such game
       if(record.get("r").asObject()==null)
-       session.writeTransaction(new TransactionWork<Void>()
-        {
-         @Override
-         public Void execute(Transaction tx)
-          {
-           tx.run("MATCH (n {username: $username}),(g:game {_id: $_id})"+
-                  "CREATE (n)-[r:RATE]->(g)"                      +
-                  "SET r.vote = $vote", 
-                  parameters("username",_user.getUsername(),"_id",_id,"vote",vote));
-           return null;
-          }
-        } );
-      else   //Otherwise just update the "vote" attribute of the already existing relationship
-       session.writeTransaction(new TransactionWork<Void>()
-        {
-         @Override
-         public Void execute(Transaction tx)
-          {
-           tx.run("MATCH (n {username: $username})-[r:RATE]->(g:game {_id: $_id})"+
-                  "SET r.vote = $vote", 
-                  parameters("username",_user.getUsername(),"_id",_id,"vote",vote));
-           return null;
-          }
-        } );
-       
-      return StatusCode.OK;
+       {
+        //Create the :RATE relationship with the appropriate vote attribute
+        session.writeTransaction(new TransactionWork<Void>()
+         {
+          @Override
+          public Void execute(Transaction tx)
+           {
+            tx.run("MATCH (n {username: $username}),(g:game {_id: $_id})"+
+                   "CREATE (n)-[r:RATE]->(g)"                      +
+                   "SET r.vote = $vote", 
+                   parameters("username",_user.getUsername(),"_id",_id,"vote",vote));
+            return null;
+           }
+         } );
+        
+        //Return to the caller notifying that the user never rated such game before
+        return new StatusObject<Long>(StatusCode.OK,null);
+       }
+      else
+       {
+        //Otherwise just update the "vote" attribute of the already existing relationship
+        session.writeTransaction(new TransactionWork<Void>()
+         {
+          @Override
+          public Void execute(Transaction tx)
+           {
+            tx.run("MATCH (n {username: $username})-[r:RATE]->(g:game {_id: $_id})"+
+                   "SET r.vote = $vote", 
+                   parameters("username",_user.getUsername(),"_id",_id,"vote",vote));
+            return null;
+           }
+         } );
+        //Return the game previous user vote
+        return new StatusObject<Long>(StatusCode.OK,record.get("r.vote").asLong());
+       }
      }      
     catch(Exception e)
      {
       System.out.println("[GraphConnector]: Error in rateGame(): " + e.getMessage());
       System.out.println("[GraphConnector]: _id = " + _id + ", vote = " + vote);
-      return StatusCode.ERR_GRAPH_UNKNOWN;
+      return new StatusObject<Long>(StatusCode.ERR_GRAPH_UNKNOWN);
      }
    }     
-  
-  
+
+
   /* DESCRIPTION: Returns a list of up to "max" featured games representing favourite suggestions for the current user, which are selected by retrieving on the 
    *              first hand the games favourited by the users followed by the user in descending followedCount order, and on the second the most favourited 
    *              games in the application, again in descending followedCount order, where games already in the user favourite games list are filtered out

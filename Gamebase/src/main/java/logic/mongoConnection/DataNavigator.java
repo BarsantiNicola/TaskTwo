@@ -2,6 +2,7 @@ package logic.mongoConnection;
 
 import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Filters.regex;
+import static com.mongodb.client.model.Filters.eq;
 import java.util.ArrayList;
 import java.util.List;
 import org.bson.conversions.Bson;
@@ -21,6 +22,7 @@ public class DataNavigator{
 	private int position;
 	private final NavType queryType;
 	private final Bson like;
+	private final Bson genre;
 	private final Bson projection;
 	private final Bson idSort;
 	private final Bson ratingSort;
@@ -36,6 +38,7 @@ public class DataNavigator{
 		this.numGames = maxNumGames;
 		this.queryType = type;
 		this.position = 0;
+		this.genre = eq("genres" , search );
 		this.projection = Projections.include( "_id", "title", "background_image" );
 		this.idSort = Sorts.descending( "_id" );
 		this.ratingSort = Sorts.descending("rating");
@@ -85,7 +88,12 @@ public class DataNavigator{
 					while(games.hasNext())
 						previews.add(games.next().generatePreview());
 					break;
-	
+				case PREVIEW_GENRE:
+					games = data.find(genre).projection(projection).skip(position).limit(numGames).iterator();
+					position += numGames;
+					while(games.hasNext())
+						previews.add(games.next().generatePreview());
+					break;
 			}
 			
 			if( this.cache == null ) 
@@ -152,7 +160,12 @@ public class DataNavigator{
 					while(games.hasNext())
 						previews.add(games.next().generatePreview());
 					break;
-			
+				case PREVIEW_GENRE:
+					position -= numGames;
+					games = data.find(genre).projection(projection).skip(position).limit(numGames).iterator();
+					while(games.hasNext())
+						previews.add(games.next().generatePreview());
+					break;
 			}
 			
 			if( this.cache == null )
