@@ -501,22 +501,9 @@ public class MongoConnection {
     	try {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
-<<<<<<< HEAD
-    		client.incrementGameViews(3328);
-    		client.voteGame(3328, 5, 4);
-=======
-    		DataNavigator games = client.getGamesByGenre(12, "Shooter").element;
+    		client.voteGame(1030, -1, 4);
+    		client.voteGame(2454, -1, 4);
 
-    		List<PreviewGame> list;
-    		if( games != null ) 
-    			for(int a = 0; a<10;a++) {
-    				list = games.getNextData().element;
-    				if( list != null )
-    					for( PreviewGame game : list )
-    						System.out.println(game.getTitle());
-    			}
-    			
->>>>>>> adf44c1a316c5ed502b4d9bf82207659e1f573c8
     		client.closeConnection();
     		
     	}catch(Exception e) {
@@ -615,7 +602,7 @@ public class MongoConnection {
     	
     }
     
-    @SuppressWarnings({ "unused"})
+    @SuppressWarnings({ "unused", "deprecation"})
 	private void updateViewsCount() {
     	
     	MongoCursor<Game> games = this.gamesCollection.find().noCursorTimeout(true).iterator();
