@@ -37,6 +37,7 @@ import org.bson.conversions.Bson;
 import com.mongodb.client.model.Updates;
 import static com.mongodb.client.model.Filters.*;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -278,20 +279,21 @@ public class MongoConnection {
     		}
     		
     		Bson filter = eq( "_id" , gameId );  		
-    		List<Bson> updates = new ArrayList<Bson>();
     		Double setVote;
+    		Bson val;
     		
     		if( previousVote == -1 ){
     			
     			setVote = Double.parseDouble( new DecimalFormat( "0.0000" ).format(( game.getRating()*game.getRatingCount() + vote )/( game.getRatingCount()+1 )).replace( "," , "." ));
-    			updates.add(Updates.inc( "ratingCount" , 1 ));
-    			
-    		}else 
+    			val = new Document("ratingCount", game.getRatingCount()+1).append("rating", setVote);      
+
+    		}else {
     			setVote = Double.parseDouble( new DecimalFormat( "0.0000" ).format(( game.getRating()*game.getRatingCount() -previousVote+ vote )/( game.getRatingCount())).replace( "," , "." ));
+    			val = new Document("rating", setVote);      
+
+    		}
     		
-    		updates.add(Updates.set( "rating" , setVote));
-    		
-    		UpdateResult res = gamesCollection.updateOne( filter , updates );
+    		UpdateResult res = gamesCollection.updateOne( filter , new Document("$set", val));
     	
     		if( res.getMatchedCount() == 0 ){
     			
@@ -493,12 +495,8 @@ public class MongoConnection {
     	try {
 
     		MongoConnection client = new MongoConnection("172.16.0.80",27018);
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    		Game game = client.getGame(58175).element;
-
-    		if(game != null)
-    			System.out.println(gson.toJson(game));
-    			
+    		client.incrementGameViews(3328);
+    		client.voteGame(3328, 5, 4);
     		client.closeConnection();
     		
     	}catch(Exception e) {
