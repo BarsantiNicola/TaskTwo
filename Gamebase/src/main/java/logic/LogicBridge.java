@@ -300,7 +300,7 @@ public class LogicBridge {
 			try {
 				FileWriter fw = new FileWriter("logs/errors.txt",true);
 				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write("VOTE GAME ERROR: cannot assign vote " + vote + " to game " + id + " , error in Mongo db. Vote has already been submitted in Graph db.");
+				bw.write("VOTE GAME ERROR: cannot assign vote " + vote + " to game " + id + " , error in Mongo db. Old vote was " + oldVote + ".Vote has already been submitted in Graph db.");
 				bw.newLine();
 				bw.close();
 			} catch( Exception e) {
@@ -309,7 +309,7 @@ public class LogicBridge {
 			}
 			
 			return false;
-		}else { System.out.println("AAA");};
+		}
 		
 		return true;
 	}

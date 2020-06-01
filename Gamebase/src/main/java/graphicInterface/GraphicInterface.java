@@ -811,6 +811,12 @@ public class GraphicInterface {
 			releaseDateLabel.setText("Release Date: " + Integer.toString(releaseDate.getDate())+"/"+Integer.toString(releaseDate.getMonth()) +"/"+Integer.toString(releaseDate.getYear()));
 		}
 		
+		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
+			System.out.println("->[GraphicInterface] error while incrementing view count.");
+		} else {
+			System.out.println("->[GraphicInterface] increment view count performed.");
+		}
+		
 		Integer viewsCount = game.getViewsCount();
 		
 		if( viewsCount == null ) {
@@ -991,12 +997,7 @@ public class GraphicInterface {
 			videoPlayer.initializeVideoPlayerPanel(null);
 			videoPlayer.playVideo();
 		}
-		
-		if( logicHandler.incrementGameViews(game.getId()) != StatusCode.OK ) {
-			System.out.println("->[GraphicInterface] error while incrementing view count.");
-		} else {
-			System.out.println("->[GraphicInterface] increment view count performed.");
-		}
+	
 	}
 	
 	private void cleanGamePage() {
