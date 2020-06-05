@@ -460,8 +460,9 @@ public class GraphicInterface {
 						}
 						
 						System.out.println("->[GraphicInterface] unfollow procedure terminated correctly.");
-						usersTableModel.setValueAt("x", modelRow, 1);
-				    	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+						//usersTableModel.setValueAt("x", modelRow, 1);
+				  //  	usersTableModel.setValueAt("FOLLOW", modelRow, 2);
+						   usersTableModel.setValueAt("FOLLOW", modelRow, 8);          //Add
 				    	userGamesListModel.removeAllElements();
 				    	displayedUserLabel.setText("Currently Displayed: no games");
 					} else { //I don't follow the user so I may follow him/her
@@ -472,8 +473,9 @@ public class GraphicInterface {
 						}
 						
 						System.out.println("->[GraphicInterface] follow procedure terminated correctly.");
-						usersTableModel.setValueAt("SEE GAMES", modelRow, 1);
-						usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
+						usersTableModel.setValueAt("UNFOLLOW", modelRow, 8);          //Add
+				//		usersTableModel.setValueAt("SEE GAMES", modelRow, 1);
+				//		usersTableModel.setValueAt("UNFOLLOW", modelRow, 2);
 					}
 				} else {
 					

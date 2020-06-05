@@ -1267,12 +1267,17 @@ public class GraphConnector implements GraphInterface,AutoCloseable
     if(max<=0)
      return new StatusObject<List<User>>(StatusCode.ERR_GRAPH_NOTPOSITIVELIMIT);  
     
+    /* Returning the local suggested users list has been disabled due to the fact that if a user follows and then unfollows 
+       a suggested user, that suggested user won't appear again in the list until the current user relaunches the application
+   
     //If the local suggested users list has at least "max" elements, return it directly
     if((_suggestedUsersList!=null)&&(_suggestedUsersList.size()>=max))
      {
       _suggestedUsersList = _suggestedUsersList.subList(0,max);
       return new StatusObject<List<User>>(StatusCode.OK,_suggestedUsersList);
      }
+    
+    */
     
     //Otherwise, fetch the users following suggestions from the database
     try(Session session = driver.session())
