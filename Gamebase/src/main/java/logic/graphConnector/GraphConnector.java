@@ -407,16 +407,22 @@ public class GraphConnector implements GraphInterface,AutoCloseable
               return new StatusObject<UserInfo>(StatusCode.ERR_GRAPH_USER_UNKNOWNTYPE);
            
            //Initialize the user variable attributes
-           _user.setFirstName(record.get("n.firstName").asString());
-           _user.setLastName(record.get("n.lastName").asString());
+           if((record.get("n.firstName").asObject() != null))
+            _user.setFirstName(record.get("n.firstName").asString());
+           if((record.get("n.lastName").asObject() != null))
+            _user.setLastName(record.get("n.lastName").asString());
            if((record.get("n.age").asObject() != null))
             _user.setAge(new Long(record.get("n.age").asLong()));
+           if((record.get("n.email").asObject() != null))
            _user.setEmail(record.get("n.email").asString());
            if((record.get("n.gender").asObject() != null))
             _user.setGender(new Character(record.get("n.gender").asString().charAt(0)));
+           if((record.get("n.country").asObject() != null))
            _user.setCountry(record.get("n.country").asString());
-           _user.setFavouriteGenre(record.get("n.favouriteGenre").asString());
-           _user.setFollowedCount(record.get("n.followedCount").asLong());    
+           if((record.get("n.favouriteGenre").asObject() != null))
+            _user.setFavouriteGenre(record.get("n.favouriteGenre").asString());
+           if((record.get("n.followedCount").asObject() != null))                 //Technically not required
+            _user.setFollowedCount(record.get("n.followedCount").asLong());    
           
            //Load the user followed users and favourite games lists
            loadFollowedUsersList(session);

@@ -212,6 +212,7 @@ public class GraphicInterface {
 	private JMenuBar genreMenuBar;
 	private JMenuItem femaleMenuItem;
 	private JMenuItem maleMenuItem;
+	private JMenuItem noGenderMenuItem;
 	private JMenu genderMenu;
 	private JMenuBar genderMenuBar;
 	private JTextField emailTextField;
@@ -1373,17 +1374,30 @@ public class GraphicInterface {
 		Character gender = currentUser.getGender();
 		String currentCountry = currentUser.getCountry();
 		
+		ageTextField.setText(currentAge!=null?currentAge:"-");
+  nameTextField.setText(currentName!=null?currentName:"-");
+  surnameTextfield.setText(currentSurname!=null?currentSurname:"-");
+  emailTextField.setText(currentEmail!=null?currentEmail:"-");
+  countryTextField.setText(currentCountry!=null?currentCountry:"-");
+    
+		/* Old
 		ageTextField.setText("Current: " + (currentAge!=null?currentAge:"null"));
 		nameTextField.setText("Current: " + (currentName!=null?currentName:"null"));
 		surnameTextfield.setText("Current: " + (currentSurname!=null?currentSurname:"null"));
 		emailTextField.setText("Current: " + (currentEmail!=null?currentEmail:"null"));
 		countryTextField.setText("Current: " + (currentCountry!=null?currentCountry:"null"));
 		
+		
 		if( gender == null || gender.equals('M') ) {
 			genderMenu.setText("M");
 		} else if( gender.equals('F') ) {
 			genderMenu.setText("F");
-		}
+		}*/
+  
+  if(gender==null)
+   genderMenu.setText("-");
+  else
+   genderMenu.setText(gender.toString());
 		
 		StatusObject<List<String>> genresStatus = logicHandler.getGenres();
 		
@@ -1391,9 +1405,29 @@ public class GraphicInterface {
 			
 			List<String> genres = genresStatus.element;
 			
+			
+			
+	  genreMenu.setText("-");  //Patch to prevent the same genre to be carried out between multiple users login
+			
+	  //Add the empty choice "-" to the genreMenu
+	  JMenuItem emptyItem = new JMenuItem("-");
+	  emptyItem.setFont(new Font("Corbel", Font.BOLD, 15));
+	  emptyItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	  emptyItem.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent arg0) {
+     
+     genreMenu.setText("-");
+    }
+   });
+   genreMenu.add(emptyItem);  
+   
 			for( int i = 0; i < genres.size(); i++ ) {
 				
 				final String genre = genres.get(i);
+				
+				if(genre==null)                          //Patch to prevent the first empty element
+				 continue;
+				
 				JMenuItem item = new JMenuItem(genre);
 				item.setFont(new Font("Corbel", Font.BOLD, 15));
 				item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -1403,7 +1437,7 @@ public class GraphicInterface {
 						genreMenu.setText(genre);
 					}
 				});
-				genreMenu.add(item);
+				genreMenu.add(item);		
 				
 				if( currentFavouriteGenre != null && currentFavouriteGenre.equals(genre) ) {
 					genreMenu.setText(genre);
@@ -4940,6 +4974,7 @@ public class GraphicInterface {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				
+			 if(ageTextField.getText().equals("-"))
 				ageTextField.setText("");
 			}
 		});
@@ -4970,15 +5005,59 @@ public class GraphicInterface {
 				String email = emailTextField.getText();
 				String country = countryTextField.getText();
 				
-				if( !ageString.equals("") && !ageString.startsWith("Current")) {
-					try {
+				/*
+				if(!ageString.equals("-")) {
+				 try {
 						age = Long.parseLong(ageString);
 						currentUser.setAge(age);
 					} catch (Exception e) {
 						System.out.println("->[GraphicInterface] Error in parsing age. Age not updated.");
 					}
-				}
+				}*/
 				
+				if(ageString.equals("-")||ageString.equals("")||ageString.equalsIgnoreCase("null"))
+				 currentUser.setAge(null);
+				else
+				 try
+				  {
+				   age = Long.parseLong(ageString);
+				   currentUser.setAge(age); 
+				  }
+				 catch(NumberFormatException e)
+				  { System.out.println("->[GraphicInterface] Error in parsing age. Age not updated."); }
+				
+				if(name.equals("-")||name.equals("")||name.equalsIgnoreCase("null"))
+     currentUser.setFirstName(null);
+				else
+				 currentUser.setFirstName(name);
+    
+				if(surname.equals("-")||surname.equals("")||surname.equalsIgnoreCase("null"))
+     currentUser.setLastName(null);
+    else
+     currentUser.setLastName(surname);
+    
+				if(gender.equals("-"))
+				 currentUser.setGender(null);
+				else
+				 currentUser.setGender(gender.charAt(0));
+
+				
+    if(genre.equals("-")) 
+     currentUser.setFavouriteGenre(null);
+    else
+     currentUser.setFavouriteGenre(genre);
+    
+    if(email.equals("-")||email.equals("")||email.equalsIgnoreCase("null"))
+     currentUser.setEmail(null);
+    else
+     currentUser.setEmail(email);
+    
+    if(country.equals("-")||country.equals("")||country.equalsIgnoreCase("null"))
+     currentUser.setCountry(null);
+    else
+     currentUser.setCountry(country);
+    
+				/* OLD
 				if( !name.equals("") && !name.startsWith("Current") ) {
 					currentUser.setFirstName(name);
 				}
@@ -5002,9 +5081,12 @@ public class GraphicInterface {
 				if( !country.equals("") && !country.startsWith("Current") ) {
 					currentUser.setCountry(country);
 				}
+				*/
+				
 				
 				if( logicHandler.saveUser() == StatusCode.OK ) {
 					
+				 genreMenu.removeAll();                            //Required
 					initializeUserInformationPage();
 				} else {
 					
@@ -5022,6 +5104,7 @@ public class GraphicInterface {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
+			 if(nameTextField.getText().equals("-"))
 				nameTextField.setText("");
 			}
 		});
@@ -5037,7 +5120,8 @@ public class GraphicInterface {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-				nameTextField.setText("");
+			 if(surnameTextfield.getText().equals("-"))
+			 surnameTextfield.setText("");
 			}
 		});
 		surnameTextfield.setFont(new Font("Corbel", Font.ITALIC, 15));
@@ -5065,6 +5149,17 @@ public class GraphicInterface {
 		genderMenu.setName("genderMenu");
 		genderMenuBar.add(genderMenu);
 		
+		noGenderMenuItem = new JMenuItem("-");
+		noGenderMenuItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		noGenderMenuItem.setFont(new Font("Corbel", Font.BOLD, 15));
+		noGenderMenuItem.addActionListener(new ActionListener() {
+   public void actionPerformed(ActionEvent e) {
+    genderMenu.setText("-");
+   }
+  });
+		noGenderMenuItem.setName("noGenderMenuItem");
+  genderMenu.add(noGenderMenuItem);
+  
 		maleMenuItem = new JMenuItem("Male");
 		maleMenuItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		maleMenuItem.setFont(new Font("Corbel", Font.BOLD, 15));
@@ -5133,6 +5228,14 @@ public class GraphicInterface {
 		userInformationPanel.add(homeUserInformationButton);
 		
 		emailTextField = new JTextField();
+		emailTextField.addMouseListener(new MouseAdapter() {
+   @Override
+   public void mouseClicked(MouseEvent e) {
+    
+    if(emailTextField.getText().equals("-"))
+    emailTextField.setText("");
+   }
+  });
 		emailTextField.setText("E-Mail");
 		emailTextField.setName("emailTextField");
 		emailTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
@@ -5141,6 +5244,14 @@ public class GraphicInterface {
 		userInformationPanel.add(emailTextField);
 		
 		countryTextField = new JTextField();
+	 countryTextField.addMouseListener(new MouseAdapter() {
+   @Override
+   public void mouseClicked(MouseEvent e) {
+    
+    if(countryTextField.getText().equals("-"))
+     countryTextField.setText("");
+   }
+  });
 		countryTextField.setFont(new Font("Corbel", Font.ITALIC, 15));
 		countryTextField.setName("countryTextField");
 		countryTextField.setText("Country");
