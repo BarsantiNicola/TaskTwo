@@ -22,7 +22,7 @@ public class WebScraping {
 	//Scrape 10 new games from rawg, starting from the id subsequent the max game id in the database. 
 	//Games are scraped in json form and need to be converted into Game class.
 	public static Game searchNewGames(int MaxGameID) { 
-		System.out.println("--->[WebScraping][scrapeNewGames] Search for new games");
+		System.out.println("--->[WebScraping][searchNewGames] Search for new games");
 		JSONObject newGame = new JSONObject(); 
 		
 		boolean suitableGame = false;
@@ -33,31 +33,31 @@ public class WebScraping {
 			try {
 			TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
-				System.out.println("--->[WebScraping][scrapeNewGames] Error: sleep() function failed");
+				System.out.println("--->[WebScraping][searchNewGames] Error: sleep() function failed");
 			}
 			if (failed == 100){
-				System.out.println("--->[WebScraping][scrapeNewGames] More than 100 attempts failed. Stopping the search for new games...");
+				System.out.println("--->[WebScraping][searchNewGames] More than 100 attempts failed. Stopping the search for new games...");
 				return null;
 			}
 			
-			System.out.println("--->[WebScraping][scrapeNewGames] Search for new game: ID=" + MaxGameID);
+			System.out.println("--->[WebScraping][searchNewGames] Search for new game: ID=" + MaxGameID);
 			newGame = scrapeNewGame(MaxGameID);
-			System.out.println("--->[WebScraping][scrapeNewGames] New game obtained");
+			System.out.println("--->[WebScraping][searchNewGames] New game obtained");
 			MaxGameID++;
 			
 			//Check if the new game is suitable
 			if(!newGame.has("id") || !newGame.has("name")) {
-				System.out.println("--->[WebScraping][scrapeNewGames] Game not suitable");
+				System.out.println("--->[WebScraping][searchNewGames] Game not suitable");
 				failed ++;
 				continue;
 			}
 			
-			System.out.println("--->[WebScraping][scrapeNewGames] Game suitable");
+			System.out.println("--->[WebScraping][searchNewGames] Game suitable");
 			suitableGame = true;
 		}
 		
 		//Create object Game
-		System.out.println("--->[WebScraping][scrapeNewGames] Creating object Game for new game");
+		System.out.println("--->[WebScraping][searchNewGames] Creating object Game for new game");
 		Game gameToAdd = util.initializeGameToAdd(newGame);		
 		
 		//Return list of games to add
@@ -75,18 +75,18 @@ public class WebScraping {
 		JSONObject newGame = new JSONObject();
 			
 		try {
-	           System.out.println("--->[WebScraping][searchNewGame] Sending Http GET request for new game. ID:" + ID_GAME);
+	           System.out.println("--->[WebScraping][scrapeNewGame] Sending Http GET request for new game. ID:" + ID_GAME);
 	           try {
 				newGame = objRequest.sendGetNewGame(ID_GAME);
 	           } catch (Exception e) {
-	        	   System.out.println("--->[WebScraping][searchNewGamel] Something went wrong in sending http request");
+	        	   System.out.println("--->[WebScraping][scrapeNewGame] Something went wrong in sending http request");
 				}
 
 	        } finally {
 	            try {
 					objRequest.close();
 				} catch (IOException e) {
-					System.out.println("--->[WebScraping][searchNewGamel] Something went wrong in closing http request");
+					System.out.println("--->[WebScraping][scrapeNewGame] Something went wrong in closing http request");
 				}
 	        }	
 		
@@ -123,7 +123,7 @@ public class WebScraping {
 	}
 	
 
-
+/*
  //GAME DESCRIPTION SCRAPING BRUTEFORCE
 	///*
  public static void addDescriptionToAllGames(MongoConnection MONGO) throws Exception
@@ -147,14 +147,15 @@ public class WebScraping {
     { System.out.println("[Logic Bridge Main]: Error in addDescriptionToAllGames(): " + e.getMessage()); }
    logicBridge.closeConnection();
   }
- //*/
+ //*/ 
 	
- /*
-
+ 
+	/*
 	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
-		 scrapeNewGames(99999999);
+		 searchNewGames(99999999);
 
 	 }
 	 */
+
 }
