@@ -286,7 +286,7 @@ public class util {
 		
 	
 	
-	//Create GraphGame consistent with the new game just scraped
+	//Create GraphGame consistent with a new game 
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
 		System.out.println("-->[util][initializeGraphGameToAdd] Initializing GraphGame for game: " + gameToAdd.getTitle());
 			

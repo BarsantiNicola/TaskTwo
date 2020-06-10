@@ -21,20 +21,14 @@ public class WebScraping {
 
 	//Scrape 10 new games from rawg, starting from the id subsequent the max game id in the database. 
 	//Games are scraped in json form and need to be converted into Game class.
-	public static List<Game> scrapeNewGames(int MaxGameID) { 
-		System.out.println("--->[WebScraping] Starting...");
-		if (MaxGameID == 0) {
-			System.out.println("--->[WebScraping][scrapeNewGames] MaxGameID value is not accettable");
-			System.out.println("--->[WebScraping][scrapeNewGames] UpdateDatabase can't be executed. Returning.");
-			return null;
-		}
+	public static Game searchNewGames(int MaxGameID) { 
 		System.out.println("--->[WebScraping][scrapeNewGames] Search for new games");
-		List<JSONObject> newGames = new ArrayList<JSONObject>(); 
-		List<Game> gamesToAdd = new ArrayList<Game>();
+		JSONObject newGame = new JSONObject(); 
 		
-		int i = 0;
+		boolean suitableGame = false;
 		int failed=0;
-		while (i < 10) {
+		while (!suitableGame) {
+			
 			//Wait 3 seconds after each request, for polite scraping
 			try {
 			TimeUnit.SECONDS.sleep(3);
@@ -43,46 +37,38 @@ public class WebScraping {
 			}
 			if (failed == 100){
 				System.out.println("--->[WebScraping][scrapeNewGames] More than 100 attempts failed. Stopping the search for new games...");
-				break;
+				return null;
 			}
+			
 			System.out.println("--->[WebScraping][scrapeNewGames] Search for new game: ID=" + MaxGameID);
-			JSONObject newGame = searchNewGame(MaxGameID);
+			newGame = scrapeNewGame(MaxGameID);
 			System.out.println("--->[WebScraping][scrapeNewGames] New game obtained");
 			MaxGameID++;
+			
+			//Check if the new game is suitable
 			if(!newGame.has("id") || !newGame.has("name")) {
 				System.out.println("--->[WebScraping][scrapeNewGames] Game not suitable");
 				failed ++;
 				continue;
 			}
-			i++;
-			System.out.println("--->[WebScraping][scrapeNewGames] Game suitable");
-			newGames.add(newGame);
-		}
-		
-		System.out.println("--->[WebScraping][scrapeNewGames] New games list:"+ newGames.size());
-		
-		//The empty list case is handled in the calling function
-		if (newGames.isEmpty()) {
-			return gamesToAdd;
-		}
-		
-		//Create list of objects Game
-		System.out.println("--->[WebScraping][scrapeNewGames] Creating objects Game for new games");
-		for(int k = 0; k < newGames.size(); k++) {
 			
-			Game gameToAdd = util.initializeGameToAdd(newGames.get(k));	
-			gamesToAdd.add(gameToAdd);
-		}		
+			System.out.println("--->[WebScraping][scrapeNewGames] Game suitable");
+			suitableGame = true;
+		}
+		
+		//Create object Game
+		System.out.println("--->[WebScraping][scrapeNewGames] Creating object Game for new game");
+		Game gameToAdd = util.initializeGameToAdd(newGame);		
 		
 		//Return list of games to add
-		return gamesToAdd;
+		return gameToAdd;
 	}
 	
 	
 	
 
 	//Scrape new game using id
-	public static JSONObject searchNewGame(int ID_GAME) {
+	public static JSONObject scrapeNewGame(int ID_GAME) {
 		
 		//Create http object for request
 		HttpClient objRequest = new HttpClient();
@@ -108,7 +94,7 @@ public class WebScraping {
 	}
 	
 
-	//Get description of a given Game (Needs Game_id)
+	//Get description of a given Game (Needs Game id)
 	public static String getGameDescription(int GAME_ID ) { 
 		System.out.println("--->[WebScraping][getGameDescription] Getting Description for game_id = " + GAME_ID);
 		
@@ -162,49 +148,6 @@ public class WebScraping {
    logicBridge.closeConnection();
   }
  //*/
-  
- //OLD GAME DESCRIPTION SCRAPING (Federico)
-	/*
- //OLD Scraping (Federico) 
- public void addDescriptionToAllGames() 
-  {
-   int MaxGameId= MONGO.getMaxGameId().element;
-   int i = 0;
-   while (i < MaxGameId) 
-    {
-     i++;
-     try 
-      { TimeUnit.MILLISECONDS.sleep(10); } 
-     catch (InterruptedException e) 
-      { System.out.println("--->[] Error: sleep() function failed"); }
-   
-   String description = getGameDescription(i);
-   System.out.println("Adding description for game: " + i);
-   StatusCode addDescriptionStatus = addGameDescription(i, description); 
-   
-   if(addDescriptionStatus == StatusCode.ERR_NETWORK_UNREACHABLE) 
-   {
-    System.out.println("-->[] Network Unreachable. Exit after game: " + i);
-    break;
-   }
-  }
-  MONGO.closeConnection();
- }
- 
-  public static void main(String[] args) throws Exception 
-   {
-   LogicBridge logicBridge = new LogicBridge();
-   System.out.println(logicBridge.MONGO.getMaxGameId().element);
-   try 
-    { logicBridge.addDescriptionToAllGames(); } 
-   catch (Exception e)
-    { 
-     System.out.println("[Logic Bridge Main]: Error in addDescriptionToAllGames(): " + e.getMessage());
-    }
-   logicBridge.closeConnection();
-   }
-  }
- */
 	
  /*
 
