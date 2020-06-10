@@ -301,13 +301,6 @@ public class MongoConnection {
     			return StatusCode.ERR_DOCUMENT_GAME_NOT_FOUND;
     			
     		}
-    	
-    		if( res.getModifiedCount() == 0 ) {
-    			
-    			System.out.println( "---> [MongoConnector][VoteGame] Error, game not modified, the game has already a description" );
-    			return StatusCode.ERR_DOCUMENT_UNKNOWN;
-    			
-    		}
     		
     		return StatusCode.OK;
     		
