@@ -1,0 +1,22 @@
+DEBUG[23/5]
+
+MAIN FIXES
+
+- [MAIN PAGE] scrollbar Followed Users non centrata
+- [GAME PAGE] voto non legato a utente, posso votare quante volte mi pare un gioco con un utente e viola quindi consistenza graph/mongo
+- [GAME PAGE] il voto è problema di consistenza tra i database[OPERAZIONE CHE COINVOLGE DUE DATABASE CHE POSSONO FALLIRE NON GESTITA]
+
+- [USER PAGE] scrollbar degli users non centrata
+
+- [STATS PAGE] in Top Games i nomi dei giochi vengono tagliati ---> non ci posso fare molto, è una libreria che ho importato e modificato per trasformarla in pannello e adattarla ai dati, modificare il grafico in se richiede molto molto molto molto molto molto tempo. Per ovviare all'inconveniente c'è la legenda sotto
+
+
+OPTIONAL FIXES[se non prendono troppo tempo]
+
+- stacco delle immagini dal titolo un pò bruttino
+[potrebbe essere impostato un background sul titolo e renderlo della larghezza dell'immagine in modo da coprire lo stacco]
+
+- immagine di background al posto della tinta unita
+[in javafx bastava un comando per metterlo, posso fare io l'immagine io da inserirci]
+
+

@@ -1,0 +1,21 @@
+{
+"_id":
+"title":
+"viewsCount":
+"rating":
+"ratingCount":
+"metacritic":
+"description":
+"releaseDate":{"$date":}
+"background_image":
+"favouritesCount":
+"genres":
+"subgenres":[
+"multimedia":{
+	"images":[],
+	"videos":[]
+},
+"releases":[],
+"sales":[{"company":,"saleUrl":,"store":}]
+
+}

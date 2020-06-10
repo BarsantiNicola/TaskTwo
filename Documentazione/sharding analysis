@@ -1,8 +1,0 @@
-
-SHARD-KEY
-I possibili candidati per una shard key sono
-	_id
-	genres
-	year
-Tuttavia abbiamo statistiche basate sui generi e sull'anno, utilizzare una shard key basata sul genere ridurebbe la parellizzazione di queste ultime, il miglior approccio individuato è applicare lo sharding attraverso un hashing del campo _id, questo porta alla suddivisione dei documenti tra gli shard come mostrato in figura. Avere uno shard3 di dimensione minore nel nostro caso risulta un ottima cosa in quanto lo shard3 è realizzato tramite una seconda istanza di mongod all'interno di tre server(un mongod per il configServer un secondo mongod come shardServer), per cui avere un numero minore di documenti riduce il carico su quella macchina che è già sovracaricata mentre negli altri due server abbiamo un numero di documenti simile.
-
