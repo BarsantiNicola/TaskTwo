@@ -105,17 +105,28 @@ public class GraphUnitTest
      /* deleteUser()
      //The User 1 (adri) is supposed to be registered in the application as an administrator 
      User brad = new User("brad","bradPassword",null,null,null,null,null,new Character('M'),"United States","Platform",null); //User 2 (some attributes)
-     graph.register(brad);                                    //Register as User 2
-     graph.login("brad","bradPassword");                      //Login as User 2 (fallback)
-     System.out.println(graph.deleteUser("brad"));            //NOTALLOWED removal attempt
-     graph.logout();                                          //Logout as User 2
+     GraphGame game1 = new GraphGame("0","mario","https://marioImage.png");    //Game 1  
+     GraphGame game2 = new GraphGame("1","luigi","https://luigiImage.png");    //Game 2    
      
-     System.out.println(graph.deleteUser("brad"));            //NOTLOGGED removal attempt
-     System.out.println(graph.login("adri","adriPassword"));  //Login as User 1 (administrator)
+     graph.login("adri","adriPassword");
+     System.out.println(graph.addGame(game1));      //Add some games to the database
+     System.out.println(graph.addGame(game2));
+     graph.addToFavourites("0");                    //Add one game to favourites
+     graph.logout();                                //Logout as administrator
+     
+     graph.register(brad);                          //Register user 2
+     System.out.println(graph.deleteUser("brad"));  //NOT ALLOWED removal attempt
+     graph.addToFavourites("0");                    //Add both games to favourites
+     graph.addToFavourites("1");                   
+     graph.logout();
+     
+     graph.login("adri","adriPassword");           //Relog as administrator
      System.out.println("StandardUsers = " + graph.getStandardUsersCount() + ", Analysts = " + graph.getAnalystsCount() + ", Administrators = " + graph.getAdministratorsCount() + ", Total = " + graph.getTotalUsersCount());
-     System.out.println(graph.deleteUser("brad"));            //Delete User 2
-     System.out.println("StandardUsers = " + graph.getStandardUsersCount() + ", Analysts = " + graph.getAnalystsCount() + ", Administrators = " + graph.getAdministratorsCount() + ", Total = " + graph.getTotalUsersCount());
-     */
+     System.out.println(graph.deleteUser("brad")); //Delete brad
+     System.out.println("StandardUsers = " + graph.getStandardUsersCount().element + ", Analysts = " + graph.getAnalystsCount().element + ", Administrators = " + graph.getAdministratorsCount().element + ", Total = " + graph.getTotalUsersCount().element);
+     System.out.println(graph.deleteUser("brad")); //Attempt to re-delete brad
+     System.out.println("StandardUsers = " + graph.getStandardUsersCount().element + ", Analysts = " + graph.getAnalystsCount().element + ", Administrators = " + graph.getAdministratorsCount().element + ", Total = " + graph.getTotalUsersCount().element);
+     */ 
     
      
      /* upgradeToAnalyst()

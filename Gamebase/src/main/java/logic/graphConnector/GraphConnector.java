@@ -821,7 +821,31 @@ public class GraphConnector implements GraphInterface,AutoCloseable
        return StatusCode.ERR_GRAPH_USER_NOTEXISTS;
       else
         {        
-         String userType = record.get("labels(n)").asList().get(0).toString();  //Retrieve the UserType of the user
+         //Decrement the favouriteCount of the games in the user's favourite list for consistency
+         StatusObject<List<GraphGame>>  userFavouriteGamesList = getFavouritesGamesList(username);
+         
+         //If retrieving the user favourite games list failed for any reason, abort and return such error
+         if(userFavouriteGamesList.statusCode != StatusCode.OK)    
+          return userFavouriteGamesList.statusCode;
+         else
+          {
+           //Otherwise, decrement the favouriteCount of the games in the user's favourite list
+           for(GraphGame game : userFavouriteGamesList.element)
+            session.writeTransaction(new TransactionWork<Void>()
+             {
+              @Override
+              public Void execute(Transaction tx)
+               {
+                tx.run("MATCH (g:game {_id: $_id})"    +   
+                       "SET g.favouriteCount = g.favouriteCount-1", 
+                       parameters("_id",game._id));
+                return null;
+               }
+            } );
+          } 
+         
+         //Retrieve the user's UserType
+         String userType = record.get("labels(n)").asList().get(0).toString();
         
          //Delete the user from the database
          session.writeTransaction(new TransactionWork<Void>()
@@ -1729,7 +1753,7 @@ public class GraphConnector implements GraphInterface,AutoCloseable
    * 
    * ARGUMENTS:   - String username:                The username of the target user whose favourite games list is to be retrieved
    * 
-   * CALLABLE BY: ALL connected users logged into the application (even if non-administrators may retrieve only their own and their followed users favourite games lists
+   * CALLABLE BY: ALL connected users logged into the application (even if non-administrators may retrieve only their own and their followed users favourite games lists)
    *
    * RETURNS:     A StatusObject<List<GraphGame>> object composed of:
    *              1) A StatusCode, representing the result of the operation:
