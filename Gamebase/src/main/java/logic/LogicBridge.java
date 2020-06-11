@@ -140,7 +140,7 @@ public class LogicBridge {
 		for (int i = 0; i < 10 ; i++) {
 			Game gameToAdd = WebScraping.searchNewGames(MaxGameId + 1); 
 			if (gameToAdd == null) {
-				System.out.println("-->[LogicBridge][updateDatabase] A situable game was not found. Interrupting update.");
+				System.out.println("-->[LogicBridge][updateDatabase] A suitable game was not found. Interrupting update.");
 				return false;
 			}
 			if (!addGameToDatabase(gameToAdd)) {
