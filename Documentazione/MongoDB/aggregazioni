@@ -1,0 +1,148 @@
+
+
+----------- getRatingsCountByGen
+
+[mongoDb query]
+db.games.aggregate([
+	{
+		$group: { 
+			_id: "$genres",
+			count: { $sum : "$ratingCount" }
+		}
+	},{
+		$sort: { _id:-1}
+	}
+])
+
+
+[java]
+
+BasicDBObject group_id = new BasicDBObject("_id", "$genres" );
+BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , "$ratingCount"));
+BasicDBObject group = new BasicDBObject("$group", groupFields);
+BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+HashMap<String,Integer> result = new HashMap<>();
+MongoCursor<Document> res = null;
+Document data;
+		
+	try {
+
+		res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
+
+
+
+----------- getRatingsCountByYearGen
+
+[mongoDb query]
+db.games.aggregate([
+	{
+		$group: { 
+			_id: {
+				year: {
+					$year:"$releaseDate"
+				},
+				generes : "$genres"
+			},
+			count: { $sum : "$ratingCount"}
+		}
+	},{
+		$sort: { _id:-1 }
+	}
+])
+
+[java]	    
+BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
+BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
+BasicDBObject group = new BasicDBObject("$group", groupFields);
+BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+	  	 
+HashMap<Integer,HashMap<String,Integer>> result = new HashMap<>();
+HashMap<String,Integer> genresGames;
+		
+MongoCursor<Document> res = null;
+Document data;
+DateFormat df1 = new SimpleDateFormat("yyyy");
+Integer year= null;
+		
+try {
+
+	res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
+
+
+
+----------- getGamesCountByYearGen
+
+[mongoDb query]
+db.games.aggregate([
+	{
+		$group: { 
+			_id: {
+				year: {
+					$year:"$releaseDate"
+				},
+				generes : "$genres"
+			},
+			count: { $sum : 1 }
+		}
+	},{
+		$sort: { _id:-1 }
+	}
+])
+
+[java]
+BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
+BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , 1));
+BasicDBObject group = new BasicDBObject("$group", groupFields);
+BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+	  	 
+HashMap<Integer,HashMap<String,Integer>> result = new HashMap<>();
+HashMap<String,Integer> genresGames;
+		
+MongoCursor<Document> res = null;
+Document data;
+DateFormat df1 = new SimpleDateFormat("yyyy");
+Integer year= null;
+		
+try {
+
+	res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
+
+------------getViewsCountByYearGen
+
+[mongoDb query]
+db.games.aggregate([
+	{
+		$group: { 
+			_id: {
+				year: { $year:"$releaseDate" },
+			generes : "$genres"
+			},
+			count: { $sum : "$viewsCount" }
+		}
+	},{
+		$sort: { _id:-1 }
+	}
+])
+
+[java]
+
+BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
+BasicDBObject groupFields = group_id.append("count", new BasicDBObject("$sum" , "$viewsCount"));
+BasicDBObject group = new BasicDBObject("$group", groupFields);
+BasicDBObject sort = new BasicDBObject("$sort" , new BasicDBObject("_id",-1));
+
+MongoCursor<Document> res = null;
+Document data;
+DateFormat df1 = new SimpleDateFormat("yyyy");
+HashMap<Integer,HashMap<String,Integer>> result = new HashMap<>();
+HashMap<String,Integer> genresGames;
+		
+Integer year= null;
+try {
+
+	res = statisticsCollection.aggregate(Arrays.asList(group,sort)).iterator();
+
+
+Sulle statistiche che richiedevano i campi releaseDate e genres prima era richiesto uno step aggiuntivo di $unwind molto pesante, bisognava "srotolare" l'array creando un insieme di documenti identici tranne per il precedente array di cui rimane un solo un elemento distinto, sono stati rimossi modificando i campi del documento.
+
+

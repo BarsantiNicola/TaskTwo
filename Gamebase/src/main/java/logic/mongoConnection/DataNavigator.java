@@ -38,7 +38,7 @@ public class DataNavigator{
 		this.numGames = maxNumGames;
 		this.queryType = type;
 		this.position = 0;
-		this.genre = eq("genres" , search );
+		this.genre = eq( "genres" , search );
 		this.projection = Projections.include( "_id", "title", "background_image" );
 		this.idSort = Sorts.descending( "_id" );
 		this.ratingSort = Sorts.descending("rating");
