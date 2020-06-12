@@ -19,8 +19,9 @@ import logic.mongoConnection.MongoConnection;
 
 public class WebScraping {
 
-	//Scrape 10 new games from rawg, starting from the id subsequent the max game id in the database. 
-	//Games are scraped in json form and need to be converted into Game class.
+	//Search a new game from rawg, starting from the id subsequent the max game id in the database
+	//Up to 100 tries are made searching for a suitable game
+	//Games are scraped in json form and need to be converted into Game class
 	public static Game searchNewGames(int MaxGameID) { 
 		System.out.println("--->[WebScraping][searchNewGames] Search for new games");
 		JSONObject newGame = new JSONObject(); 
@@ -34,7 +35,7 @@ public class WebScraping {
 			TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
 				System.out.println("--->[WebScraping][searchNewGames] Error: sleep() function failed");
-			}
+			} 
 			if (failed == 100){
 				System.out.println("--->[WebScraping][searchNewGames] More than 100 attempts failed. Stopping the search for new games...");
 				return null;
@@ -56,11 +57,11 @@ public class WebScraping {
 			suitableGame = true;
 		}
 		
-		//Create object Game
+		//Create object Game 
 		System.out.println("--->[WebScraping][searchNewGames] Creating object Game for new game");
 		Game gameToAdd = util.initializeGameToAdd(newGame);		
 		
-		//Return list of games to add
+		//Return game 
 		return gameToAdd;
 	}
 	
@@ -153,7 +154,6 @@ public class WebScraping {
 	/*
 	//Main (for DEBUG)
 	 public static void main(String[] args) throws Exception {
-		 searchNewGames(99999999);
 
 	 }
 	 */

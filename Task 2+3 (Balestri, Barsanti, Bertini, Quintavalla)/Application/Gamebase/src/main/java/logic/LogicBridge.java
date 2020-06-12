@@ -125,10 +125,13 @@ public class LogicBridge {
 	
 	///////////////  DATASCRAPER FUNCTIONS
 	
+	//Update database searching new games starting from the id subsequent the max game id in the database
+	//10 games are added to the database, unless some errors occur
 	public boolean updateDatabase() { 
 		System.out.println("-->[LogicBridge][updateDatabase] Starting database update.");
 		
 		int MaxGameId= MONGO.getMaxGameId().element;
+		//Check if MaxGameId is acceptable
 		if (MaxGameId == 0) {
 			System.out.println("--->[LogicBridge][updateDatabase] MaxGameID value is not accettable");
 			System.out.println("--->[LogicBridge][updateDatabase] UpdateDatabase can't be executed. Returning...");
@@ -139,10 +142,12 @@ public class LogicBridge {
 		
 		for (int i = 0; i < 10 ; i++) {
 			Game gameToAdd = WebScraping.searchNewGames(MaxGameId + 1); 
+			//check if the game found is feasible
 			if (gameToAdd == null) {
 				System.out.println("-->[LogicBridge][updateDatabase] A suitable game was not found. Interrupting update.");
 				return false;
 			}
+			//Try adding the game to the database
 			if (!addGameToDatabase(gameToAdd)) {
 				System.out.println("-->[LogicBridge][updateDatabase] Interrupting update.");
 				return false;
@@ -227,8 +232,8 @@ public class LogicBridge {
 	////////////// ADD GAME, DELETE GAME, ADD VOTE and CLOSE CONNECTION
 	
 	public boolean addGameToDatabase(Game gameToAdd) {
-		System.out.println("-->[LogicBridge][addGameToDatabase] Called");
-		GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gameToAdd);
+
+		GraphGame graphGameToAdd = util.initializeGraphGameToAdd(gameToAdd);  
 		StatusCode graphAddGameStatus = GRAPH.addGame(graphGameToAdd);
 		if(graphAddGameStatus!=StatusCode.OK) {
 			System.out.println("-->[LogicBridge][addGameToDatabase] Failing in adding game" + graphGameToAdd._id + " : " + graphGameToAdd.title + " to Graph database.");

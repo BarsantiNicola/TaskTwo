@@ -20,7 +20,7 @@ import logic.data.PlatformInfo;
 
 public class util {
 	
-	//Create a Game consistent with the new game just scraped
+	//Create a Game consistent with the new game just scraped (which is in json form)
 	public static Game initializeGameToAdd(JSONObject newGame) {
 		System.out.println("-->[util][initializeGameToAdd] Initializing new game. ID:" + newGame.getInt("id"));
 		Game gameToAdd = new Game();
@@ -286,7 +286,7 @@ public class util {
 		
 	
 	
-	//Create GraphGame consistent with a new game 
+	//Create GraphGame consistent with a new Game 
 	public static GraphGame initializeGraphGameToAdd(Game gameToAdd) {
 		System.out.println("-->[util][initializeGraphGameToAdd] Initializing GraphGame for game: " + gameToAdd.getTitle());
 			
@@ -306,7 +306,7 @@ public class util {
 		
 	}
 	
-	//Write information about an error in file error.txt
+	//Write information about an error in file errors.txt
 	public static void writeErrorLog(String error) {
 		Date date = new Date();
 		Timestamp ts = new Timestamp(date.getTime());
