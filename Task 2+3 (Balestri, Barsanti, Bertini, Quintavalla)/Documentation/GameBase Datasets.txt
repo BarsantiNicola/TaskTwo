@@ -1,0 +1,9 @@
+Both the MongoDB and the Neo4j datasets used in the GameBase application can be found at the following link:
+
+https://unipiit-my.sharepoint.com/:f:/g/personal/r_bertini2_studenti_unipi_it/Ehm4LBSs3s9CppkyoVXpqgcBgB-Rb3IaaTU4kXxF4keRQg?e=FfkvwE
+
+It should also be noted that the two datasets can be accessed directly by connecting to the MongoDB cluster and Neo4j instance
+deployed on the Unipi servers at the following addresses:
+
+MongoDB: 172.16.0.80:27018       (db: myDb, no authentication)
+Neo4j:   bolt://172.16.0.78:7687 (username: "neo4j", password: "password")

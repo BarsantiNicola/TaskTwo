@@ -820,61 +820,39 @@ public class GraphConnector implements GraphInterface,AutoCloseable
       if(record==null)
        return StatusCode.ERR_GRAPH_USER_NOTEXISTS;
       else
-        {        
-         //Decrement the favouriteCount of the games in the user's favourite list for consistency
-         StatusObject<List<GraphGame>>  userFavouriteGamesList = getFavouritesGamesList(username);
-         
-         //If retrieving the user favourite games list failed for any reason, abort and return such error
-         if(userFavouriteGamesList.statusCode != StatusCode.OK)    
-          return userFavouriteGamesList.statusCode;
-         else
-          {
-           //Otherwise, decrement the favouriteCount of the games in the user's favourite list
-           for(GraphGame game : userFavouriteGamesList.element)
-            session.writeTransaction(new TransactionWork<Void>()
-             {
-              @Override
-              public Void execute(Transaction tx)
-               {
-                tx.run("MATCH (g:game {_id: $_id})"    +   
-                       "SET g.favouriteCount = g.favouriteCount-1", 
-                       parameters("_id",game._id));
-                return null;
-               }
-            } );
-          } 
-         
+        { 
          //Retrieve the user's UserType
          String userType = record.get("labels(n)").asList().get(0).toString();
         
-         //Delete the user from the database
+         //Delete the user from the database, also decrementing the favouriteCount of the games in its favourite games list
          session.writeTransaction(new TransactionWork<Void>()
           {
            @Override
            public Void execute(Transaction tx)
             {
-             tx.run("MATCH (n{username: $username})" +
+             tx.run("MATCH (n{username: $username})-[:ADD]-(g:game) " +
+                    "SET g.favouriteCount = g.favouriteCount-1 "      +
                     "DETACH DELETE n",
                     parameters("username",username));
              return null;
             }
           } );
         
-        //Decrement the corresponding UserType and the total users counters attributes
-        totalUsersCount--;
-        if(userType.equalsIgnoreCase("user"))
-         standardUsersCount--;
-        else
-         if(userType.equalsIgnoreCase("analyst"))
-          analystsCount--;
+         //Decrement the corresponding UserType and the total users counters attributes
+         totalUsersCount--;
+         if(userType.equalsIgnoreCase("user"))
+          standardUsersCount--;
          else
-          if(userType.equalsIgnoreCase("administrator"))
-           administratorsCount--;
-          else                      //In case a user with an unknown UserType was deleted, notify to the caller
-           return StatusCode.ERR_GRAPH_USER_UNKNOWNTYPE;
+          if(userType.equalsIgnoreCase("analyst"))
+           analystsCount--;
+          else
+           if(userType.equalsIgnoreCase("administrator"))
+            administratorsCount--;
+           else                      //In case a user with an unknown UserType was deleted, notify to the caller
+            return StatusCode.ERR_GRAPH_USER_UNKNOWNTYPE;
         
-        return StatusCode.OK;
-       }
+         return StatusCode.OK;
+        }
      }
     catch(Exception e)
      {

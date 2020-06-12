@@ -3,16 +3,15 @@
 ----------- getRatingsCountByGen
 
 [mongoDb query]
-db.games.aggregate([
-	{
-		$group: { 
-			_id: "$genres",
-			count: { $sum : "$ratingCount" }
-		}
-	},{
-		$sort: { _id:-1}
-	}
-])
+db.games.aggregate
+(
+ [ 
+  { $group: { _id: "$genres", count: {$sum: "$ratingCount"}} },
+  { $sort:  { _id: -1} } 
+ ]
+)
+
+
 
 
 [java]
@@ -34,21 +33,13 @@ Document data;
 ----------- getRatingsCountByYearGen
 
 [mongoDb query]
-db.games.aggregate([
-	{
-		$group: { 
-			_id: {
-				year: {
-					$year:"$releaseDate"
-				},
-				generes : "$genres"
-			},
-			count: { $sum : "$ratingCount"}
-		}
-	},{
-		$sort: { _id:-1 }
-	}
-])
+db.games.aggregate
+(
+ [
+  { $group: {_id: {year: {$year: "$releaseDate"}, generes: "$genres"},count: {$sum: "$ratingCount"}} },
+  { $sort:  { _id: -1 } }
+ ]
+)
 
 [java]	    
 BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
@@ -73,21 +64,13 @@ try {
 ----------- getGamesCountByYearGen
 
 [mongoDb query]
-db.games.aggregate([
-	{
-		$group: { 
-			_id: {
-				year: {
-					$year:"$releaseDate"
-				},
-				generes : "$genres"
-			},
-			count: { $sum : 1 }
-		}
-	},{
-		$sort: { _id:-1 }
-	}
-])
+db.games.aggregate
+(
+ [ 
+  { $group: {_id: {year: {$year: "$releaseDate"}, generes: "$genres"}, count: {$sum: 1}} },
+  { $sort:  { _id: -1 } }
+ ]
+)
 
 [java]
 BasicDBObject group_id = new BasicDBObject("_id", new BasicDBObject("year", new BasicDBObject("$year", "$releaseDate")).append("generes", "$genres"));
@@ -110,19 +93,13 @@ try {
 ------------getViewsCountByYearGen
 
 [mongoDb query]
-db.games.aggregate([
-	{
-		$group: { 
-			_id: {
-				year: { $year:"$releaseDate" },
-			generes : "$genres"
-			},
-			count: { $sum : "$viewsCount" }
-		}
-	},{
-		$sort: { _id:-1 }
-	}
-])
+db.games.aggregate
+(
+ [
+  { $group: {_id: {year: {$year: "$releaseDate"}, generes: "$genres"}, count: {$sum: "$viewsCount"}} },
+  { $sort: { _id: -1} }
+ ]
+)
 
 [java]
 

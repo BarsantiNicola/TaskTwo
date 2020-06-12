@@ -121,11 +121,10 @@ public class GraphUnitTest
      graph.logout();
      
      graph.login("adri","adriPassword");           //Relog as administrator
-     System.out.println("StandardUsers = " + graph.getStandardUsersCount() + ", Analysts = " + graph.getAnalystsCount() + ", Administrators = " + graph.getAdministratorsCount() + ", Total = " + graph.getTotalUsersCount());
+     System.out.println("StandardUsers = " + graph.getStandardUsersCount().element + ", Analysts = " + graph.getAnalystsCount().element + ", Administrators = " + graph.getAdministratorsCount().element + ", Total = " + graph.getTotalUsersCount().element);
      System.out.println(graph.deleteUser("brad")); //Delete brad
      System.out.println("StandardUsers = " + graph.getStandardUsersCount().element + ", Analysts = " + graph.getAnalystsCount().element + ", Administrators = " + graph.getAdministratorsCount().element + ", Total = " + graph.getTotalUsersCount().element);
      System.out.println(graph.deleteUser("brad")); //Attempt to re-delete brad
-     System.out.println("StandardUsers = " + graph.getStandardUsersCount().element + ", Analysts = " + graph.getAnalystsCount().element + ", Administrators = " + graph.getAdministratorsCount().element + ", Total = " + graph.getTotalUsersCount().element);
      */ 
     
      
